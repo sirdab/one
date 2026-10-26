@@ -2,7 +2,10 @@
 
 import * as React from "react";
 
-import { formatValue, type Locale as NumeralLocale } from "@sirdab/one/foundation";
+import {
+  formatValue,
+  type Locale as NumeralLocale,
+} from "@sirdab/one/foundation";
 
 import { cn } from "../../lib/utils";
 import { CheckIcon, ChevronDownIcon } from "../icons/catalogue";

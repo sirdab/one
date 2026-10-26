@@ -14,6 +14,7 @@ import {
   type PhoneCountry,
 } from "../../lib/phone";
 import { cn } from "../../lib/utils";
+import { phoneFlagUrl } from "../../lib/phone-flags";
 import { ChevronDownIcon } from "../icons/catalogue";
 import { Button } from "./button";
 import {
@@ -64,8 +65,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./sheet";
    FLAGS ARE DRAWN, NOT EMOJI. The trigger reads the flag and "+966"; each
    row leads with its flag, then the country name and its code. An emoji
    flag is blank on Windows, so the marks are static SVGs served from the
-   app's /flags/<iso>.svg (public/flags), the same files the language menus
-   draw. A country with no file simply shows no flag; the name and code
+   package, so the host bundler owns their asset URLs and base path. A country with no file simply shows no flag; the name and code
    still carry the row.
 
    THE LIST SEARCHES, by country name (in the reader's language), ISO code
@@ -126,10 +126,11 @@ function orderedCountries(locale?: string): PhoneCountry[] {
    kilobyte or two. */
 function CountryFlag({ code }: { code: string }): React.JSX.Element {
   const [missing, setMissing] = React.useState(false);
-  if (missing) return <></>;
+  const src: string | undefined = phoneFlagUrl(code);
+  if (missing || !src) return <></>;
   return (
     <img
-      src={`/flags/${code.toLowerCase()}.svg`}
+      src={src}
       alt=""
       width={19}
       height={14}

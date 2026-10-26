@@ -2,17 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@sirdab/one/foundation": [
-        "./src/foundation/index.ts"
-      ]
+      "@sirdab/one/foundation": ["./src/foundation/index.ts"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
 }

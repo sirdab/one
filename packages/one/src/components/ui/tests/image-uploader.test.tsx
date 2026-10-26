@@ -106,11 +106,9 @@ const two: UploaderImage[] = [
 
 describe("ImageUploader", () => {
   it("uploads what was chosen, in the order it was picked", async () => {
-    const upload = vi.fn(
-      async (file: File): Promise<UploadOutcome> => ({
-        url: `https://x/${file.name}`,
-      }),
-    );
+    const upload = vi.fn(async (file: File): Promise<UploadOutcome> => ({
+      url: `https://x/${file.name}`,
+    }));
     const onValue = vi.fn();
     render(<Harness upload={upload} onValue={onValue} />);
     expect(screen.getByText(labels.dropTitle)).toBeTruthy();
@@ -130,11 +128,9 @@ describe("ImageUploader", () => {
   /* Once there are photos the grid is the drop target too, not only the
        add tile: a second drop anywhere on the uploader adds to the set. */
   it("takes a drop anywhere on a filled uploader", async () => {
-    const upload = vi.fn(
-      async (file: File): Promise<UploadOutcome> => ({
-        url: `https://x/${file.name}`,
-      }),
-    );
+    const upload = vi.fn(async (file: File): Promise<UploadOutcome> => ({
+      url: `https://x/${file.name}`,
+    }));
     const onValue = vi.fn();
     const { container } = render(
       <Harness upload={upload} initial={two} onValue={onValue} />,
@@ -226,22 +222,18 @@ describe("ImageUploader", () => {
   });
 
   it("stops at the limit and says so", async () => {
-    const upload = vi.fn(
-      async (file: File): Promise<UploadOutcome> => ({
-        url: `https://x/${file.name}`,
-      }),
-    );
+    const upload = vi.fn(async (file: File): Promise<UploadOutcome> => ({
+      url: `https://x/${file.name}`,
+    }));
     render(<Harness upload={upload} maxFiles={1} />);
     await choose([photo("1.jpg"), photo("2.jpg")]);
     expect(await screen.findByText(labels.rejectedCount!)).toBeTruthy();
   });
 
   it("revokes every preview it made", async () => {
-    const upload = vi.fn(
-      async (): Promise<UploadOutcome> => ({
-        error: "nope",
-      }),
-    );
+    const upload = vi.fn(async (): Promise<UploadOutcome> => ({
+      error: "nope",
+    }));
     const { unmount } = render(<Harness upload={upload} />);
     await choose([photo("1.jpg")]);
     await screen.findByText("nope");

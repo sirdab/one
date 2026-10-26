@@ -1,19 +1,41 @@
 # Fonts we redistribute
 
-Type stacks and the reasoning behind them live in `src/foundation.css` and
-`packages/ui/src/fonts.ts`. This file is only about provenance: which font
+Type stacks and the reasoning behind them live in `src/foundation/foundation.css`. This file is only about provenance: which font
 files ship inside our bundles, where they came from, and what we know about
-their licenses. Google-hosted families (Inter, IBM Plex Sans Arabic) are fetched from
-fonts.googleapis.com at runtime and are not redistributed by us, so they are
-not listed here.
+their licenses. Inter and IBM Plex Sans Arabic are redistributed through the optional
+`@sirdab/one/fonts.css` entry. Loading these base fonts makes no runtime Google
+Fonts request.
+Hosts can omit that stylesheet and supply the same font families themselves.
+
+MoodBoard's existing font preview is separate: user-selected typography can
+load a Google Fonts stylesheet for the preview. Those remotely served preview
+fonts are not redistributed by the package.
+
+## Inter and IBM Plex Sans Arabic
+
+- **Source**: the root-installed `@fontsource/inter` and
+  `@fontsource/ibm-plex-sans-arabic` packages. The repository lockfile records
+  the exact versions used for each build.
+- **Files**: Inter normal weights 300, 400, 500, 600 and 700, and IBM Plex
+  Sans Arabic normal weights 400, 500, 600 and 700, including all Unicode
+  subsets supplied for those weights. Their WOFF2 and WOFF files are copied
+  unchanged to `dist/assets/fonts/`. `dist/fonts.css` retains Fontsource's
+  family names, Unicode ranges and `font-display: swap`; only URLs change.
+- **License**: SIL Open Font License 1.1. Unmodified notices are copied from
+  each installed package to `dist/licenses/inter-OFL.txt` and
+  `dist/licenses/ibm-plex-sans-arabic-OFL.txt`, which ship in every tarball.
+  Inter is by Rasmus Andersson; IBM Plex is by IBM Corp.
+- **Serving**: CSS URLs are relative to the package stylesheet. Next.js and
+  Vite emit the assets under the consuming site's configured base path.
+  Consumers do not copy anything into a public directory.
 
 ## SaudiRiyal (`saudi-riyal.woff2` / `.woff`)
 
 - **What**: a single-glyph face carrying U+20C1 SAUDI RIYAL SIGN, loaded
   with `unicode-range: U+20C1` so it only ever paints the riyal symbol.
-- **Where it ships**: `packages/ui/public/fonts/`; each consuming app
-  copies the two files into its own `public/fonts/` so the `@font-face` in
-  `foundation.css` resolves (`/fonts/saudi-riyal.woff2`).
+- **Where it ships**: `src/assets/fonts/`, copied unchanged into `dist/assets/fonts/`.
+  `styles.css` includes the face with package-relative URLs, so the host
+  bundler emits both files without a manual public-directory copy.
 - **Origin**: the font's own name table says family `saudi_riyal`, style
   `regular`, copyright and designer "Emran Alhaddad", vendor URL
   `github.com/emran-alhaddad`. That matches the public Saudi-Riyal-Font
@@ -41,7 +63,7 @@ not listed here.
   credits section. Nothing in it restricts commercial use or the number
   of sites the font is served from.
 - **How we comply**: the attribution line below sits in this file and in
-  the `@font-face` comment in `src/foundation.css`. Keep the two in step
+  the `@font-face` comment in `src/foundation/foundation.css`. Keep the two in step
   when the declaration moves.
 
   > Saudi Riyal Font © Emran Alhaddad - Used under SIL Open Font License 1.1

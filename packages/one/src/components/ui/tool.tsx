@@ -46,12 +46,7 @@ import {
        </Tool>
 */
 type ToolState =
-  | "running"
-  | "done"
-  | "failed"
-  | "awaiting_approval"
-  | "denied"
-  | "expired";
+  "running" | "done" | "failed" | "awaiting_approval" | "denied" | "expired";
 
 const STATE_ICON: Record<ToolState, IconComponent> = {
   running: LoaderIcon,

@@ -193,14 +193,14 @@ describe("PhoneInput country selection", () => {
 /* Typing into the search re-filters every country row at once, which a busy
    CI runner has taken past the 5s default twice (PR #672 and its merge). */
 describe("PhoneInput flags and search", { timeout: 20_000 }, () => {
-  it("draws a flag from /flags on the trigger and on every row", () => {
+  it("draws package-owned flags on the trigger and on every row", () => {
     render(<Harness locale="en" />);
     expect(trigger().querySelector("img")?.getAttribute("src")).toBe(
-      "/flags/sa.svg",
+      new URL("../../../assets/flags/sa.svg", import.meta.url).href,
     );
     for (const option of openCountries()) {
       expect(option.querySelector("img")?.getAttribute("src")).toMatch(
-        /^\/flags\/[a-z]{2}\.svg$/,
+        /(?:^data:image\/svg\+xml,|\/assets\/flags\/[a-z]{2}\.svg$)/,
       );
     }
   });

@@ -1,0 +1,9 @@
+@import "tailwindcss" source(none);
+@import "./foundation/shadcn-bridge.css" layer(base);
+@import "./foundation/foundation.css" layer(base);
+@import "./foundation/tailwind.css";
+
+@source "./components/ui";
+@source "./components/icons";
+@source "./hooks";
+@source "./lib";

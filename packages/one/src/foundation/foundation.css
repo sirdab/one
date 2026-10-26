@@ -1548,8 +1548,8 @@
 @font-face {
   font-family: "SaudiRiyal";
   src:
-    url("/fonts/saudi-riyal.woff2") format("woff2"),
-    url("/fonts/saudi-riyal.woff") format("woff");
+    url("../assets/fonts/saudi-riyal.woff2") format("woff2"),
+    url("../assets/fonts/saudi-riyal.woff") format("woff");
   unicode-range: U+20C1;
   font-weight: 400 700;
   font-display: swap;
