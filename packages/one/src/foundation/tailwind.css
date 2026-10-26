@@ -1,0 +1,1281 @@
+/* ============================================================================
+   TAILWIND GLUE
+   ----------------------------------------------------------------------------
+   Binds Tailwind v4's utility namespaces to the foundation tokens. This is
+   the app-facing layer. Import order in an app's globals.css is
+   load-bearing (packages/ui/AGENTS.md, "Mounting", is the canonical copy):
+
+       @import "tailwindcss" source("../");
+       @import "@sirdab/one/foundation/shadcn-bridge.css" layer(base);
+       @import "@sirdab/one/foundation/foundation.css" layer(base);
+       @import "@sirdab/one/foundation/tailwind.css";
+
+   BOTH kit files go into layer(base) so Tailwind utilities (the last
+   layer) can override them; the bridge imports FIRST so that, within the
+   layer, foundation wins any token collision while the bridge's shadcn
+   aliases and density defaults still apply where foundation says
+   nothing. The shadcn --secondary fill-vs-text collision is resolved
+   HERE, at the utility-name level (--color-secondary → --muted).
+
+   Tailwind's stock palette and type scale are WIPED, not shadowed. bg-red-500
+   and text-sm do not exist; the lint catches stragglers, but the build not
+   generating them is the stronger guarantee.
+   ============================================================================ */
+
+/* The component animation vocabulary (animate-in/out, fade-, zoom-,
+   slide-in-from-*). Every overlay primitive in @sirdab/one writes these
+   classes, so the kit must supply them: before this import lived here,
+   they only compiled in hosts that happened to import tw-animate-css
+   themselves, and overlay entrances silently died everywhere else (the
+   app shell mount is where that surfaced). */
+@import "tw-animate-css";
+
+/* `disabled:` must also cover aria-disabled, because asChild renders
+   non-button elements where :disabled never matches, so every variant's
+   disabled styles would silently vanish on them.
+
+   FOOTGUN: because of this, `disabled:x` and `aria-disabled:y` overlap on
+   aria-disabled elements at identical specificity, and Tailwind's variant
+   sort (not your class order) picks the winner. If a rule must apply ONLY
+   to real :disabled controls (e.g. keeping pointer events for cursor
+   feedback), write it as an explicit `[&:disabled]:` arbitrary variant. */
+@custom-variant disabled (&:is(:disabled, [aria-disabled="true"]));
+
+/* Disabled controls keep pointer-events (the cursor must still read), which
+   means :hover/:active MATCH on them, so hover fills leaked onto disabled
+   buttons. Gate both variants on not-disabled instead of relying on each
+   variant to re-pin its disabled background. */
+@custom-variant hover {
+  @media (hover: hover) {
+    &:hover:not(:disabled, [aria-disabled="true"]) {
+      @slot;
+    }
+  }
+}
+@custom-variant active (&:active:not(:disabled, [aria-disabled="true"]));
+
+/* dark: means "inside a .dark scope", never the OS preference (Tailwind's
+   default), and it stops at a .light island, so a light card inside the dark
+   shell frame does not pick up its parent's dark: rules. The scopes
+   themselves are the contract in foundation.css, section 4 (THEME SCOPES).
+   One home for every host: apps do not re-declare it. */
+@custom-variant dark {
+  @scope (.dark) to (.light) {
+    @slot;
+  }
+}
+
+@theme inline {
+  /* The width at which the topbar field has room for its word AND the
+       chord's keycaps (global-search-trigger.tsx). The field is half the
+       palette's width, so Tailwind's 16rem container step would hide the
+       hint on most laptops; the threshold is named here instead. */
+  --container-search-chord: 14.5rem;
+
+  /* ------------------------------------------------ colors: wipe + semantic */
+  --color-*: initial;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-unread: var(--unread);
+  --color-alert-mark: var(--alert-mark);
+  --color-search-link: var(--search-link);
+
+  --color-card: var(--card);
+  /* the rail (sidebar/navbar): the plane between the page and a card */
+  --color-surface-rail: var(--surface-rail);
+  --color-surface-raised: var(--surface-raised);
+  /* the plane behind a lifted shell card */
+  --color-surface-sunken: var(--surface-sunken);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  /* Frosted floating surfaces: the popover at 90% over a backdrop blur
+       (backdrop-blur-popover, mapped in the shadows section below). */
+  --color-popover-surface: var(--popover-surface);
+  --color-popover-foreground: var(--popover-foreground);
+  /* The modal scrim, pairs with backdrop-blur-scrim (below). */
+  --color-scrim-surface: var(--scrim-surface);
+  /* The shell header frost, pairs with backdrop-blur-header (below). */
+  --color-header-surface: var(--header-surface);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-primary-foreground: var(--primary-foreground);
+
+  /* The brand hue, the ONE non-status colour. It is the accent, never the
+       action: --primary stays ink and no button is bg-brand. The ramp steps
+       are exposed for marketing chrome and charts; product code should reach
+       for the aliases. See foundation.css 3b and COLORS.md row 11. */
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-subtle: var(--brand-subtle);
+  --color-brand-subtle-foreground: var(--brand-subtle-foreground);
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+
+  /* Logo only. These are the mark's literals, not product roles: reach
+       for them inside the mark and nowhere else. See the LOGO section in
+       foundation.css. */
+  --color-logo-ink: var(--logo-ink);
+  --color-logo-paper: var(--logo-paper);
+  --color-logo-teal: var(--logo-teal);
+
+  /* shadcn collision: bg-secondary is a fill; the text role stays
+       --secondary and is reachable as text-muted-foreground. */
+  --color-secondary: var(--muted);
+  --color-secondary-foreground: var(--foreground);
+
+  --color-muted: var(--muted);
+  /* Resolves through --secondary, which keeps its foundation text value
+       (SOLID gray-600 light / gray-650 dark, the Arabic-joins
+       divergence) in ANY import order: the bridge never reassigns
+       it; shadcn's fill semantics live only in the --color-secondary
+       mapping above. The text-secondary lint rule guards the
+       utility-name side of the same collision. */
+  --color-muted-foreground: var(--secondary);
+
+  /* placeholder / timestamp tier. Below AA by design; never task-critical. */
+  --color-subtle: var(--subtle);
+
+  /* shadcn-compat ONLY: --accent exists in shadcn-bridge.css so
+       unported shadcn components resolve. NEVER use bg-accent in our own
+       components: hovers are --muted or the alpha ramp. */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  /* The sidebar family, for the shadcn sidebar component: docked rail =
+       the one tinted surface, interaction fills walk the same gray-alpha
+       ladder as nav items (the COLORS.md nav recipe), border is the
+       hairline. sidebar-ring is unmapped on purpose: focus is the global
+       focus-visible outline, and the trued sidebar paints no ring. */
+  --color-sidebar: var(--surface-rail);
+  --color-sidebar-foreground: var(--foreground);
+  --color-sidebar-primary: var(--primary);
+  --color-sidebar-primary-foreground: var(--primary-foreground);
+  --color-sidebar-accent: var(--gray-alpha-100);
+  --color-sidebar-accent-foreground: var(--foreground);
+  --color-sidebar-border: var(--border);
+
+  /* status: report-only (error text, banners, chips); never a button
+       fill. The -glyph steps are for ICONS drawn on a card (text-*-glyph),
+       one per tone including neutral; lint:tokens refuses bg-*-glyph. */
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-subtle: var(--destructive-subtle);
+  --color-destructive-glyph: var(--destructive-glyph);
+  --color-impersonation: var(--impersonation);
+  --color-impersonation-foreground: var(--impersonation-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-warning-glyph: var(--warning-glyph);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-subtle: var(--success-subtle);
+  --color-success-glyph: var(--success-glyph);
+  --color-attention: var(--attention);
+  --color-attention-foreground: var(--attention-foreground);
+  --color-attention-subtle: var(--attention-subtle);
+  --color-attention-glyph: var(--attention-glyph);
+  --color-neutral-glyph: var(--neutral-glyph);
+
+  --color-border: var(--border);
+  --color-border-interactive: var(--border-interactive);
+  --color-input: var(--input);
+  --color-input-border-hover: var(--input-border-hover);
+  --color-input-border-hover-form: var(--input-border-hover-form);
+  --color-ring: var(--ring);
+
+  /* component tokens: the interaction ladders */
+  --color-btn-border: var(--btn-border);
+  --color-btn-border-hover: var(--btn-border-hover);
+  --color-btn-surface-hover: var(--btn-surface-hover);
+  --color-btn-surface-active: var(--btn-surface-active);
+  --color-btn-ghost-surface-hover: var(--btn-ghost-surface-hover);
+  --color-btn-ghost-surface-active: var(--btn-ghost-surface-active);
+  --color-btn-destructive: var(--btn-destructive);
+  --color-btn-destructive-border-disabled: var(
+    --btn-destructive-border-disabled
+  );
+  --color-btn-destructive-text-disabled: var(--btn-destructive-text-disabled);
+  --color-btn-disabled-surface: var(--btn-disabled-surface);
+  --color-btn-disabled-text: var(--btn-disabled-text);
+  --color-row-divider: var(--row-divider);
+  --color-row-surface-hover: var(--row-surface-hover);
+  --color-row-surface-selected: var(--row-surface-selected);
+  --color-row-surface-selected-hover: var(--row-surface-selected-hover);
+  --color-kbd-border: var(--kbd-border);
+  --color-kbd-surface: var(--kbd-surface);
+
+  /* solid gray ramp, public ("Use --gray-* or, better, the semantic
+       tokens"); mirrors in dark. The button states use it directly
+       (disabled = gray-400 fill / gray-100 text). */
+  --color-gray-50: var(--gray-50);
+  --color-gray-62: var(--gray-62);
+  --color-gray-75: var(--gray-75);
+  --color-gray-100: var(--gray-100);
+  --color-gray-150: var(--gray-150);
+  --color-gray-200: var(--gray-200);
+  --color-gray-250: var(--gray-250);
+  --color-gray-300: var(--gray-300);
+  --color-gray-350: var(--gray-350);
+  --color-gray-400: var(--gray-400);
+  --color-gray-450: var(--gray-450);
+  --color-gray-500: var(--gray-500);
+  --color-gray-550: var(--gray-550);
+  --color-gray-600: var(--gray-600);
+  --color-gray-650: var(--gray-650);
+  --color-gray-700: var(--gray-700);
+  --color-gray-750: var(--gray-750);
+  --color-gray-800: var(--gray-800);
+  --color-gray-850: var(--gray-850);
+  --color-gray-900: var(--gray-900);
+  --color-gray-925: var(--gray-925);
+  --color-gray-950: var(--gray-950);
+
+  /* alpha ramp, public per COLORS.md (nav fills use it directly) */
+  --color-gray-alpha-50: var(--gray-alpha-50);
+  --color-gray-alpha-75: var(--gray-alpha-75);
+  --color-gray-alpha-100: var(--gray-alpha-100);
+  --color-gray-alpha-150: var(--gray-alpha-150);
+  --color-gray-alpha-200: var(--gray-alpha-200);
+  --color-gray-alpha-250: var(--gray-alpha-250);
+  --color-gray-alpha-300: var(--gray-alpha-300);
+  --color-gray-alpha-350: var(--gray-alpha-350);
+  --color-gray-alpha-400: var(--gray-alpha-400);
+  --color-gray-alpha-450: var(--gray-alpha-450);
+  --color-gray-alpha-500: var(--gray-alpha-500);
+  --color-gray-alpha-550: var(--gray-alpha-550);
+  --color-gray-alpha-600: var(--gray-alpha-600);
+  --color-gray-alpha-650: var(--gray-alpha-650);
+  --color-gray-alpha-700: var(--gray-alpha-700);
+  --color-gray-alpha-750: var(--gray-alpha-750);
+  --color-gray-alpha-800: var(--gray-alpha-800);
+  --color-gray-alpha-850: var(--gray-alpha-850);
+  --color-gray-alpha-900: var(--gray-alpha-900);
+  --color-gray-alpha-925: var(--gray-alpha-925);
+  --color-gray-alpha-950: var(--gray-alpha-950);
+
+  /* dark-mode depth is surface, not shadow; near-flat in light by design */
+  --color-surface-flat: var(--surface-flat);
+  /* the tonal panel: #FCFCFC light / #121212 dark, recessed group surfaces */
+  --color-surface-whisper: var(--surface-whisper);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-surface-modal: var(--surface-modal);
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* ------------------------------------------------------------- radius */
+  --radius-*: initial;
+  --radius-none: 0;
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-shell: var(--radius-shell);
+  /* The command palette's row (14px), see --radius-palette-item. */
+  --radius-palette-item: var(--radius-palette-item);
+  /* The dialog-tier PANEL radius (20px): filter dialogs, large popovers. */
+  /* The keycap corner (5px), see --kbd-radius. */
+  --radius-kbd: var(--kbd-radius);
+  --radius-popover: var(--popover-radius);
+  /* The MODAL radius (24px), every size, mobile included. */
+  --radius-modal: var(--radius-modal);
+  --radius-full: var(--radius-full);
+
+  /* ------------------------------------------------------------- shadows */
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --shadow-none: none;
+  --shadow-raised: var(--shadow-raised);
+  --shadow-overlay: var(--shadow-overlay);
+  --shadow-popover-sm: var(--shadow-popover-sm);
+  --shadow-card: var(--shadow-card);
+  --shadow-card-hover: var(--shadow-card-hover);
+  --shadow-modal: var(--shadow-modal);
+  --shadow-modal-lg: var(--shadow-modal-lg);
+
+  /* frosted popover backdrop, pairs with bg-popover-surface */
+  --blur-popover: var(--popover-blur);
+  /* modal scrim backdrop, pairs with bg-scrim-surface */
+  --blur-scrim: var(--scrim-blur);
+  /* shell header backdrop, pairs with bg-header-surface */
+  --blur-header: var(--header-blur);
+
+  /* ------------------------------------------------------------- fonts */
+  --font-*: initial;
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+
+  /* --------------------------------------------------------------- type
+     The stock text-xs…text-9xl scale is removed. Type is set through the
+     role utilities below, which compose the four longhands and therefore
+     can never reset font-variant-numeric the way `font:` shorthand does. */
+  --text-*: initial;
+
+  /* ------------------------------------------------------------- motion */
+  --ease-*: initial;
+  --ease-out: var(--ease-out);
+  --ease-in: var(--ease-in);
+  --ease-exit: var(--ease-exit);
+  --ease-in-out: var(--ease-in-out);
+  --ease-linear: var(--ease-linear);
+  --ease-spring: var(--ease-spring);
+  --ease-pop: var(--ease-pop);
+  --ease-overlay: var(--ease-overlay);
+  --ease-standard: var(--ease-standard);
+  --ease-drawer: var(--ease-drawer);
+  /* 100ms: COLOUR transitions run at 100ms everywhere in the system and
+       transition-colors is our dominant transition (fast enough to feel
+       immediate, long enough that a hover is a change and not a flicker).
+       Buttons opt DOWN to 75; size and layout changes opt UP
+       (duration-200 / duration-300) explicitly. --ease-standard, not the
+       strong --ease-out, so a hover moves evenly instead of landing at
+       once. */
+  --default-transition-duration: 100ms;
+  --default-transition-timing-function: var(--ease-standard);
+
+  /* Skeletons breathe to 0.6, not stock Tailwind's 0.5: a placeholder
+       that dims less reads as waiting rather than blinking. */
+  --animate-pulse: opacity-pulse var(--duration-pulse)
+    cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  @keyframes opacity-pulse {
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  /* The wave loader's bars (wave-loader.tsx): each squashes to 60% of its
+       height and back on the loop speed, the five a beat apart. After
+       loading-ui's Wave (MIT, loading-ui.com). */
+  --animate-wave-bar: wave-bar var(--duration-spin) var(--ease-in-out) infinite;
+  @keyframes wave-bar {
+    0%,
+    100% {
+      transform: scaleY(1);
+    }
+    50% {
+      transform: scaleY(0.6);
+    }
+  }
+
+  /* The bell rings when an alert arrives: a swing that settles in under a
+       second, hung from the top of the glyph (origin-top on the icon). */
+  --animate-bell-ring: bell-ring 700ms var(--ease-out);
+  @keyframes bell-ring {
+    0%,
+    100% {
+      rotate: 0deg;
+    }
+    15% {
+      rotate: 16deg;
+    }
+    30% {
+      rotate: -14deg;
+    }
+    45% {
+      rotate: 10deg;
+    }
+    60% {
+      rotate: -6deg;
+    }
+    75% {
+      rotate: 3deg;
+    }
+  }
+  /* A ring spreading from the bell's count three times and gone, Tailwind's
+       ping without the forever: an arrival is news once. */
+  --animate-alert-ping: alert-ping 1s cubic-bezier(0, 0, 0.2, 1) 3;
+  @keyframes alert-ping {
+    75%,
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  /* A settings row arriving: from the rail's side, out of a slight blur,
+       on the entrance curve, after Shopify's settings column. The rail is
+       on the start edge, so Arabic flips the direction (the -rtl twin).
+       Callers stagger it per row with an animation delay. */
+  --animate-settings-row-in: settings-row-in 400ms var(--ease-out) both;
+  --animate-settings-row-in-rtl: settings-row-in-rtl 400ms var(--ease-out) both;
+  @keyframes settings-row-in {
+    from {
+      opacity: 0;
+      translate: -1.5rem 0;
+      filter: blur(2px);
+    }
+  }
+  @keyframes settings-row-in-rtl {
+    from {
+      opacity: 0;
+      translate: 1.5rem 0;
+      filter: blur(2px);
+    }
+  }
+
+  /* A disclosure (CollapsibleContent) grows AND fades, after ElevenLabs:
+       tw-animate's collapsible keyframes move height alone, and the words
+       arrived at full ink while the box was still a sliver tall. 180ms
+       open, 150 close, on the drawer curve. */
+  --animate-disclose-open: disclose-open 180ms var(--ease-drawer);
+  --animate-disclose-close: disclose-close 150ms var(--ease-drawer);
+  @keyframes disclose-open {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+      opacity: 1;
+    }
+  }
+  @keyframes disclose-close {
+    from {
+      height: var(--radix-collapsible-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0;
+    }
+  }
+
+  /* ---------------------------------------------------------- breakpoints
+     Literal values (media queries cannot read custom properties). Must stay
+     in lockstep with --screen-* in foundation.css; sm–2xl and the container
+     scale equal Tailwind's defaults and are inherited untouched. */
+  /* rem, matching Tailwind's default breakpoint unit. v4's breakpoint
+       sorting is only reliable when all breakpoints share one unit. */
+  --breakpoint-2xs: 23.4375rem; /* 375px */
+  --breakpoint-xs: 30rem; /* 480px */
+  --breakpoint-3xl: 120rem; /* 1920px */
+}
+
+/* ----------------------------------------------------------------------------
+   TYPE ROLES: longhands only, numerals-safe by construction. Each utility
+   multiplies the static -base token by the script knobs AT THE ELEMENT.
+   The composed foundation tokens bake the knobs in at :root and cannot see
+   a nested [lang] or .latin island (see foundation.css, TYPE section).
+   ---------------------------------------------------------------------------- */
+
+@utility text-caption {
+  font-family: var(--font-sans);
+  font-size: calc(var(--text-caption-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(var(--text-caption-leading-base) + var(--script-leading-add)),
+    var(--script-leading-floor)
+  );
+  font-weight: var(--text-caption-weight);
+  letter-spacing: calc(
+    var(--text-caption-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-badge {
+  font-family: var(--font-sans);
+  font-size: var(--text-badge-size-base);
+  line-height: 1;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+@utility text-caption-quiet {
+  font-family: var(--font-sans);
+  font-size: calc(
+    var(--text-caption-quiet-size-base) * var(--script-size-scale)
+  );
+  line-height: max(
+    calc(var(--text-caption-quiet-leading-base) + var(--script-leading-add)),
+    var(--script-leading-floor)
+  );
+  font-weight: var(--text-caption-quiet-weight);
+  letter-spacing: calc(
+    var(--text-caption-quiet-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-label {
+  font-family: var(--font-sans);
+  font-size: calc(var(--text-label-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(var(--text-label-leading-base) + var(--script-leading-add)),
+    var(--script-leading-floor)
+  );
+  font-weight: var(--text-label-weight);
+  letter-spacing: calc(
+    var(--text-label-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-body {
+  font-family: var(--font-sans);
+  font-size: calc(var(--text-body-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(var(--text-body-leading-base) + var(--script-leading-add)),
+    var(--script-leading-floor)
+  );
+  font-weight: var(--text-body-weight);
+  letter-spacing: calc(
+    var(--text-body-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-body-quiet {
+  font-family: var(--font-sans);
+  font-size: calc(var(--text-body-quiet-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(var(--text-body-quiet-leading-base) + var(--script-leading-add)),
+    var(--script-leading-floor)
+  );
+  font-weight: var(--text-body-quiet-weight);
+  letter-spacing: calc(
+    var(--text-body-quiet-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-body-lg {
+  font-family: var(--font-sans);
+  font-size: calc(var(--text-body-lg-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(var(--text-body-lg-leading-base) + var(--script-leading-add)),
+    var(--script-leading-floor)
+  );
+  font-weight: var(--text-body-lg-weight);
+  letter-spacing: calc(
+    var(--text-body-lg-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-heading-xs {
+  font-family: var(--font-sans);
+  font-size: calc(var(--text-heading-xs-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(var(--text-heading-xs-leading-base) + var(--script-leading-add)),
+    var(--script-leading-floor)
+  );
+  font-weight: var(--text-heading-xs-weight);
+  letter-spacing: calc(
+    var(--text-heading-xs-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-heading-sm {
+  font-family: var(--font-sans);
+  font-size: calc(var(--text-heading-sm-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(var(--text-heading-sm-leading-base) + var(--script-leading-add)),
+    var(--script-leading-floor)
+  );
+  font-weight: var(--text-heading-sm-weight);
+  letter-spacing: calc(
+    var(--text-heading-sm-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-heading-md {
+  font-family: var(--font-sans);
+  font-size: calc(var(--text-heading-md-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(var(--text-heading-md-leading-base) + var(--script-leading-add)),
+    var(--script-leading-floor)
+  );
+  font-weight: var(--text-heading-md-weight);
+  letter-spacing: calc(
+    var(--text-heading-md-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-display-sm {
+  font-family: var(--font-display);
+  font-size: calc(var(--text-display-sm-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(
+      var(--text-display-sm-leading-base) + var(--script-leading-add-display)
+    ),
+    var(--script-leading-floor-display)
+  );
+  font-weight: var(--text-display-sm-weight);
+  letter-spacing: calc(
+    var(--text-display-sm-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-display-md {
+  font-family: var(--font-display);
+  font-size: calc(var(--text-display-md-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(
+      var(--text-display-md-leading-base) + var(--script-leading-add-display)
+    ),
+    var(--script-leading-floor-display)
+  );
+  font-weight: var(--text-display-md-weight);
+  letter-spacing: calc(
+    var(--text-display-md-tracking-base) * var(--script-tracking-scale)
+  );
+}
+@utility text-display-lg {
+  font-family: var(--font-display);
+  font-size: calc(var(--text-display-lg-size-base) * var(--script-size-scale));
+  line-height: max(
+    calc(
+      var(--text-display-lg-leading-base) + var(--script-leading-add-display)
+    ),
+    var(--script-leading-floor-display)
+  );
+  font-weight: var(--text-display-lg-weight);
+  letter-spacing: calc(
+    var(--text-display-lg-tracking-base) * var(--script-tracking-scale)
+  );
+}
+
+/* ----------------------------------------------------------------------------
+   Z LAYERS: local lift or a named portal layer; nothing else.
+   ---------------------------------------------------------------------------- */
+
+@utility z-behind {
+  z-index: var(--z-behind);
+}
+@utility z-raised {
+  z-index: var(--z-raised);
+}
+@utility z-raised-more {
+  z-index: var(--z-raised-more);
+}
+@utility z-dropdown {
+  z-index: var(--z-dropdown);
+}
+/* A reactive wash laid OVER a surface instead of replacing it. A hover
+   written as bg-gray-alpha-* swaps a solid surface (whisper, card) for a
+   translucent fill, so the control reads as going see-through; as a
+   background-image the alpha sits on top and the surface stays. Same
+   ladder, same rungs (COLORS.md row 5): wash-50 for the quietest, wash-100
+   for a pressable zone. */
+@utility wash-50 {
+  background-image: linear-gradient(var(--gray-alpha-50), var(--gray-alpha-50));
+}
+@utility wash-100 {
+  background-image: linear-gradient(
+    var(--gray-alpha-100),
+    var(--gray-alpha-100)
+  );
+}
+
+/* An inline slot that opens to its content's width and closes to nothing, so
+   the controls beside it slide over instead of jumping (Reveal in @sirdab/one).
+   Its own name, not reveal-inline: that is the filter chip's, and a second
+   @utility of the same name merges into it.
+   The column animates between 0fr and 1fr; closed, the slot also gives back
+   the 8px gap of the gap-2 row it sits in, so nothing is left holding space.
+   The content clips only while it is narrower than itself: open, it is
+   visible again so a focus ring is never cut off. */
+@utility reveal-slot {
+  display: inline-grid;
+  grid-template-columns: 0fr;
+  margin-inline-start: calc(var(--spacing) * -2);
+  transition:
+    grid-template-columns 250ms var(--ease-out),
+    margin-inline-start 250ms var(--ease-out);
+  & > * {
+    min-width: 0;
+    overflow: hidden;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+/* A label that folds to nothing and back, sliding its neighbours over:
+   the phone's status tabs, where only the chosen tab says its name. The
+   column animates between 1fr and 0fr and the words fade with it; the
+   text stays in the accessibility tree either way. */
+@utility reveal-label {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-columns 250ms var(--ease-out),
+    opacity 200ms var(--ease-out);
+  & > * {
+    min-width: 0;
+    overflow: hidden;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+@utility reveal-label-closed {
+  grid-template-columns: 0fr;
+  opacity: 0;
+}
+@utility reveal-label-open {
+  grid-template-columns: 1fr;
+  opacity: 1;
+}
+/* A block that arrives by opening to its own height, so what is below it
+   is pushed down rather than jumped (a save confirmation over the first
+   card). A keyframe, not a transition from @starting-style: it plays
+   whenever the block is first shown, including inside a subtree that was
+   rendered hidden, and mounting it is the whole trigger. The content
+   settles in after the rows have made room for it. */
+@utility reveal-block {
+  display: grid;
+  grid-template-rows: 1fr;
+  animation: reveal-block-open 400ms var(--ease-out) both;
+  & > * {
+    min-height: 0;
+    overflow: hidden;
+  }
+  & > * > * {
+    animation: reveal-block-settle 300ms var(--ease-out) 120ms both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    & > * > * {
+      animation: none;
+    }
+  }
+}
+@keyframes reveal-block-open {
+  from {
+    grid-template-rows: 0fr;
+  }
+  to {
+    grid-template-rows: 1fr;
+  }
+}
+@keyframes reveal-block-settle {
+  from {
+    opacity: 0;
+    translate: 0 -8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@utility reveal-slot-open {
+  grid-template-columns: 1fr;
+  margin-inline-start: 0;
+  & > * {
+    overflow: visible;
+  }
+}
+
+/* A block that opens to its own height and closes back to nothing, both
+   ways animated, so the container it sits in grows and shrinks instead of
+   jumping (the Feedback popover's Send row, which only exists once there
+   is something to send). The row animates between 0fr and 1fr. Put any gap
+   above the content as padding inside the child, so it folds away too; the
+   clip margin keeps a focus ring whole without letting the content paint
+   past the block while it is still opening. */
+@utility reveal-rows {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 250ms var(--ease-out);
+  & > * {
+    min-height: 0;
+    overflow: clip;
+    overflow-clip-margin: calc(var(--spacing) * 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+@utility reveal-rows-open {
+  grid-template-rows: 1fr;
+}
+
+@utility z-sticky {
+  z-index: var(--z-sticky);
+}
+@utility z-overlay {
+  z-index: var(--z-overlay);
+}
+@utility z-modal {
+  z-index: var(--z-modal);
+}
+@utility z-popover {
+  z-index: var(--z-popover);
+}
+@utility z-toast {
+  z-index: var(--z-toast);
+}
+@utility z-tooltip {
+  z-index: var(--z-tooltip);
+}
+
+/* ----------------------------------------------------------------------------
+   CONTROL + ROW HEIGHTS
+   ---------------------------------------------------------------------------- */
+
+@utility h-control-xs {
+  height: var(--control-xs);
+}
+@utility h-control-sm {
+  height: var(--control-sm);
+}
+@utility h-control {
+  height: var(--control-md);
+}
+@utility h-control-lg {
+  height: var(--control-lg);
+}
+@utility h-control-xl {
+  height: var(--control-xl);
+}
+@utility h-control-touch {
+  height: var(--control-touch);
+}
+/* The 44px touch floor (--control-touch) as a hit area, not a size: on a
+   touch screen an invisible box at least 44px square, centred on the
+   control, takes the tap, so a 28px icon button keeps its look and still
+   meets the platform minimum. The control must be positioned (Button is). */
+@utility touch-target {
+  @media (pointer: coarse) {
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: max(100%, var(--control-touch));
+      height: max(100%, var(--control-touch));
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+@utility h-row {
+  height: var(--row-height);
+}
+
+/* Shell frame: the 50px header bar (the rail's
+   logo row matches it) and the 256px rail/drawer width. Width-only and
+   height-only on purpose, the shell's grid does the wiring. */
+@utility h-shell-header {
+  height: var(--shell-header-height);
+}
+/* For a surface with NO topbar of its own that still shares the viewport with
+   the fixed workspace switch (the shell's notification bar today): clears the
+   strip the switch is pinned inside, so centred content cannot land
+   underneath it. */
+@utility pt-shell-header {
+  padding-top: var(--shell-header-height);
+}
+@utility w-shell-rail-icon {
+  width: var(--shell-rail-icon-width);
+}
+@utility w-shell-rail {
+  width: var(--shell-rail-width);
+}
+@utility w-shell-search {
+  width: var(--shell-search-width);
+}
+@utility w-shell-palette {
+  width: var(--shell-palette-width);
+}
+@utility h-shell-launcher {
+  height: var(--shell-launcher-height);
+}
+@utility top-shell-launcher {
+  top: var(--shell-launcher-top);
+}
+
+/* Quiet icons: SOLID ink + group opacity, never an alpha colour, since
+   lucide glyphs are multiple overlapping strokes, and alpha ink double-paints
+   at every intersection (44% + 44% reads ~69% at a joint). Opacity composites
+   the finished glyph once. Pair with hover:opacity-100 / focus states. */
+@utility icon-quiet {
+  color: var(--foreground);
+  opacity: var(--icon-quiet-opacity);
+}
+@utility icon-quiet-disabled {
+  opacity: var(--icon-quiet-opacity-disabled);
+}
+@utility icon-quiet-hover {
+  opacity: var(--icon-quiet-opacity-hover);
+}
+
+/* Scrolling panels (command lists) hide the scrollbar; the frosted
+   panel reads cleaner without a track. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* A 4px scrollbar: a quiet thumb, no track, for panes where the full
+   system bar is louder than the content (the assistant's chat). Chrome and
+   Safari take the pseudo-elements; setting scrollbar-width there would make
+   Chrome drop them for its own 11px thin bar, so the standard properties
+   are left to browsers without the pseudo-elements (Firefox). */
+@utility scrollbar-hairline {
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: var(--gray-alpha-300);
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-alpha-500);
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray-alpha-300) transparent;
+  }
+}
+
+/* Composite-input focus: ~1.5px of ink total (1px border + 0.5px ring),
+   deliberately NOT the global 2px offset outline. */
+@utility ring-input-focus {
+  box-shadow: 0 0 0 var(--input-ring-width) var(--ring);
+}
+
+/* Page-tabs underline: the bottom border the active tab paints. The
+   indicator is a real element (it slides
+   between tabs on a shared layout animation), so the token maps to its
+   HEIGHT; pair with bg-foreground. */
+@utility h-tab-indicator {
+  height: var(--tab-indicator-width);
+}
+
+/* A width reveal CSS can animate. An auto-width box cannot transition its
+   width, but a one-column grid track can go from 0fr to 1fr, so a chip's
+   applied value slides open and shut with no motion library on the page.
+   Open it with data-open on the same element; the speed is the motion
+   ladder's, so pair it with its duration-* rung (chips run at 200). */
+@utility reveal-inline {
+  display: grid;
+  grid-template-columns: 0fr;
+  opacity: 0;
+  transition-property: grid-template-columns, opacity;
+  transition-timing-function: var(--ease-out);
+
+  & > * {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  &[data-open] {
+    grid-template-columns: 1fr;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: none;
+  }
+}
+
+/* A band of light crossing muted text, for one job: saying "working on it"
+   in words (Shimmer in @sirdab/one). The band is the page tone sweeping over
+   --muted-foreground, clipped to the glyphs, so it flips with the theme.
+   Timing comes from the element: --shimmer-duration is one sweep,
+   --shimmer-spread the band's half width, and --shimmer-cycle the length of
+   one breath (data-pulse), where the words fade out and back so a long wait
+   reads as alive. Reduced motion drops the band and the breath and leaves
+   plain muted text. */
+@utility shimmer {
+  display: inline-block;
+  color: transparent;
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent calc(50% - var(--shimmer-spread, 8px)),
+      var(--color-background),
+      transparent calc(50% + var(--shimmer-spread, 8px))
+    ),
+    linear-gradient(
+      var(--color-muted-foreground),
+      var(--color-muted-foreground)
+    );
+  background-size:
+    250% 100%,
+    auto;
+  background-repeat: no-repeat;
+  background-position: 100% center;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shimmer-sweep var(--shimmer-duration, 2s) linear infinite;
+
+  &[data-pulse] {
+    animation:
+      shimmer-sweep var(--shimmer-duration, 2s) linear infinite,
+      shimmer-breath var(--shimmer-cycle, 6s) ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background-image: none;
+    color: var(--color-muted-foreground);
+    &[data-pulse] {
+      animation: none;
+    }
+  }
+}
+@keyframes shimmer-sweep {
+  from {
+    background-position: 100% center;
+  }
+  to {
+    background-position: 0% center;
+  }
+}
+@keyframes shimmer-breath {
+  0%,
+  84% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* The aurora ring: a 1.5px band of the aurora hues round the edge of
+   whatever wears it, over a wide soft bloom of the same pooled under it, the
+   light source behind it. Lit on the cards that carry it (the build card, a
+   pending confirmation); the prompt bar lights it only while focus is inside
+   (`data-aurora-ring="focus"` on the wearer), fading on the 150 rung.
+   Static [decision]: a ring that keeps moving pulls the eye off what it
+   frames.
+
+   The hues run along the length (--aurora-sweep, mixed in oklch), not round
+   a centre: a conic sweep on a wide pill packed every change into its middle
+   and left one colour per half, warm on one end and blue on the other.
+
+   The band takes the place of the wearer's 1px hairline: it is drawn over
+   the border box (inset -1px, since an absolute box starts inside the
+   border) with the wearer's own radius, so nothing moves when it comes or
+   goes. Pair it with border-transparent, or the gray hairline shows as a
+   second border. Both layers sit at z -1 inside the wearer's own stacking
+   context, which puts the bloom ABOVE the wearer's background, so the band
+   layer carries the card surface inside the band and covers it: the bloom
+   only shows outside the box. (Cutting a hole in the bloom instead left a
+   square of bare page at every rounded corner.) Every wearer is a card
+   surface, so the fill is --card. The wearer stays positioned however it
+   already is; one that is not gets `relative` (at zero specificity, so its
+   own `absolute` wins). */
+@utility aurora-ring {
+  isolation: isolate;
+
+  :where(&) {
+    position: relative;
+  }
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: -1;
+    transition-property: opacity;
+    transition-duration: 150ms;
+    transition-timing-function: var(--ease-out);
+  }
+
+  /* The bloom, pooled under the wearer. */
+  &::before {
+    inset: 6px 12px -6px;
+    opacity: 0.5;
+    filter: blur(20px) saturate(1.2);
+    background: linear-gradient(to right in oklch, var(--aurora-sweep));
+  }
+
+  /* The band, with the card surface inside it over the bloom. */
+  &::after {
+    inset: -1px;
+    border: 1.5px solid transparent;
+    background:
+      linear-gradient(var(--card) 0 0) padding-box,
+      linear-gradient(to right in oklch, var(--aurora-sweep)) border-box;
+  }
+
+  &[data-aurora-ring="focus"]:not(:focus-within)::before,
+  &[data-aurora-ring="focus"]:not(:focus-within)::after {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before,
+    &::after {
+      transition-property: none;
+    }
+  }
+}
+
+/* A card that rises under the pointer (Card's `lift`), on Amboras' timing
+   [decision]: 350ms on a back-out curve that overshoots the 4px rise by
+   about 0.7px and settles, the shadow on the same curve, and a press that
+   answers in 100ms. Past the 300ms ceiling on purpose: the settle is the
+   feel. */
+@utility card-lift {
+  transition-property: translate, scale, box-shadow;
+  transition-duration: 350ms;
+  transition-timing-function: cubic-bezier(0.34, 1.8, 0.64, 1);
+
+  &:active {
+    transition-duration: 100ms;
+  }
+}
+
+/* Struck-through text (a finished step, a removed value), centred on the
+   ink rather than the font's strikeout line: an underline lifted by
+   --script-strike-offset, so Arabic gets its own height. Use it wherever
+   line-through would go. */
+@utility strike {
+  text-decoration-line: underline;
+  text-decoration-skip-ink: none;
+  text-underline-offset: var(--script-strike-offset);
+}
+
+/* A list that runs out under a blur rather than a fade (home's payments
+   card), after Amboras: five stacked layers, each blurring the page behind
+   it a little more and each masked to a lower band, so the blur deepens
+   toward the foot. Wear it on an empty, absolutely placed box with five
+   empty children. */
+@utility progressive-blur {
+  pointer-events: none;
+
+  & > * {
+    position: absolute;
+    inset: 0;
+  }
+  & > :nth-child(1) {
+    backdrop-filter: blur(2px);
+    mask-image: linear-gradient(transparent 0%, #000 20%);
+  }
+  & > :nth-child(2) {
+    backdrop-filter: blur(4px);
+    mask-image: linear-gradient(transparent 20%, #000 40%);
+  }
+  & > :nth-child(3) {
+    backdrop-filter: blur(6px);
+    mask-image: linear-gradient(transparent 40%, #000 60%);
+  }
+  & > :nth-child(4) {
+    backdrop-filter: blur(8px);
+    mask-image: linear-gradient(transparent 60%, #000 80%);
+  }
+  & > :nth-child(5) {
+    backdrop-filter: blur(10px);
+    mask-image: linear-gradient(transparent 80%, #000 100%);
+  }
+}
+
+/* The prompt bar's two layouts as grids (prompt-bar.tsx). The pill is one
+   row in reading order; the card is pictures, then mark and field, then the
+   controls at either end. The tool spans under the field in the card, so the
+   mark's column is the mark's width and the field starts where it always
+   did. Utilities rather than inline styles so a breakpoint can pick one
+   (the phone-stacked bar). */
+@utility prompt-bar-pill {
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-template-areas: "leading tool input trailing";
+}
+@utility prompt-bar-card {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "attach attach attach"
+    "leading input input"
+    "tool tool trailing";
+}
+
+/* The aurora avatars: the face of a record that has no photo (a recent
+   order, a recent customer) in the command palette's 40px tile. Six fixed
+   pairings of the aurora hues, each running from a deep end to an airy
+   one, so a white glyph on it holds wherever the gradient lands; the
+   palette picks one off the record's id, so the same order keeps the same
+   face on every visit. Fixed values in both theme scopes on purpose: a
+   face that changed colour with the theme would read as a different
+   record. COLORS.md, row 11, is the licence; nothing else wears them. */
+@utility aurora-avatar-1 {
+  background-image: linear-gradient(
+    in oklch 135deg,
+    var(--aurora-violet-deep),
+    var(--aurora-blue)
+  );
+}
+
+@utility aurora-avatar-2 {
+  background-image: linear-gradient(
+    in oklch 135deg,
+    var(--aurora-blue-deep),
+    var(--aurora-violet)
+  );
+}
+
+@utility aurora-avatar-3 {
+  background-image: linear-gradient(
+    in oklch 135deg,
+    var(--aurora-violet-deep),
+    var(--aurora-peach)
+  );
+}
+
+@utility aurora-avatar-4 {
+  background-image: linear-gradient(
+    in oklch 135deg,
+    var(--aurora-blue-deep),
+    var(--aurora-peach)
+  );
+}
+
+@utility aurora-avatar-5 {
+  background-image: linear-gradient(
+    in oklch 135deg,
+    var(--aurora-violet),
+    var(--aurora-blue-deep)
+  );
+}
+
+@utility aurora-avatar-6 {
+  background-image: linear-gradient(
+    in oklch 135deg,
+    var(--aurora-violet-deep),
+    var(--aurora-blue-deep)
+  );
+}
+
+/* Autofill: browsers paint their own yellow/blue wash and text colour over
+   the field. Repaint with our surface and ink so an autofilled input looks
+   like every other input. Global, so no component carries the incantation. */
+@layer base {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-box-shadow: inset 0 0 0 1000px var(--background);
+    -webkit-text-fill-color: var(--foreground);
+    caret-color: var(--foreground);
+  }
+}
+
+/* Tailwind v4's preflight switched buttons to the native cursor: default.
+   Interactive things show a pointer here; disabled ones fall back to the
+   arrow even though they keep pointer-events (for cursor feedback).
+
+   BOTH selectors have to exclude aria-disabled, not just the role one.
+   A refused control (disabledReason / closed) is a real <button> that
+   deliberately does NOT carry the disabled attribute, because that would
+   drop it out of the tab order and kill the hover its explanation lives
+   on. So `button:not(:disabled)` matches it, and it was showing a
+   pointer while refusing to do anything. */
+@layer base {
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "name": "sirdab-one-workspace",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test",
+    "typecheck": "nx run-many -t typecheck",
+    "lint": "nx run-many -t lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "dev": "nx run site:dev"
+  },
+  "devDependencies": {
+    "nx": "^23.0.0",
+    "typescript": "^6.0.3",
+    "prettier": "^3.8.4",
+    "eslint": "^9",
+    "@eslint/js": "^9",
+    "typescript-eslint": "^8.61.1",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "vitest": "^4.1.9",
+    "jsdom": "^29.1.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/dom": "^10.4.1",
+    "@playwright/test": "^1.61.0",
+    "@axe-core/playwright": "^4.11.0",
+    "esbuild": "^0.27.0",
+    "tailwindcss": "^4",
+    "@tailwindcss/cli": "^4",
+    "@tailwindcss/postcss": "^4",
+    "postcss": "^8",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/ibm-plex-sans-arabic": "^5.3.0"
+  }
+}

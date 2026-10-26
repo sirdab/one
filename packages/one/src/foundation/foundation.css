@@ -1,0 +1,2083 @@
+/* ============================================================================
+   FOUNDATION
+   ----------------------------------------------------------------------------
+   Sirdab's design foundation. Every value is stated once here and mapped
+   into the semantic, utility, and component layers; the comment blocks
+   carry the reasoning.
+
+   Some blocks carry a label:
+
+     [proposed]   provisional, not yet validated in product use; safe to
+                  revisit
+     [decision]   a deliberate choice, dated where it matters; the comment
+                  says why
+     [Sirdab]    an explicit product-owner call, dated. Do not revisit
+                  without asking
+
+   Reject any [proposed] block and nothing else breaks.
+   ============================================================================ */
+
+/* ============================================================================
+   1. NEUTRAL RAMP
+   ----------------------------------------------------------------------------
+   The 23-step pure-neutral ramp. The steps were authored in HSL and are
+   expressed here in OKLCH. Identical in sRGB, but the spacing rationale
+   does not survive the trip: the steps are evenly spaced in HSL (mean
+   4.45, sd 0.50) and uneven in OKLCH (mean 3.90, sd 0.67, drifting from
+   3.45 in the light half to 4.35 in the dark). Kept anyway: the
+   deviation is below noticing, and the wider dark-end steps happen to
+   help, since the mirror makes them the dark-mode surface stack.
+
+   The MIRROR is the part worth having. Three layers: a raw ramp where
+   every number exists exactly once, then two mappings over it. Light is
+   identity; dark takes step (1000 - N). Nothing is duplicated, so light
+   and dark cannot drift apart.
+
+   The half-steps (62/75/150/250/.../925/938) are the other reason this
+   ramp earns its keep. Tailwind ships nothing between 50 and 100, and
+   dense UI needs those rungs for surface separation.
+   ============================================================================ */
+
+:root {
+  /* @internal  the raw ramp: the ONLY place these numbers exist; edit
+     here and both themes follow. NEVER reference --ramp-* from a
+     component or utility class. They do not flip with the theme. Use
+     --gray-* (which does), or better, the semantic tokens. */
+  --ramp-50: oklch(98.5% 0 0); /* #FAFAFA */
+  /* The sunken plane wanted a tone between #FAFAFA and
+       #EDEDED: 50 was too close to the white page to read as "below" it, 75
+       too far. 96.7% lands within 0.15% of the midpoint of the two, so it
+       sits on the ramp's own spacing rather than beside it. */
+  --ramp-62: oklch(96.7% 0 0); /* #F4F4F4 */
+  --ramp-75: oklch(94.6% 0 0); /* #EDEDED */
+  --ramp-100: oklch(91.6% 0 0); /* #E3E3E3 */
+  --ramp-150: oklch(88.5% 0 0); /* #D9D9D9 */
+  --ramp-200: oklch(85.5% 0 0); /* #CFCFCF */
+  --ramp-250: oklch(81.4% 0 0); /* #C2C2C2 */
+  --ramp-300: oklch(78.3% 0 0); /* #B8B8B8 */
+  --ramp-350: oklch(74.8% 0 0); /* #ADADAD */
+  --ramp-400: oklch(71.5% 0 0); /* #A3A3A3 */
+  --ramp-450: oklch(67.3% 0 0); /* #969696 */
+  --ramp-500: oklch(64% 0 0); /* #8C8C8C */
+  --ramp-550: oklch(60% 0 0); /* #808080 */
+  --ramp-600: oklch(56.2% 0 0); /* #757575 */
+  --ramp-650: oklch(52.1% 0 0); /* #696969 */
+  --ramp-700: oklch(47.5% 0 0); /* #5C5C5C */
+  --ramp-750: oklch(43.9% 0 0); /* #525252 */
+  --ramp-800: oklch(39% 0 0); /* #454545 */
+  --ramp-850: oklch(35.2% 0 0); /* #3B3B3B */
+  --ramp-900: oklch(30.1% 0 0); /* #2E2E2E */
+  --ramp-925: oklch(24.8% 0 0); /* #212121 */
+  /* 62's mirror. It exists BECAUSE 62 does: the dark mapping is step
+       (1000 - N), so a light step without its partner leaves --gray-62
+       undefined in dark, which is a trap rather than a missing feature.
+       Interpolated between 925 and 950 on the ramp's own spacing; nothing
+       references it directly yet. */
+  --ramp-938: oklch(22.6% 0 0); /* #1C1C1C */
+  --ramp-950: oklch(20.5% 0 0); /* #171717 */
+}
+
+/* On :root AND on .light, so a light island inside a .dark scope gets the
+   page ramp back (THEME SCOPES, section 4). */
+:root,
+.light {
+  /* Light mapping: identity. */
+  --gray-50: var(--ramp-50);
+  --gray-62: var(--ramp-62);
+  --gray-75: var(--ramp-75);
+  --gray-100: var(--ramp-100);
+  --gray-150: var(--ramp-150);
+  --gray-200: var(--ramp-200);
+  --gray-250: var(--ramp-250);
+  --gray-300: var(--ramp-300);
+  --gray-350: var(--ramp-350);
+  --gray-400: var(--ramp-400);
+  --gray-450: var(--ramp-450);
+  --gray-500: var(--ramp-500);
+  --gray-550: var(--ramp-550);
+  --gray-600: var(--ramp-600);
+  --gray-650: var(--ramp-650);
+  --gray-700: var(--ramp-700);
+  --gray-750: var(--ramp-750);
+  --gray-800: var(--ramp-800);
+  --gray-850: var(--ramp-850);
+  --gray-900: var(--ramp-900);
+  --gray-925: var(--ramp-925);
+  --gray-950: var(--ramp-950);
+}
+
+/* Dark mapping: step N takes ramp step (1000 - N). Low numbers stay
+   background-adjacent and high numbers stay foreground-adjacent in BOTH
+   themes. That is the invariant the semantic layer relies on. */
+.dark {
+  --gray-50: var(--ramp-950);
+  --gray-62: var(--ramp-938);
+  --gray-75: var(--ramp-925);
+  --gray-100: var(--ramp-900);
+  --gray-150: var(--ramp-850);
+  --gray-200: var(--ramp-800);
+  --gray-250: var(--ramp-750);
+  --gray-300: var(--ramp-700);
+  --gray-350: var(--ramp-650);
+  --gray-400: var(--ramp-600);
+  --gray-450: var(--ramp-550);
+  --gray-500: var(--ramp-500);
+  --gray-550: var(--ramp-450);
+  --gray-600: var(--ramp-400);
+  --gray-650: var(--ramp-350);
+  --gray-700: var(--ramp-300);
+  --gray-750: var(--ramp-250);
+  --gray-800: var(--ramp-200);
+  --gray-850: var(--ramp-150);
+  --gray-900: var(--ramp-100);
+  --gray-925: var(--ramp-75);
+  --gray-950: var(--ramp-50);
+}
+
+/* ============================================================================
+   2. ALPHA RAMP
+   ----------------------------------------------------------------------------
+   The best-designed thing in the system. Hand-tuned, deliberately
+   non-linear: tight 50-300, steep through 350-450, compressed 800-950.
+   Do not "clean up" these numbers into an even progression. The curve is
+   the point.
+
+   --gray-alpha-* points at black in light mode and white in dark, so a
+   token like --border needs ONE declaration for both themes.
+   ============================================================================ */
+
+:root {
+  /* @internal  NEVER reference --darken-* or --lighten-* directly; they
+     do not flip with the theme. Use --gray-alpha-* (which does), or a
+     semantic token. */
+  /* The 50 step is the one asymmetric pair (05 = 2.0% vs 06 = 2.4%),
+     not a typo; keep it verbatim. */
+  --darken-50: #00000005;
+  --lighten-50: #ffffff06; /*  2.4% */
+  --darken-75: #00000008;
+  --lighten-75: #ffffff08; /*  3.1% */
+  --darken-100: #0000000b;
+  --lighten-100: #ffffff0b; /*  4.3% */
+  --darken-150: #00000013;
+  --lighten-150: #ffffff13; /*  7.5% */
+  --darken-200: #0000001a;
+  --lighten-200: #ffffff1a; /* 10.2% */
+  --darken-250: #00000022;
+  --lighten-250: #ffffff22; /* 13.3% */
+  --darken-300: #00000029;
+  --lighten-300: #ffffff29; /* 16.1% */
+  --darken-350: #00000041;
+  --lighten-350: #ffffff41; /* 25.5% */
+  --darken-400: #00000059;
+  --lighten-400: #ffffff59; /* 34.9% */
+  --darken-450: #00000070;
+  --lighten-450: #ffffff70; /* 43.9% */
+  --darken-500: #00000087;
+  --lighten-500: #ffffff87; /* 52.9% */
+  --darken-550: #00000095;
+  --lighten-550: #ffffff95; /* 58.4% */
+  --darken-600: #000000a4;
+  --lighten-600: #ffffffa4; /* 64.3% */
+  --darken-650: #000000ad;
+  --lighten-650: #ffffffad; /* 67.8% */
+  --darken-700: #000000b6;
+  --lighten-700: #ffffffb6; /* 71.4% */
+  --darken-750: #000000c2;
+  --lighten-750: #ffffffc2; /* 76.1% */
+  --darken-800: #000000cd;
+  --lighten-800: #ffffffcd; /* 80.4% */
+  --darken-850: #000000d4;
+  --lighten-850: #ffffffd4; /* 83.1% */
+  --darken-900: #000000db;
+  --lighten-900: #ffffffdb; /* 85.9% */
+  --darken-925: #000000df;
+  --lighten-925: #ffffffdf; /* 87.5% */
+  --darken-950: #000000e3;
+  --lighten-950: #ffffffe3; /* 89.0% */
+}
+
+:root,
+.light {
+  --gray-alpha-50: var(--darken-50);
+  --gray-alpha-75: var(--darken-75);
+  --gray-alpha-100: var(--darken-100);
+  --gray-alpha-150: var(--darken-150);
+  --gray-alpha-200: var(--darken-200);
+  --gray-alpha-250: var(--darken-250);
+  --gray-alpha-300: var(--darken-300);
+  --gray-alpha-350: var(--darken-350);
+  --gray-alpha-400: var(--darken-400);
+  --gray-alpha-450: var(--darken-450);
+  --gray-alpha-500: var(--darken-500);
+  --gray-alpha-550: var(--darken-550);
+  --gray-alpha-600: var(--darken-600);
+  --gray-alpha-650: var(--darken-650);
+  --gray-alpha-700: var(--darken-700);
+  --gray-alpha-750: var(--darken-750);
+  --gray-alpha-800: var(--darken-800);
+  --gray-alpha-850: var(--darken-850);
+  --gray-alpha-900: var(--darken-900);
+  --gray-alpha-925: var(--darken-925);
+  --gray-alpha-950: var(--darken-950);
+}
+
+.dark {
+  --gray-alpha-50: var(--lighten-50);
+  --gray-alpha-75: var(--lighten-75);
+  --gray-alpha-100: var(--lighten-100);
+  --gray-alpha-150: var(--lighten-150);
+  --gray-alpha-200: var(--lighten-200);
+  --gray-alpha-250: var(--lighten-250);
+  --gray-alpha-300: var(--lighten-300);
+  --gray-alpha-350: var(--lighten-350);
+  --gray-alpha-400: var(--lighten-400);
+  --gray-alpha-450: var(--lighten-450);
+  --gray-alpha-500: var(--lighten-500);
+  --gray-alpha-550: var(--lighten-550);
+  --gray-alpha-600: var(--lighten-600);
+  --gray-alpha-650: var(--lighten-650);
+  --gray-alpha-700: var(--lighten-700);
+  --gray-alpha-750: var(--lighten-750);
+  --gray-alpha-800: var(--lighten-800);
+  --gray-alpha-850: var(--lighten-850);
+  --gray-alpha-900: var(--lighten-900);
+  --gray-alpha-925: var(--lighten-925);
+  --gray-alpha-950: var(--lighten-950);
+}
+
+/* ============================================================================
+   3. STATUS RAMPS                                                  [decision]
+   ----------------------------------------------------------------------------
+   Status colours report state; the default action is foreground inverted.
+   Sirdab's brand ramp follows in section 3b and stays separate from status.
+   ============================================================================ */
+
+:root {
+  /* Destructive: hue 27.3 */
+  --destructive-50: oklch(97.7% 0.011 27.3); /* #FFF5F3 */
+  --destructive-100: oklch(94.5% 0.028 27.3); /* #FFE6E3 */
+  --destructive-200: oklch(88.5% 0.061 27.3); /* #FFCBC3 */
+  --destructive-300: oklch(82.8% 0.096 27.3); /* #FFAFA5 */
+  --destructive-400: oklch(74.6% 0.154 27.3); /* #FF8276 */
+  --destructive-500: oklch(65.6% 0.211 27.3); /* #F74A42 */
+  --destructive-550: oklch(61.3% 0.185 24.4); /* #DD4949 */
+  --destructive-600: oklch(57.7% 0.215 27.3); /* #DC2626 */
+  --destructive-700: oklch(50.5% 0.198 27.3); /* #BC1117 */
+  --destructive-800: oklch(44.3% 0.171 27.3); /* #9C1114 */
+  --destructive-900: oklch(39.6% 0.139 27.3); /* #811917 */
+  --destructive-950: oklch(28.8% 0.093 27.3); /* #4F110E */
+
+  /* Warning: hue 58.3. Amber goes muddy at 600 and below (#B46100
+     reads brown). Warnings use a LIGHT step as fill with dark text,
+     which is the standard pattern regardless. */
+  --warning-50: oklch(97.7% 0.014 58.3); /* #FFF5EF */
+  --warning-100: oklch(94.5% 0.03 58.3); /* #FDE9DA */
+  --warning-200: oklch(88.5% 0.058 58.3); /* #F7D0B4 */
+  --warning-300: oklch(82.8% 0.09 58.3); /* #F3B98C */
+  --warning-400: oklch(74.6% 0.129 58.3); /* #E99753 */
+  --warning-500: oklch(66.6% 0.157 58.3); /* #D97706 */
+  --warning-600: oklch(57.7% 0.138 58.3); /* #B46100 */
+  --warning-700: oklch(50.5% 0.121 58.3); /* #965000 */
+  --warning-800: oklch(44.3% 0.106 58.3); /* #7D4200 */
+  --warning-900: oklch(39.6% 0.095 58.3); /* #6B3700 */
+  --warning-950: oklch(28.8% 0.069 58.3); /* #432000 */
+
+  /* Success: hue 149.2. Free to be green now that nothing else is. */
+  --success-50: oklch(97.7% 0.015 149.2); /* #F1FBF2 */
+  --success-100: oklch(94.5% 0.032 149.2); /* #DFF3E1 */
+  --success-200: oklch(88.5% 0.063 149.2); /* #BDE5C3 */
+  --success-300: oklch(82.8% 0.097 149.2); /* #9AD9A5 */
+  --success-400: oklch(74.6% 0.139 149.2); /* #66C57B */
+  --success-500: oklch(62.7% 0.17 149.2); /* #16A34A */
+  --success-600: oklch(57.7% 0.162 149.2); /* #00923F */
+  --success-700: oklch(50.5% 0.142 149.2); /* #007A33 */
+  --success-800: oklch(44.3% 0.124 149.2); /* #006529 */
+  --success-900: oklch(39.6% 0.111 149.2); /* #005622 */
+  --success-950: oklch(28.8% 0.075 149.2); /* #063515 */
+
+  /* Attention: hue 100, a lemon yellow. [proposed]
+     Where DRAFT lives, and every "your move, nothing is wrong" chip
+     (pending, confirmed, waiting on your signature). Warning is an apricot
+     at hue 58; a draft in it would read as a problem, so the product needed
+     its own yellow. The two 100 steps share a lightness (94.5%, 1.01:1
+     apart): the hue tells them apart, not the tone.
+     Yellow is the one hue whose sRGB gamut peaks at HIGH lightness, so the
+     chroma curve is its own (a third break in the generator): fat through
+     100 to 400 where the gamut is wide, then pulled in from 700 down
+     (0.104 / 0.091 / 0.081) because 0.106 / 0.093 / 0.083 push the blue
+     channel below zero and the browser clips it to a duller colour than
+     this declaration says. Step 500 is a mustard, not a lemon: a true
+     lemon cannot clear 3:1 on white as an icon. */
+  --attention-50: oklch(97.7% 0.045 100); /* #FEF9D6 */
+  --attention-100: oklch(94.5% 0.11 100); /* #FEEF97 */
+  --attention-200: oklch(88.5% 0.14 100); /* #EFDB64 */
+  --attention-300: oklch(82.8% 0.155 100); /* #DEC83A */
+  --attention-400: oklch(74.6% 0.154 100); /* #C4AE07 */
+  --attention-500: oklch(66% 0.136 100); /* #A69306 */
+  --attention-600: oklch(57.7% 0.12 100); /* #8A7A00 */
+  --attention-700: oklch(50.5% 0.104 100); /* #736503 */
+  --attention-800: oklch(44.3% 0.091 100); /* #5F5402 */
+  --attention-900: oklch(39.6% 0.081 100); /* #514702 */
+  --attention-950: oklch(28.8% 0.06 100); /* #322B00 */
+}
+
+/* ============================================================================
+   3b. BRAND RAMP                                                    [decision]
+   ----------------------------------------------------------------------------
+   The one hue that is not a status: Sirdab teal. It is the ACCENT, not the
+   action. --primary defaults to ink (the foreground inverted); only a
+   product with an explicit brand-primary ruling uses teal for actions; the ramp exists for the moments that need to read as Sirdab
+   rather than as a status: the logo, a selected or active accent, marketing
+   chrome, a data series that has to say "us". COLORS.md row 11 is the
+   decision order; the "never list" says where it may not go.
+
+   Authored as literals, not generated: these are the brand's own ten steps
+   (the Figma ramp), so they carry their hex rather than a curve. 500 is the
+   mark's fill. Small text on white wants 600 or darker (500 is ~3.6:1).
+   ============================================================================ */
+
+:root,
+.light {
+  --brand-50: #f0fcfb;
+  --brand-100: #cef5f2;
+  --brand-200: #a8eee8;
+  --brand-300: #7ae4dc;
+  --brand-400: #34c4be;
+  --brand-500: #03989e;
+  --brand-600: #027787;
+  --brand-700: #015a71;
+  --brand-800: #00415b;
+  --brand-900: #002f4b;
+
+  /* Aliases, never literals below this line. --brand is the text-safe
+       accent (600 clears AA on white); the fill pair is for the rare solid
+       brand block (a hero chip, a selected tile), never a button. */
+  --brand: var(--brand-600);
+  --brand-hover: var(--brand-700);
+  --brand-foreground: #ffffff;
+  --brand-subtle: var(--brand-50);
+  --brand-subtle-foreground: var(--brand-800);
+}
+
+.dark {
+  /* Lifts two rungs so the accent clears ink the way the status ramps
+       do; the wash goes to the navy end of the ramp so it stays a surface
+       tint rather than a glow. */
+  --brand: var(--brand-300);
+  --brand-hover: var(--brand-200);
+  --brand-foreground: var(--brand-900);
+  --brand-subtle: var(--brand-900);
+  --brand-subtle-foreground: var(--brand-200);
+}
+
+/* ============================================================================
+   4. SEMANTIC LAYER                                      mapping [decision]
+   ----------------------------------------------------------------------------
+   THEME SCOPES: .dark AND .light WORK ON ANY ELEMENT. [Sirdab]
+   Sirdab supports optional light, dark and system theme switching. A root
+   class="dark" switches the whole app; .dark and .light also form local
+   scopes. A shell can use a dark frame with a light page card. Portals
+   inherit the theme of their container, normally <body>.
+
+   Why it takes a contract: a custom property's var()s resolve on the
+   element that DECLARES it, and descendants inherit the resolved value.
+   While the aliases below lived on :root alone, a .dark subtree flipped
+   only the ~dozen tokens its own block re-declared; the ~29 pure aliases
+   (--card, --primary, --border, the --btn-* ladder, …) stayed frozen at
+   their light resolution. Proven empirically 2026-07-26: a .dark subtree
+   rendered ink-on-white cards.
+
+   The contract, in three parts:
+     1. Every alias block that reads a flipping token is declared on
+        `:root, .light, .dark`, so it re-resolves on whichever scope
+        element is nearest. Alias duplication, not value duplication; the
+        ramp still holds every number once.
+     2. Each `.dark` block comes AFTER its light block and overrides only
+        the values that differ. Same specificity, so source order decides.
+     3. `.light` restores the page ramp and every light value, so a light
+        island can sit inside a dark scope. Nesting depth is free: the
+        nearest scope wins by inheritance.
+   src/tests/theme-scopes.test.ts pins all three. A new alias that reads a
+   flipping token goes in one of the scoped blocks, never a bare :root.
+
+   Aliases, never literals.
+
+   --accent is deliberately not carried here at all: this system has no
+   accent role, hovers come from --muted or the alpha ramp. It is a
+   shadcn concern and lives in shadcn-bridge.css.
+   ============================================================================ */
+
+:root,
+.light,
+.dark {
+  --background: oklch(100% 0 0);
+  /* Ink sits BEYOND the ramp: 16.8%, deeper than ramp-950 (20.5%).
+     Text and primary actions get a floor the surface stack never
+     reaches, which is why an ink button reads black while a gray-900
+     button reads gray. The value is 16.8% PURE NEUTRAL (#0F0F0F),
+     rounded on purpose from a hair deeper with a faint blue cast: the
+     delta is sub-perceptual and the system is chroma-zero everywhere
+     else. */
+  --ink: oklch(16.8% 0 0); /* #0F0F0F */
+  --foreground: var(--ink);
+  --card: var(--surface-flat); /* white in light; ink, the page tone, in dark */
+  --card-foreground: var(--foreground);
+  /* Popover rides the overlay surface: background in light, gray-100
+     (#2E2E2E) in dark, painted at 90% over the 8px blur, so the
+     effective tone lands ~#2B2B2B over the dark card. */
+  --popover: var(--surface-overlay);
+  --popover-foreground: var(--foreground);
+
+  /* FROSTED GLASS is the base treatment for floating surfaces: the popover
+     paints at 90% over a blurred backdrop, so what is behind it shows
+     through faintly. Modals override back to solid; popovers keep it.
+     Apply BOTH together: 90% without the blur just looks washed out.
+
+       background: var(--popover-surface);
+       backdrop-filter: blur(var(--popover-blur)); */
+  --popover-surface: color-mix(in oklch, var(--popover) 90%, transparent);
+  --popover-blur: 8px;
+  --popover-radius: 1.25rem; /* 20px, the dialog-tier popover; its
+       default inset is 16px (p-4 at the call site). Modals are one step
+       softer: --radius-modal (24px), in the RADIUS section. */
+
+  /* THE MODAL SCRIM, the frosted veil behind a dialog: gray-150 at
+       30% over a 2.5px blur, fading in/out 200ms. It BRIGHTENS the
+       page: a light gray veil, not a black dim. gray-150 flips per
+       theme, so one definition serves light (#D9D9D9/30) and dark
+       (#3B3B3B/30). In dark this scrim is the modal's ENTIRE
+       separation story. The modal itself is ink with no shadow.
+
+       background: var(--scrim-surface);
+       backdrop-filter: blur(var(--scrim-blur)); */
+  --scrim-surface: color-mix(in oklch, var(--gray-150) 30%, transparent);
+  --scrim-blur: 2.5px;
+
+  /* THE PRIMARY BUTTON IS THE FOREGROUND INVERTED, never a gray step.
+     A gray-900 button (#2E2E2E, 13.6:1) reads gray; ink (19.2:1) reads
+     black. Hover is gray-800 = #454545.
+     --ink flips to white in dark mode, so no .dark override. */
+  /* @use   THE action button, including destructive confirmations.
+             One primary per view. Everything else is a ghost button
+             (transparent + --border-interactive) or a plain link. */
+  --primary: var(--foreground);
+  --primary-hover: var(--gray-800);
+  /* active / data-[state=open] / data-[state=on] all land one rung past
+     hover; disabled is a SOLID pair, not an opacity fade. */
+  --primary-active: var(--gray-700);
+  --primary-foreground: var(--background);
+
+  /* --secondary is a TEXT colour, so it has no "-foreground" pair: nothing
+     is painted on top of it. (shadcn's --secondary is a button background
+     and does need --secondary-foreground; that lives in shadcn-bridge.css,
+     not here, so the two conventions don't collide.)
+
+     SOLID, NOT ALPHA. No cleanup pass may "fix" this to the alpha
+     ramp. Alpha text is only correct in a Latin-only system, where
+     glyphs never touch. Ours do. Arabic is a connected script, glyphs
+     overlap at every join, and translucent text double-paints the
+     overlaps (on Noto Sans Arabic at 52.9% alpha, joins hit tone 68
+     against a 120 body: every connection a dark spot). Text is
+     a leaf, so it simply stops being alpha; the solid ramp steps below
+     match the old composited tones within ~1% oklch lightness
+     (alpha-500 over white = tone 120, gray-600 = 117), so the colour
+     Sirdab chose does not visibly change. Fills and borders (--border,
+     --input, --muted, btn surfaces) STAY alpha: a fill cannot overlap
+     itself, and there the surface-adaptation is genuinely wanted. */
+  --secondary: var(--gray-600); /* was gray-alpha-500; ~4.6:1, ignore AA */
+  /* --subtle does NOT meet AA for body text. It is for placeholders,
+     timestamps, and redundant labels only. Anything a user must read to
+     complete a task uses --secondary. Low-contrast on purpose; do not
+     raise it for AA. Solid for the same Arabic-joins reason as
+     --secondary; gray-500 is the mirrored ramp's fixed point, so it holds
+     in both themes. */
+  --subtle: var(--gray-500); /* was gray-alpha-450 */
+  /* @use  quiet FILLS: icon wells, skeletons, code backgrounds, count and
+             code chips, and the neutral status chip's wash (a tag is a
+             hairline outline, never this fill)
+     @avoid text of any kind: this is a 4% wash, not a colour */
+  --muted: var(--gray-alpha-100);
+  /* Note: --accent / --accent-foreground are NOT here. shadcn uses --accent
+     as its hover-surface token; this system has no accent role. Our own
+     components use --muted or a transparent nav-style hover. The token
+     lives in shadcn-bridge.css purely so shadcn components resolve. */
+
+  --border: var(--gray-alpha-150);
+  /* The input border: a visible-but-quiet hairline, deliberately not
+     a WCAG-boosted one. --border-interactive is retained as an alias so
+     components referencing it still resolve. */
+  --input: var(--gray-alpha-200);
+  --border-interactive: var(--gray-alpha-200);
+
+  /* SECONDARY / GHOST BUTTON STATE LADDER.
+     Background and border step up together on interaction; both use the
+     alpha ramp so both flip in dark mode for free. Colours animate over
+     100ms (transition-colors at the default tier), not instantly.
+
+       state     surface fill            border
+       rest      transparent/background  --btn-border       (alpha-200)
+       hover     --btn-surface-hover     --btn-border-hover (alpha-300)
+       active    --btn-surface-active    --btn-border-hover (alpha-300)
+       disabled  background              --btn-border, text --subtle          */
+  --btn-border: var(--gray-alpha-200);
+  --btn-border-hover: var(--gray-alpha-300);
+  --btn-surface-hover: var(--gray-alpha-50);
+  --btn-surface-active: var(--gray-alpha-100);
+  /* Two active behaviours: the secondary button actives to alpha-100
+       (this token), but the bordered SELECT trigger repeats the hover
+       pair (alpha-50). We standardised on the button's deeper step;
+       select.tsx re-pins the hover pair on active for secondary/outline
+       triggers as a deliberate, documented exception. */
+
+  /* GHOST / ICON BUTTON: a third variant. No border at any state; only the
+     fill steps. Used for icon-only actions (toolbar, inside inputs).
+       rest transparent -> hover alpha-100 -> active/open alpha-200          */
+  --btn-ghost-surface-hover: var(--gray-alpha-100);
+  --btn-ghost-surface-active: var(--gray-alpha-200);
+
+  /* DESTRUCTIVE BUTTON: a red OUTLINE with translucent red washes,
+     NEVER a red fill. Border AND text are the same red, #DD4949
+     (destructive-550). Do not "fix" the text to --destructive; that
+     token is the error-TEXT red (700, for contrast), a different job.
+     Catastrophic confirmations only; ordinary deletes still use
+     --primary in a confirm modal. */
+  --btn-destructive: var(--destructive-550);
+  --btn-destructive-border-disabled: var(--destructive-300);
+  --btn-destructive-text-disabled: var(--destructive-400);
+
+  /* Disabled primary is a SOLID pair, not an opacity fade. It is
+     semantic so components never reach into the raw ramp. */
+  --btn-disabled-surface: var(--gray-400);
+  --btn-disabled-text: var(--gray-100);
+
+  /* TABLE / LIST ROWS. Rows are the quietest interactive surface in
+     the system: alpha-50, one step below nav's alpha-100. The fill is a
+     rounded 12px PILL floating inside the row's band, never an
+     edge-to-edge wash, and only an interactive row takes it. */
+  --row-surface-hover: var(--gray-alpha-50);
+  /* A ticked row, off the same ramp (interaction fills are alpha steps,
+       COLORS.md): alpha-100, the fill the command palette gives its
+       selected item and one step past the hover, so the two never read as
+       the same; alpha-150 under the pointer, so a ticked row still answers
+       it. */
+  --row-surface-selected: var(--gray-alpha-100);
+  --row-surface-selected-hover: var(--gray-alpha-150);
+  /* Under the header AND under every row, not header-only: the data
+       table divides every row, and at
+       the 52px rhythm the line is what lets the eye track across a long
+       row. The pill's 6px of air keeps the two off each other. */
+  --row-divider: var(--gray-alpha-100);
+  --row-height: 3.25rem; /* 52px, off the control scale on purpose.
+       Rows are DATA and take this taller rhythm;
+       CONTROLS stay on the 40px house default. */
+
+  /* TEXT INPUTS have their own ladder, close to buttons but not identical:
+       rest   border --input              (alpha-200)
+       hover  border --input-border-hover (alpha-400: a BIGGER jump than
+                                           buttons, which stop at alpha-300)
+       focus  border --foreground (INK) + a 0.5px ink ring
+     That ink-border-plus-hairline-ring is what reads as "a 2px black border,
+     about double the normal one" when you tab through. It is ~1.5px of ink,
+     not a 2px ring.
+
+     NOTE: solid gray-300/gray-500 form inputs (and a stray font-serif
+     label) were a bug, not a design. --input holds the CORRECT
+     alpha-ramp value. Do not "restore" solid form-input grays. */
+  --input-border-hover: var(--gray-alpha-400);
+  /* The GENTLER hover rung, checkbox and radio only [Sirdab
+       2026-07-28]: text inputs hover alpha-400 at every size; a 16px
+       selection box at 400 shouts, so the small controls keep the
+       one-rung step. */
+  --input-border-hover-form: var(--gray-alpha-300);
+  --input-ring-width: 0.5px;
+
+  /* Quiet icons (inside inputs, on chips) sit at the subtle tone and light
+       to full ink on focus-within.
+
+       There is deliberately NO colour token for this. Icons are MULTI-STROKE:
+       an alpha ink double-paints where strokes cross (44% + 44% reads ~69%
+       at the joint). Quiet icons therefore take SOLID ink with group opacity,
+       via the icon-quiet UTILITY only; a colour token here once invited
+       exactly the double-paint the utility exists to prevent, and was
+       removed. Values track the quiet-text tones (--subtle/--secondary),
+       which are solid ramp steps for the same joins reason. */
+  --icon-quiet-opacity: 0.439;
+  /* Disabled dims RELATIVE to rest (half of it): an absolute opacity-50
+       brightened light-mode icons above their rest state. Literal per
+       theme, not a calc: composed tokens freeze at :root. */
+  --icon-quiet-opacity-disabled: 0.22;
+  /* Hover steps a quiet icon UP TO its label's tone (the secondary alpha),
+       never to full ink: a full-ink icon outweighs the 53% label it
+       belongs to. Ink at 0.529 lands ~8 gray points short of the label.
+       If a chip's hovered icon ever competes with its label, lower this. */
+  --icon-quiet-opacity-hover: 0.529;
+
+  /* Keyboard keycap chips (⌘ K). Border is 15% INK, not the alpha ramp:
+     a distinct hairline treatment; fill is the lightest ramp step. */
+  --kbd-border: color-mix(in oklch, var(--ink) 15%, transparent);
+  --kbd-surface: var(--gray-50);
+  /* The keycap's own corner: a step inside the 6px sm radius, because a
+       16-18px chip at 6px reads as a pill, not a key. */
+  --kbd-radius: 0.3125rem; /* 5px */
+  --ring: var(--foreground); /* the focus ring is ink, like the button */
+
+  /* Status = communication only. The -subtle steps are STATUS FILLS (the
+     quiet wash behind a chip, a note or a banner), not surfaces and not
+     washes in COLORS.md's sense; the tone's own text step reads on them
+     (a chip) and --foreground reads on them (a banner).
+     There are deliberately no -hover tokens: nothing here is a button.
+     Destructive ACTIONS use --primary inside a confirmation modal with
+     an explicit verb ("Delete store", never "Confirm").
+
+     THE FIVE TONES (FND-07), one meaning each: the colour says WHOSE MOVE
+     IT IS.
+       neutral    nothing for you to do (done, closed, off, in someone
+                  else's hands): --muted / --foreground
+       attention  your move, and nothing is wrong (a draft, a pending
+                  order): --attention-subtle / --attention
+       warning    something is off and needs you soon: --warning-subtle /
+                  --warning
+       critical   failed or refused, it will not fix itself:
+                  --destructive-subtle / --destructive
+       success    live, on the shelf, switched on: --success-subtle /
+                  --success
+     A WORD on its wash needs 4.5:1 (the tone's text step on its subtle).
+     An ICON on a card needs 3:1, and the 700 text step at icon size reads
+     as a dull brown, so every tone has a -glyph step for icons (500 in
+     light, 400 in a .dark scope). Glyphs are text-* colours for an icon,
+     never a fill; lint:tokens refuses bg-*-glyph. */
+  /* @use   error banners, failed-state badges, validation text, the
+             red dot on a failed row
+     @avoid  BUTTON FILLS. There is no red-FILLED button in this system
+             (the one red button is the destructive OUTLINE above, for
+             catastrophic confirmations). An ordinary delete opens a
+             confirmation modal whose confirm button is --primary with
+             an explicit verb ("Delete store", never "Confirm").
+             Friction comes from the modal, not the colour.
+     Red reports; it never commands. */
+  --destructive: var(--destructive-700); /* 6.50:1 on white */
+  --destructive-foreground: oklch(100% 0 0);
+  /* Step 100, like every other status fill [decision]: step 50 is 1.07:1
+       against white and reads as nothing, so a critical chip would be red
+       text on a blank. Error banners carry the same pale pink. */
+  --destructive-subtle: var(--destructive-100);
+  --destructive-glyph: var(--destructive-500); /* 3.5:1 on white */
+  /* The bell's own dot: red, the destructive glyph, because everything the
+       bell holds is a problem on her store (Shopify's, iOS's and Material's
+       badges are red for the same reason). The bell only; a row inside it
+       wears the unread blue (--unread). Set beside the glyph in both scopes,
+       so a .dark scope re-resolves it. */
+  --alert-mark: var(--destructive-glyph);
+
+  --warning: var(--warning-700); /* 6.10:1 on white, 5.2:1 on its wash */
+  --warning-foreground: oklch(100% 0 0);
+  --warning-subtle: var(--warning-100);
+  --warning-glyph: var(--warning-500); /* 3.2:1 on white */
+
+  /* [Sirdab] Support impersonation must be conspicuous (2026-10-23).
+       A saturated warning strip, identical in both scopes, with dark ink.
+       Reserved for impersonation, never a general status or action fill. */
+  --impersonation: var(--warning-400);
+  --impersonation-foreground: var(--ramp-950);
+
+  --success: var(--success-700);
+  --success-foreground: oklch(100% 0 0);
+  --success-subtle: var(
+    --success-100
+  ); /* the warning wash's step: 50 read as white */
+  --success-glyph: var(--success-500); /* 3.3:1 on white */
+
+  --attention: var(--attention-700); /* 5.0:1 on its wash */
+  --attention-foreground: oklch(100% 0 0);
+  --attention-subtle: var(--attention-100);
+  --attention-glyph: var(--attention-500); /* 3.1:1 on white */
+
+  /* Neutral has no ramp of its own: its wash is --muted and its text is
+       --foreground. Its glyph is gray-500, the mirrored ramp's fixed point
+       (#8C8C8C, 3.35:1 on white, the same in both themes). The icon-quiet
+       utility composites to 2.96:1 on the rail grey, which is why a status
+       icon does not take it. */
+  --neutral-glyph: var(--gray-500);
+}
+
+.dark {
+  /* Low numbers are background-adjacent in BOTH themes. That is the whole
+     point of the mirror. --gray-50 resolves near-black here. Aliasing
+     --background to --gray-950 gives you white-on-white.            */
+  /* THE PAIR SWAPS: the same two values serve both blocks verbatim.
+     Light is ink-on-paper, dark is paper-on-ink. So the dark background
+     also sits BEYOND the ramp (16.8% vs ramp-floor 20.5%): the page is
+     always darker or lighter than any surface on it, in both themes. */
+  --background: oklch(16.8% 0 0); /* #0F0F0F */
+  --ink: oklch(100% 0 0);
+  --foreground: var(--ink);
+
+  /* --secondary steps one rung brighter vs light mode (600 → 650):
+     white on dark reads dimmer than black on light at matched tone, so
+     the primary de-emphasis tier compensates. Text tokens step,
+     --border/--muted do not; that asymmetry is deliberate.
+     --subtle does NOT step: gray-500 is the mirrored ramp's fixed
+     point, identical in both themes. Solid, not alpha, for the
+     Arabic-joins reason documented at the light-theme declaration:
+     gray-650 (dark ramp: #ADADAD) matches the old alpha-600-over-dark
+     composite at tone ~172. */
+  --secondary: var(--gray-650); /* was gray-alpha-600 */
+  --subtle: var(--gray-500); /* was gray-alpha-500 */
+  --icon-quiet-opacity: 0.529;
+  --icon-quiet-opacity-disabled: 0.26;
+  --icon-quiet-opacity-hover: 0.643;
+
+  /* Status lightens in dark mode, same logic as --primary. */
+  --destructive: var(--destructive-400);
+  --destructive-foreground: var(--gray-50);
+  --destructive-subtle: var(--destructive-950);
+  --destructive-glyph: var(--destructive-400);
+  --alert-mark: var(--destructive-glyph);
+
+  --warning: var(--warning-400);
+  --warning-foreground: var(--gray-50);
+  --warning-subtle: var(--warning-950);
+  --warning-glyph: var(--warning-400);
+
+  --success: var(--success-400);
+  --success-foreground: var(--gray-50);
+  --success-subtle: var(--success-950);
+  --success-glyph: var(--success-400);
+
+  --attention: var(--attention-400);
+  --attention-foreground: var(--gray-50);
+  --attention-subtle: var(--attention-950);
+  --attention-glyph: var(--attention-400);
+}
+
+/* ============================================================================
+   5. ELEVATION                                            scale [decision]
+   ----------------------------------------------------------------------------
+   SHADOW IS NOT THE PRIMARY MECHANISM HERE. Most box-shadow work in a
+   dense interface is hairline BORDERS drawn as box-shadow (0 0 0 1px
+   var(--border) and inset variants), not elevation at all.
+
+   Separation is carried by --border and by surface colour. Shadow is
+   reserved for things that genuinely float above the page. That is the
+   correct pattern for dense tooling: shadow on every card turns a
+   working interface into mush.
+
+   Consequently there are three levels, named for what floats rather
+   than for abstract height. Five levels would be five chances to pick
+   the wrong one.
+
+   THE LAYERS ARE EXACT. The alpha hex is preserved:
+   0f = 5.88%, 0a = 3.92%, 05 = 1.96%. Writing 6/4/2% would be a
+   rounding. The formula holds across every layer:
+
+       blur = y,  y doubles,  alpha 6% -> 4% -> 2%
+
+   Elevation is HOW MANY LAYERS you include, and WHICH SPREAD VARIANT:
+
+     CONTACT (spread = -y/2)   things RESTING on the surface: cards on
+                               hover, dragged items. Negative spread pulls
+                               the shadow in tight beneath the object.
+     AMBIENT (spread = 0)      things FLOATING above it: popovers, menus.
+                               The shadow spreads fully at each blur radius,
+                               reading as distance rather than contact.
+
+   Both share y-doubling, blur = y, and the alpha ladder; only spread
+   differs. The popover paints the ambient variant exactly. (An earlier
+   pass called the zero-spread string a "corrupted variant". That was
+   wrong; it is a deliberate second set.)
+
+   The MODAL family broke the per-layer alpha table: the small modal
+   shadow runs 6,6,6,6,2%: its 12px layer is 2% where the l-ladder says
+   4%. Alphas are tuned per SHADOW, not per layer, so the modal tokens
+   are stored verbatim, not composed from --shadow-l*.
+   ============================================================================ */
+
+:root,
+.light,
+.dark {
+  --shadow-l1: 0 0 0 1px #0000000f; /* hairline, crisp at any DPI */
+  --shadow-l2: 0 1px 1px -0.5px #0000000f;
+  --shadow-l3: 0 3px 3px -1.5px #0000000f;
+  --shadow-l4: 0 6px 6px -3px #0000000f;
+  --shadow-l5: 0 12px 12px -6px #0000000a;
+  --shadow-l6: 0 24px 24px -12px #0000000a;
+  --shadow-l7: 0 48px 48px -24px #00000005;
+
+  /* AMBIENT layers: same curve, spread 0, for floating surfaces.
+     l1/l2 are shared with the contact set; they diverge from layer 3 up. */
+  --shadow-a3: 0 3px 3px 0 #0000000f;
+  --shadow-a4: 0 6px 6px 0 #0000000f;
+  --shadow-a5: 0 12px 12px 0 #0000000a;
+  --shadow-a6: 0 24px 24px 0 #0000000a;
+
+  --shadow-none: none;
+
+  /* List rows and the boxes, tiles and rows INSIDE a card: NONE, with
+     --border doing the work. The page card itself wears --shadow-card
+     below; reach for raised only when something lifts on hover or drag. */
+  /* @use   hover lift, active drag
+     @avoid  resting list rows and anything inside a card: those are
+             --shadow-none plus --border; the page card is --shadow-card. */
+  --shadow-raised: var(--shadow-l1), var(--shadow-l2), var(--shadow-l3);
+
+  /* Dropdowns, popovers, tooltips, comboboxes: floating, dismissible.
+     The popover shadow is 6 ambient layers. No border needed: layer 1
+     IS the hairline, which is why popovers ship border-width 0. */
+  --shadow-overlay:
+    var(--shadow-l1), var(--shadow-l2), var(--shadow-a3), var(--shadow-a4),
+    var(--shadow-a5), var(--shadow-a6);
+  /* The PANEL shadow (menus, comboboxes, filter dialogs, tooltips all
+       wear this one): a 1px 6% ring (the hairline; panels stay
+       border-width 0) + a doubling cascade 1/3/6/12/24 fading 6% → 4%.
+       Distinct from --shadow-modal's contact ladder (negative spreads).
+       Dark swaps to the white hairline ring below. */
+  --shadow-popover-sm:
+    0 0 0 1px #0000000f, 0 1px 1px -0.5px #0000000f, 0 3px 3px 0 #0000000f,
+    0 6px 6px 0 #0000000f, 0 12px 12px 0 #0000000a, 0 24px 24px 0 #0000000a;
+
+  /* The CARD shadow: the page card, once (a form, a
+       settings group, a detail section, a stat tile). Nothing inside a card
+       takes a shadow; boxes, tiles and rows in it are --border hairlines. A
+       card that sits visibly ON the page, deeper than --shadow-raised, never
+       floating like a panel. Soft and wide rather than dark and tight: after
+       the hairline, each layer grows its blur (4, 16, 32px) while a negative
+       spread pulls it back in, so the shade spreads out underneath at low
+       opacity instead of pooling at the edge. Like the panel shadow its
+       first layer is the hairline, so a card wearing it drops its border. */
+  --shadow-card:
+    0 0 0 1px #0000000f, 0 2px 4px -1px #00000008, 0 6px 16px -4px #0000000a,
+    0 12px 32px -8px #0000000a;
+  /* The card a merchant can press, lifted under the pointer (home's launch
+       cards), after Amboras [decision]: the card's own layers, then one deep,
+       soft drop pulled in by its spread. Built ON --shadow-card, layer for
+       layer, because a shadow transitions layer by layer: with the layers in
+       a different order the hairline turned into the drop mid-hover, and on
+       the lift's overshooting curve a layer's offset swung past zero and the
+       shadow peeked out over the card's top edge. Only the added drop moves. */
+  --shadow-card-hover: var(--shadow-card), 0 24px 24px -10px #00000040;
+
+  /* Dialogs: the 6-layer contact ladder, VERBATIM (spreads negative,
+       12/24px at 4%). Both themes wear this string exactly. (An earlier
+       pass guessed the smaller modal family from a stray utility
+       sighting. That was a different element.) */
+  --shadow-modal:
+    0 0px 0px 1px #0000000f, 0 1px 1px -0.5px #0000000f,
+    0 3px 3px -1.5px #0000000f, 0 6px 6px -3px #0000000f,
+    0 12px 12px -6px #0000000a, 0 24px 24px -12px #0000000a;
+  /* Sheets, command palettes, the biggest blocking surfaces: the full
+       7-layer contact ladder PLUS an extra 0 10px 20px 1px 4% layer,
+       verbatim. (The old stand-in was this string minus that extra
+       layer.) */
+  --shadow-modal-lg:
+    0 0px 0px 1px #0000000f, 0 1px 1px -0.5px #0000000f,
+    0 3px 3px -1.5px #0000000f, 0 6px 6px -3px #0000000f,
+    0 12px 12px -6px #0000000a, 0 24px 24px -12px #0000000a,
+    0 48px 48px -24px #00000005, 0 10px 20px 1px #0000000a;
+
+  /* Light mode is near-flat: depth comes from the border and the shadow.
+     The one tonal step is the WHISPER panel (#FCFCFC, a half-step below
+     white), the tonal card: a recessed group surface (preview, media,
+     code) where a border would fight the content. Elements on it return
+     to white, which is the sandwich: #FFF page, #FCFCFC card, #FFF
+     element. */
+  --surface-flat: var(--background);
+  --surface-raised: var(--gray-50); /* Existing Sirdab surface contract. */
+  --surface-whisper: oklch(99.2% 0 0); /* #FCFCFC */
+  --surface-overlay: var(--background);
+  --surface-modal: var(--background);
+  /* THE ONLY TINTED SURFACE [Sirdab]: the rail (sidebar / navbar) sits
+       on solid gray-50 #FAFAFA. DOCKED only: as the mobile drawer the
+       same sidebar renders on plain background, because floating layers
+       always return to background. Everything else is white. Separation
+       is shadow and border, never tint. A modal takes the FROSTED scrim
+       BEHIND it (--scrim-surface + --scrim-blur). */
+  /* One declaration serves both themes: gray-50 flips to #171717 in
+       dark. The dark rail is dark gray-50, NOT ink. */
+  --surface-rail: var(--gray-50);
+
+  /* THE SUNKEN PLANE: what shows BEHIND a lifted shell card (the
+       workspace island when the assistant is open). Deeper than the page
+       so the card reads as floating on it, and the one surface that does
+       NOT take a single declaration for both themes, see the dark block
+       for why. */
+  --surface-sunken: var(--gray-62); /* #F4F4F4 */
+
+  /* THE HEADER FROST. The shell's top bar lets page content dissolve
+       under it: background at 90% over an 8px blur, both themes. Apply
+       BOTH together, like the popover frost. The asymmetry is the
+       shell's surface story:
+       rail = solid tint, header = frost over content.
+
+       background: var(--header-surface);
+       backdrop-filter: blur(var(--header-blur)); */
+  --header-surface: color-mix(in oklch, var(--background) 90%, transparent);
+  --header-blur: 8px;
+}
+
+.dark {
+  /* NO SHADOWS IN DARK: elevation is the surface
+       tones below, full stop, so the shadow utilities compute to none
+       here. The one survivor is the panel ring, and it is a
+       border-construct, not elevation: the light popover-sm ring is 6%
+       black, invisible on ink, so dark panels take the white-alpha
+       hairline instead. */
+  --shadow-raised: none;
+  --shadow-overlay: none;
+  --shadow-modal: none;
+  --shadow-modal-lg: none;
+  --shadow-popover-sm: 0 0 0 1px var(--gray-alpha-150);
+  --shadow-card: 0 0 0 1px var(--gray-alpha-150);
+  --shadow-card-hover: var(--shadow-card);
+
+  /* DARK SURFACES, hand-tuned solid tones, a whisper apart
+       (2026-07-27): page ink #0F0F0F → tonal card #121212 → frosted
+       popover #2E2E2E at 90% (composites to ~#2B2B2B over the card: the
+       "#282828" element tier) → modal back at INK (the page tone; scrim +
+       border separate it, not tint). Flat resting cards stay ink + border:
+       depth is surface + border, full stop. */
+  --surface-flat: var(--background);
+  --surface-raised: oklch(19.7% 0 0); /* #151515 */
+  --surface-whisper: oklch(18.4% 0 0); /* #121212 */
+  --surface-overlay: var(--gray-100); /* #2E2E2E, the popover tone */
+  /* Ink, same as the page: separation comes from
+       the scrim behind + border, never tone. (We standardised on ink; a
+       #454545 modal variant was a one-off, do not reintroduce it.) */
+  --surface-modal: var(--background);
+  /* --surface-rail needs no dark override. It resolves through
+       --gray-50, which flips on its own (see the :root declaration). */
+
+  /* OFF-RAMP, and deliberately so: it must sit ABOVE the rail (#171717,
+       which is inside the lifted card) yet below gray-75's own flip
+       (#212121, which floated too far off the ink page). Nothing on the
+       ramp lands between them, so this is hand-authored like the whisper
+       tone above. */
+  --surface-sunken: oklch(21.3% 0 0); /* #191919 */
+}
+
+/* ============================================================================
+   6. RADIUS
+   ----------------------------------------------------------------------------
+   Six values cover 93% of usage. 10px alone is 42%. That is the
+   default, not 8px.
+
+   --radius-nested exists because inner corners kept getting computed by
+   hand at call sites. An inner corner should be the outer minus its
+   inset.
+   ============================================================================ */
+
+:root {
+  --radius-none: 0;
+  --radius-xs: 0.25rem; /*  4px  (inferred; rare in practice) */
+  --radius-sm: 0.375rem; /*  6px  (8%) */
+  --radius-md: 0.5rem; /*  8px  (17%) */
+  --radius-lg: 0.625rem; /* 10px  (42%), default */
+  --radius-xl: 0.75rem; /* 12px  (7%) */
+  --radius-2xl: 1rem; /* 16px  (10%) */
+  /* The SHELL card: the app's page card on the dark frame. Rounder than
+       any in-page surface so it reads as the window, not a card in it. */
+  --radius-shell: 1.25rem; /* 20px */
+  /* The PALETTE ROW: the command palette's row, a 40px tile in 6px of
+       padding. 12px read as a borrowed menu row at that height and 16px
+       as a card; 14px is the row's own shape. The tile inside keeps the
+       10px default rather than the strictly concentric 8px, which read
+       pinched on a 40px square. Nothing else reads it. */
+  --radius-palette-item: 0.875rem; /* 14px */
+  /* The MODAL corner is 24px at EVERY size, including mobile: we reject
+       stock shadcn's square corners below 640px (a leftover, not a
+       design). */
+  --radius-modal: 1.5rem; /* 24px */
+  --radius-full: 9999px; /*       (9%) */
+  --radius: var(--radius-lg);
+
+  /* Pre-composed nested pairs. CSS has no functions, so each outer+inset
+     combination you actually use gets a token. */
+  --radius-nested-2xl-12: max(0px, calc(var(--radius-2xl) - var(--space-12)));
+  --radius-nested-lg-8: max(0px, calc(var(--radius-lg) - var(--space-8)));
+  --radius-inset-border: calc(var(--radius-lg) - 1px);
+}
+
+/* ============================================================================
+   7. SPACING
+   ----------------------------------------------------------------------------
+   Chosen by usage frequency: these cover ~90%. They are on a 2px grid,
+   not 4px: 8px is 37% of all spacing, then 4, 10, 12, 6. A 4px grid
+   would have thrown away 10px (11%) and 6px (7%), which are
+   load-bearing in dense UI.
+
+   Named by their pixel value so there is no "is space-4 four pixels or
+   sixteen" ambiguity. One continuous scale, two neighbourhoods: app
+   surfaces live in 2-16, marketing in 24-96.
+   ============================================================================ */
+
+:root {
+  --space-2: 0.125rem; /*  2px */
+  --space-4: 0.25rem; /*  4px */
+  --space-6: 0.375rem; /*  6px */
+  --space-8: 0.5rem; /*  8px  (most-used, 37%) */
+  --space-10: 0.625rem; /* 10px */
+  --space-12: 0.75rem; /* 12px */
+  --space-16: 1rem; /* 16px */
+  --space-24: 1.5rem; /* 24px */
+  --space-32: 2rem; /* 32px */
+  --space-48: 3rem; /* 48px */
+  --space-64: 4rem; /* 64px */
+  --space-96: 6rem; /* 96px, marketing only */
+}
+
+/* ============================================================================
+   8. TYPE
+   ----------------------------------------------------------------------------
+   Whole styles, not loose sizes: 11 distinct styles, deduplicated to 8
+   real roles.
+
+   Two corrections to the first draft:
+     - body is 14px at weight 500, not 16px at 400. Size 14 is 78% of all
+       text; weight 500 is 74%. Dense tooling reads better at medium.
+     - tracking is far subtler than first drafted: -0.010em at 35px, not
+       -0.020em, and the curve goes POSITIVE below 13px
+       (+0.0025em at 12px and 10px; small type wants loosening).
+       Applied 2026-07-28: both caption roles carry +0.0025em; the
+       Arabic tracking scale still multiplies it to zero.
+
+   Rejected as artifacts: 14/16.7 (ratio 1.193, a computed fraction) and
+   12/24 (ratio 2.0, a span centred in a 24px row).
+
+   LONGHANDS ARE PRIMARY, shorthand is convenience. The `font` shorthand
+   resets font-variant-numeric AND font-feature-settings to their initial
+   values, so `font: var(--text-body)` on a price silently kills tabular
+   figures. Use the longhands anywhere numerals matter:
+
+       font-size: var(--text-body-size);
+       line-height: var(--text-body-leading);
+       font-weight: var(--text-body-weight);
+       letter-spacing: var(--text-body-tracking);
+
+   Leading is an exact fraction (calc(20/14), not 1.429), so every role
+   lands on a whole pixel. A rounded ratio gives 19.994px, which is how
+   16.7px values get into a codebase in the first place.
+
+   Two deliberate divergences from the raw readings:
+     - heading-sm is weight 500; a lone 700 reading does not outweigh
+       the 35px heading at 500. A 24px heavier than a 35px is far more
+       likely an inline <strong> than a heading role.
+     - caption keeps its 500 weight because the 12px basis is a BUTTON
+       label. For a true caption, add a 400-weight role rather than
+       reweighting this.
+
+   THREE SCRIPT KNOBS, one scale. Latin is the identity case.
+
+   PER-ELEMENT SWITCHING requires the -base tokens: an unregistered custom
+   property resolves its var()s WHERE IT IS DECLARED (here, :root), so the
+   composed --text-*-size/-leading/-tracking bake the page-level script knobs
+   in at <html> and cannot react to a nested [lang] or .latin island. The
+   Tailwind role utilities therefore multiply base × knob at the consuming
+   element. Raw-CSS consumers needing island-correct metrics must do the
+   same; the composed tokens are correct only at page-locale granularity.
+   (Found empirically 2026-07-26: the island rule matched, set the knob,
+   and font-size did not move.)
+   ============================================================================ */
+
+:root {
+  --font-sans:
+    "SaudiRiyal", Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-arabic:
+    "SaudiRiyal", "IBM Plex Sans Arabic", "Noto Sans Arabic", sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  --script-size-scale: 1;
+  --script-leading-add: 0;
+  /* Display tier gets its own, smaller add: +0.22 was tuned for body and,
+       being additive on the RATIO, hits tight display leadings 3.8x harder
+       (48/52 would balloon from 1.08 to 1.30). 0.1 keeps Arabic heroes
+       breathing without going airy. [decision] */
+  --script-leading-add-display: 0;
+  --script-tracking-scale: 1;
+  /* Where `strike` draws its line, as an underline lifted from the
+       baseline, because line-through sits where the font's metrics say
+       and not where the eye finds the middle. For Latin it lands where
+       Inter's own strikeout does; Arabic's ink sits low (the bowls
+       rest on the baseline), so its line comes down to the middle of
+       the letters' bodies. Measured by eye on IBM Plex Sans Arabic
+       [2026-10-18]. */
+  --script-strike-offset: -0.3em;
+  /* A FLOOR under the computed leading, because an additive nudge
+       cannot hold a script whose ink needs a fixed ratio. Zero for
+       Latin, so max() always returns the calc; see the Arabic block for
+       what it is doing there. */
+  --script-leading-floor: 0;
+  /* The display tier's own floor, zero for Latin like the one above. */
+  --script-leading-floor-display: 0;
+
+  /* 12/16: a button-label style, not a true caption */
+  --text-caption-size-base: 0.75rem;
+  --text-caption-size: calc(
+    var(--text-caption-size-base) * var(--script-size-scale)
+  );
+  --text-caption-leading-base: calc(16/12);
+  --text-caption-leading: calc(
+    var(--text-caption-leading-base) + var(--script-leading-add)
+  );
+  --text-caption-weight: 500;
+  --text-caption-tracking-base: 0.0025em;
+  --text-caption-tracking: calc(
+    var(--text-caption-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-caption: var(--text-caption-weight) var(--text-caption-size) /
+    var(--text-caption-leading) var(--font-sans);
+
+  /* 8/8 at 600: a count in a badge's circle (the bell's unread count),
+       the one role below 12px. Digits only, in a pill of fixed height, so the
+       leading is the pill's and neither the script scale nor the Arabic
+       weight dial applies (text-badge sets its weight itself). */
+  --text-badge-size-base: 0.5rem;
+
+  /* 12/16 at 400, the TRUE caption. --text-caption is 500 because its
+       12px basis is a button label; quiet meta text at medium weight
+       fights the de-emphasis --subtle provides. [decision] */
+  --text-caption-quiet-size-base: 0.75rem;
+  --text-caption-quiet-size: calc(
+    var(--text-caption-quiet-size-base) * var(--script-size-scale)
+  );
+  --text-caption-quiet-leading-base: calc(16 / 12);
+  --text-caption-quiet-leading: calc(
+    var(--text-caption-quiet-leading-base) + var(--script-leading-add)
+  );
+  --text-caption-quiet-weight: 400;
+  --text-caption-quiet-tracking-base: 0.0025em;
+  --text-caption-quiet-tracking: calc(
+    var(--text-caption-quiet-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-caption-quiet: var(--text-caption-quiet-weight)
+    var(--text-caption-quiet-size) / var(--text-caption-quiet-leading)
+    var(--font-sans);
+
+  /* 13/20: buttons */
+  --text-label-size-base: 0.8125rem;
+  --text-label-size: calc(
+    var(--text-label-size-base) * var(--script-size-scale)
+  );
+  --text-label-leading-base: calc(20/13);
+  --text-label-leading: calc(
+    var(--text-label-leading-base) + var(--script-leading-add)
+  );
+  --text-label-weight: 500;
+  --text-label-tracking-base: 0;
+  --text-label-tracking: calc(
+    var(--text-label-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-label: var(--text-label-weight) var(--text-label-size) /
+    var(--text-label-leading) var(--font-sans);
+
+  /* 14/20, 78% of all text on the page */
+  /* @use   the four longhands below wherever numerals appear (prices,
+             quantities, IDs, tables). The --text-body SHORTHAND resets
+             font-variant-numeric and font-feature-settings, silently
+             killing tabular figures. Shorthand is for prose only. */
+  --text-body-size-base: 0.875rem;
+  --text-body-size: calc(var(--text-body-size-base) * var(--script-size-scale));
+  --text-body-leading-base: calc(20/14);
+  --text-body-leading: calc(
+    var(--text-body-leading-base) + var(--script-leading-add)
+  );
+  --text-body-weight: 500;
+  --text-body-tracking-base: 0;
+  --text-body-tracking: calc(
+    var(--text-body-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-body: var(--text-body-weight) var(--text-body-size) /
+    var(--text-body-leading) var(--font-sans);
+
+  /* 14/20, regular weight variant */
+  --text-body-quiet-size-base: 0.875rem;
+  --text-body-quiet-size: calc(
+    var(--text-body-quiet-size-base) * var(--script-size-scale)
+  );
+  --text-body-quiet-leading-base: calc(20/14);
+  --text-body-quiet-leading: calc(
+    var(--text-body-quiet-leading-base) + var(--script-leading-add)
+  );
+  --text-body-quiet-weight: 400;
+  --text-body-quiet-tracking-base: 0;
+  --text-body-quiet-tracking: calc(
+    var(--text-body-quiet-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-body-quiet: var(--text-body-quiet-weight) var(--text-body-quiet-size) /
+    var(--text-body-quiet-leading) var(--font-sans);
+
+  /* 16/24 */
+  --text-body-lg-size-base: 1rem;
+  --text-body-lg-size: calc(
+    var(--text-body-lg-size-base) * var(--script-size-scale)
+  );
+  --text-body-lg-leading-base: calc(24/16);
+  --text-body-lg-leading: calc(
+    var(--text-body-lg-leading-base) + var(--script-leading-add)
+  );
+  --text-body-lg-weight: 400;
+  --text-body-lg-tracking-base: 0;
+  --text-body-lg-tracking: calc(
+    var(--text-body-lg-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-body-lg: var(--text-body-lg-weight) var(--text-body-lg-size) /
+    var(--text-body-lg-leading) var(--font-sans);
+
+  /* 18/26 */
+  --text-heading-xs-size-base: 1.125rem;
+  --text-heading-xs-size: calc(
+    var(--text-heading-xs-size-base) * var(--script-size-scale)
+  );
+  --text-heading-xs-leading-base: calc(26/18);
+  --text-heading-xs-leading: calc(
+    var(--text-heading-xs-leading-base) + var(--script-leading-add)
+  );
+  --text-heading-xs-weight: 500;
+  --text-heading-xs-tracking-base: -0.0025em;
+  --text-heading-xs-tracking: calc(
+    var(--text-heading-xs-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-heading-xs: var(--text-heading-xs-weight) var(--text-heading-xs-size) /
+    var(--text-heading-xs-leading) var(--font-sans);
+
+  /* 24/30: a lone 700 reading, n=1; see the header note */
+  --text-heading-sm-size-base: 1.5rem;
+  --text-heading-sm-size: calc(
+    var(--text-heading-sm-size-base) * var(--script-size-scale)
+  );
+  --text-heading-sm-leading-base: calc(30/24);
+  --text-heading-sm-leading: calc(
+    var(--text-heading-sm-leading-base) + var(--script-leading-add)
+  );
+  --text-heading-sm-weight: 500;
+  --text-heading-sm-tracking-base: -0.00625em;
+  --text-heading-sm-tracking: calc(
+    var(--text-heading-sm-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-heading-sm: var(--text-heading-sm-weight) var(--text-heading-sm-size) /
+    var(--text-heading-sm-leading) var(--font-sans);
+
+  /* 35/40 */
+  --text-heading-md-size-base: 2.1875rem;
+  --text-heading-md-size: calc(
+    var(--text-heading-md-size-base) * var(--script-size-scale)
+  );
+  --text-heading-md-leading-base: calc(40/35);
+  --text-heading-md-leading: calc(
+    var(--text-heading-md-leading-base) + var(--script-leading-add)
+  );
+  --text-heading-md-weight: 500;
+  --text-heading-md-tracking-base: -0.01em;
+  --text-heading-md-tracking: calc(
+    var(--text-heading-md-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-heading-md: var(--text-heading-md-weight) var(--text-heading-md-size) /
+    var(--text-heading-md-leading) var(--font-sans);
+
+  /* MARKETING TIER: landing page only. App surfaces stop above.
+
+     The display face appears ONLY at 32px and up and ONLY at weight
+     300. Large-and-light is the whole display voice. The text face
+     never exceeds 20px on a marketing page, so the two faces do not
+     overlap in size at all.
+
+     Weight 300 is a real choice rather than a default: Inter ships
+     Light, and 48px Inter Light reads editorial and restrained,
+     nothing like a 700-weight hero.
+
+     Tracking here is NOT a continuation of the app curve. Only the 48px
+     hero is tracked (-0.02em); 36 and 32 sit at zero. Tightening is
+     reserved for the largest thing on the page. */
+
+  /* 32/36 */
+  --text-display-sm-size-base: 2rem;
+  --text-display-sm-size: calc(
+    var(--text-display-sm-size-base) * var(--script-size-scale)
+  );
+  --text-display-sm-leading-base: calc(36/32);
+  --text-display-sm-leading: calc(
+    var(--text-display-sm-leading-base) + var(--script-leading-add-display)
+  );
+  --text-display-sm-weight: 300;
+  --text-display-sm-tracking-base: 0em;
+  --text-display-sm-tracking: calc(
+    var(--text-display-sm-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-display-sm: var(--text-display-sm-weight) var(--text-display-sm-size) /
+    var(--text-display-sm-leading) var(--font-display);
+
+  /* 36/42, the workhorse display size */
+  --text-display-md-size-base: 2.25rem;
+  --text-display-md-size: calc(
+    var(--text-display-md-size-base) * var(--script-size-scale)
+  );
+  --text-display-md-leading-base: calc(42/36);
+  --text-display-md-leading: calc(
+    var(--text-display-md-leading-base) + var(--script-leading-add-display)
+  );
+  --text-display-md-weight: 300;
+  --text-display-md-tracking-base: 0em;
+  --text-display-md-tracking: calc(
+    var(--text-display-md-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-display-md: var(--text-display-md-weight) var(--text-display-md-size) /
+    var(--text-display-md-leading) var(--font-display);
+
+  /* 48/52: the hero, and the only tracked display size */
+  --text-display-lg-size-base: 3rem;
+  --text-display-lg-size: calc(
+    var(--text-display-lg-size-base) * var(--script-size-scale)
+  );
+  --text-display-lg-leading-base: calc(52/48);
+  --text-display-lg-leading: calc(
+    var(--text-display-lg-leading-base) + var(--script-leading-add-display)
+  );
+  --text-display-lg-weight: 300;
+  --text-display-lg-tracking-base: -0.02em;
+  --text-display-lg-tracking: calc(
+    var(--text-display-lg-tracking-base) * var(--script-tracking-scale)
+  );
+  --text-display-lg: var(--text-display-lg-weight) var(--text-display-lg-size) /
+    var(--text-display-lg-leading) var(--font-display);
+
+  /* Marketing BODY runs +0.01em across 14-18px where the app runs 0.
+     Looser at reading distance, tighter in dense UI. Apply on marketing
+     surfaces only. It is not a global change. */
+  --tracking-marketing-body: calc(0.01em * var(--script-tracking-scale));
+}
+
+/* Per-FONT metric correction. Arabic needs more leading at matched size
+   and reads smaller, so nudge both. Tracking is SCALED TO ZERO, not
+   adjusted: Arabic is a connected script and letter-spacing either
+   collides the baseline joins or severs them. That is a typographic
+   rule, not a preference.
+
+   Retune the first two numbers by eye if you swap from IBM Plex Sans
+   Arabic. Verify the face ships a 500 weight: the default here is
+   medium, and many Arabic families jump straight to bold. */
+[lang="ar"],
+[dir="rtl"] {
+  --font-sans: var(--font-arabic);
+  --font-display: var(--font-arabic);
+  --script-size-scale: 1.05;
+  --script-leading-add: 0.22;
+  --script-leading-add-display: 0.1;
+  --script-tracking-scale: 0;
+  --script-strike-offset: -0.25em;
+
+  /* THE LEADING FLOOR. Arabic ink needs a near-constant line-height
+       RATIO, and the base ratios TIGHTEN as type grows (1.33 at caption
+       down to 1.08 at display-lg), which is right for Latin and wrong
+       here: once the line box drops under what the ink needs, the
+       half-leading goes negative and descenders (ي, ع) get sliced by
+       any clipped or height-capped container. An additive nudge cannot
+       hold a fixed ratio, so Arabic takes a floor: roles already above
+       it keep their computed leading, heading-sm and up get lifted onto
+       it.
+
+       The number is a property of the face's metrics, re-measured for
+       IBM Plex Sans Arabic [2026-08-05]. Plex declares a 1.5x-em font
+       box (Noto's was 2.1x) but its Arabic ink OVERFLOWS that box
+       downward: deep descenders reach -0.45em against a declared
+       descent of -0.415. Computed over representative UI copy with the
+       half-leading model (fontkit, shaped runs), ink stays inside the
+       line box from 1.55 (weight 400) to 1.57 (600); under Noto the
+       same computation gave 1.43 against the empirically measured
+       1.48-1.55. 1.60 keeps the same hair of margin over the measured
+       need that 1.56 kept for Noto. Fully vocalized text exceeds any
+       sane floor in BOTH faces (needs ~2.0); that was already accepted
+       risk, unchanged by the swap. */
+  --script-leading-floor: 1.6;
+
+  /* The DISPLAY floor is lower on purpose. 1.6 is what ink needs inside a
+       clipped or height-capped box, and display text (the heroes, the empty
+       states) is short, large and never sits in one: at 50px a 1.6 line box
+       leaves ~15px of air above and below every line, so a two-line hero
+       read as two floating lines. 1.3 keeps a hair over the face's measured
+       descender overflow (-0.45em) for unvocalized copy. The cost: display
+       text inside an overflow-hidden or height-capped container can clip a
+       deep descender (ي, ع). Keep display roles out of those. [2026-09-28] */
+  --script-leading-floor-display: 1.3;
+
+  /* ARABIC WEIGHT PER ROLE. THIS IS THE DIAL: edit these numbers and
+       nothing else. Each line overrides one role for Arabic only; the
+       Latin value it replaces is in the comment. A role left at parity
+       still belongs here, so the whole ladder is visible in one place.
+
+       IBM Plex Sans Arabic ships static weights (400/500/700 loaded in
+       fonts.ts), so a rung not on that list is a synthesized smear:
+       never dial a value that is not loaded. Number columns are NOT
+       free under this face: Plex's Arabic-Indic digits are proportional
+       AND their advance shifts per weight (Noto's held a 0.000 spread
+       at every weight), so a weight change now reflows prices; see
+       fonts.ts for the digit-gate status and escape hatch.
+
+       Anything changed here must also be restated in the Latin-island
+       block below, or a .latin span inside Arabic (a SKU, a brand name)
+       renders Inter at the Arabic weight. A guard test holds the two
+       lists in sync. */
+  /* THE TEXT TIER RUNS A RUNG BELOW LATIN, and that is the whole
+       point. Plex's ladder is not evenly spaced: measured as ink per
+       advance over real Arabic UI copy, 400 is 188 per-mille, 500 is
+       237, 600 is 267, 700 is 300. The step off regular is +26%, twice
+       every step above it, so 400 and 500 are not neighbours, they sit
+       either side of a cliff.
+
+       Against the Latin peer (Inter 400 = 81, Inter 500 = 93, the
+       fontkit numbers this file already carried): Plex 400 lands +6% on
+       Inter 400, near parity, while Plex 500 lands +21% on Inter 500.
+       Holding the text tier at 500 therefore did not match Latin, it
+       ran a fifth heavier in ink, which reads as darker and muddier
+       beside the same screen in English. There is no 450 in this family
+       and no variable axis, so the cliff cannot be split, only stepped
+       off.
+
+       Headings keep 500: at heading sizes the extra ink helps them hold
+       against the Latin scale rather than muddying it, and they carry
+       far fewer words. Display keeps a real rung up on Latin for the
+       old reason: Inter 300's marketing voice has no loaded Plex
+       counterpart, and Plex 400 (stroke 86 vs Inter 300's 62) holds
+       "large and light" without the underset that pushed Noto to 500.
+
+       REVISED 2026-09-28 [Mustafa]: 400 read too thin where the eye lands.
+       Labels (buttons, nav, form labels) and the display tier go up to 500;
+       running text (body, captions) stays at 400, where the ink-parity
+       argument above still holds and a paragraph at 500 muddies. The two
+       weights split by job, not at random: what you act on or scan first
+       is 500, what you read is 400. */
+  --text-caption-weight: 400; /* latin 500 */
+  --text-caption-quiet-weight: 400; /* latin 400 */
+  --text-label-weight: 500; /* latin 500 */
+  --text-body-weight: 400; /* latin 500 */
+  --text-body-quiet-weight: 400; /* latin 400 */
+  --text-body-lg-weight: 400; /* latin 400 */
+  --text-heading-xs-weight: 500; /* latin 500 */
+  --text-heading-sm-weight: 500; /* latin 500 */
+  --text-heading-md-weight: 500; /* latin 500 */
+  --text-display-sm-weight: 500; /* latin 300 */
+  --text-display-md-weight: 500; /* latin 300 */
+  --text-display-lg-weight: 500; /* latin 300 */
+}
+
+/* Latin islands inside Arabic (SKUs, order IDs, brand names) opt back
+   out so they sit on the same rhythm as the app proper. NOT prices:
+   those stay Arabic-Indic along with the rest of the Arabic UI. */
+:is([lang="ar"], [dir="rtl"]) :is([lang="en"], .latin) {
+  /* Reset every script knob to the Latin identity, --font-display
+       included: a Latin island renders Latin at every tier. The parent
+       selector mirrors the Arabic-mode trigger above (lang OR dir), so
+       an RTL subtree without lang="ar" still has a working escape
+       hatch. */
+  /* Plex Arabic after Inter: Inter has no Arabic glyphs, and Arabic
+       inside an island (a numeric field's Arabic placeholder) otherwise
+       falls through to the system font and reads as unloaded. */
+  --font-sans:
+    "SaudiRiyal", Inter, "IBM Plex Sans Arabic", "Noto Sans Arabic",
+    ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sans);
+  --script-size-scale: 1;
+  --script-leading-add: 0;
+  --script-leading-add-display: 0;
+  --script-tracking-scale: 1;
+  --script-strike-offset: -0.3em;
+  /* Inter needs no floor: its font box is close to the em, so the
+       tight display ratios are exactly what the face was drawn for. */
+  --script-leading-floor: 0;
+  --script-leading-floor-display: 0;
+
+  /* The Latin weights, restated so an island escapes the Arabic dial
+       above. These are constants: they track the :root values, never the
+       Arabic ones, so tuning Arabic never touches this list. */
+  --text-caption-weight: 500;
+  --text-caption-quiet-weight: 400;
+  --text-label-weight: 500;
+  --text-body-weight: 500;
+  --text-body-quiet-weight: 400;
+  --text-body-lg-weight: 400;
+  --text-heading-xs-weight: 500;
+  --text-heading-sm-weight: 500;
+  --text-heading-md-weight: 500;
+  --text-display-sm-weight: 300;
+  --text-display-md-weight: 300;
+  --text-display-lg-weight: 300;
+}
+
+/* Tabular figures for anything in a column. Must come AFTER any rule
+   using the `font` shorthand, or the shorthand resets both of these.
+   Safest is to use the longhand font properties on these elements.
+
+   Numerals themselves are a DATA-layer decision, not CSS. There is no
+   reliable way to convert 0-9 to ٠-٩ in stylesheets. Format with
+   Intl.NumberFormat and let the locale choose:
+
+     new Intl.NumberFormat('ar-SA').format(249)          -> ٢٤٩
+     new Intl.NumberFormat('ar-SA-u-nu-latn').format(249) -> 249
+
+   ar-SA defaults to the `arab` numbering system, so Arabic-Indic comes
+   for free. Test tabular alignment though: Arabic-Indic figures are
+   not always tabular even when the Latin ones are. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Numbers are LTR runs inside RTL text. Isolate them so a price, SKU or
+   phone number cannot reorder the sentence around it. */
+.tabular,
+.latin,
+[lang="en"] {
+  unicode-bidi: isolate;
+}
+
+/* ----------------------------------------------------------------------------
+   SAUDI RIYAL SIGN: U+20C1, encoded in Unicode 17.0 (September 2025).
+
+   Inter does not carry this glyph yet, so it is loaded as a single-
+   codepoint fallback. unicode-range means the browser only fetches this
+   file when U+20C1 actually appears, and every other character still
+   resolves to Inter. Put it FIRST in the stack.
+
+   Do NOT use U+FDFC (﷼ RIAL SIGN). That is the Iranian rial, a
+   different character. Do not use the U+E900 private-use point either
+   unless you need to support pre-Unicode-17 renderers.
+
+   SAMA guidance: the symbol sits to the LEFT of the number with a space,
+   in BOTH directions. It does not flip in RTL.
+   ---------------------------------------------------------------------------- */
+/* Attribution is a condition of the license; provenance in FONTS.md. */
+/*! Saudi Riyal Font © Emran Alhaddad - Used under SIL Open Font License 1.1 */
+@font-face {
+  font-family: "SaudiRiyal";
+  src:
+    url("/fonts/saudi-riyal.woff2") format("woff2"),
+    url("/fonts/saudi-riyal.woff") format("woff");
+  unicode-range: U+20C1;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+/* ============================================================================
+   9. MOTION
+   ----------------------------------------------------------------------------
+   Motion is categorized as duration x property x selector, the only way
+   this category yields anything. Two distinct populations:
+
+     TRANSITIONS  100ms - 0.7s, clustered hard at 0.2s (carrying
+                  opacity, box-shadow and all)
+     ANIMATIONS   0.2s - 18s, with everything at 1s+ being a LOOP:
+                  spinners, pulses, marquees, timeline scrubbers
+
+   Those are different scales, and collapsing them is how a codebase
+   ends up with a 22-value duration mess. A loop duration is a speed; a
+   transition duration is a response time. Separated here.
+
+   Easings: ease-out for entrances, linear for every loop, and two
+   custom beziers for specific keyframe animations. That is enough
+   structure to keep; the beziers below are sharper equivalents.
+   ============================================================================ */
+
+:root {
+  /* TRANSITIONS ARE A TIER LADDER, written as literal Tailwind
+       duration-* utilities at the call site. There are deliberately NO
+       named duration tokens for them (an earlier fast/base/slow set
+       duplicated this ladder and was deleted; two systems for one scale
+       is how you end up with 22 duration values).
+
+         75      buttons' colour and fill
+         (bare)  100ms  every other colour and fill change (rows, ghost
+                        buttons, fields), the DEFAULT transition duration
+                        on --ease-standard (set in tailwind.css); write
+                        nothing. Hover has no delay on enter and none on
+                        exit, and leaves at the speed it arrived.
+         150     floating panels in and out (popover, menu, select),
+                 tooltip EXITS, collapsible closes, sidebar slides,
+                 label reveals
+         180     collapsible opens
+         200     tooltip ENTER, dialog/palette and scrim ENTER and
+                 EXIT, chips, icon rotations
+         300     drawers, sheets: the largest moves
+
+       Only opacity and transform move on floating surfaces; never
+       blur, never size.
+
+       Snap (no transition class at all) is a tier too: nav rows, menu
+       highlights, and anything that should feel instant. */
+
+  /* Loops: speeds, not response times. Never reuse these for state. */
+  --duration-spin: 1s; /* spinners, ping */
+  --duration-pulse: 2s; /* breathing, skeleton shimmer */
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* entrances */
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0); /* long exits (sidebars, drawers) */
+  --ease-exit: cubic-bezier(
+    0.4,
+    0,
+    1,
+    1
+  ); /* short exits: floating panels, dialogs */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* state to state */
+  --ease-linear: linear; /* loops, always */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* slight overshoot */
+
+  /* Four curves taken from ElevenLabs' frames [decision].
+       --ease-standard is every hover and press: on the strong --ease-out a
+       100ms colour change landed in its first third and read as a snap
+       with a tail; this one spreads it evenly. The scrim fades on it too.
+       A tooltip grows from 0.75 out of its trigger's edge, and on the
+       strong --ease-out it reached full size in the first third, so two
+       neighbours crossfading read as a pop and a pop instead of one
+       motion; the gentle pop keeps the growth spread across the 200ms.
+       Floating panels and dialogs leave on the same curve they arrive on
+       (CSS `ease`), fading from the first frame instead of holding then
+       vanishing. A collapsible opens and closes on the drawer curve, the
+       one vaul already slides our sheets on: quick off the mark, long
+       soft landing. */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* hover, press, scrim */
+  --ease-pop: cubic-bezier(0, 0, 0.2, 1); /* tooltip enter */
+  --ease-overlay: cubic-bezier(
+    0.25,
+    0.1,
+    0.25,
+    1
+  ); /* panels and dialogs, in and out */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); /* collapsibles, sheets */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* ============================================================================
+   10. LAYERS                                            global [decision]
+   ----------------------------------------------------------------------------
+   Third-party libraries stake out their own z-index territory:
+
+       .react-flow__*          -1, 2, 3, 4, 5, 6, 1001, 10000
+       .recharts-tooltip        100
+       .chakra-portal           300
+       [data-sonner-toaster]    999999999
+
+   Anonymous one-off utilities (.z-10, .z-[41], .z-[59]) are what a
+   codebase without a layer system looks like: the 41 and the 59 are
+   somebody needing to sit just above something else, forever. The
+   named global scale below replaces that.
+
+   LOCAL lift is a different job from global layering: z-index 1, 2 and
+   3 belong on :hover, :focus, :focus-within and peer-hover utilities,
+   lifting one card above its siblings, not placing a modal above the
+   app. It gets its own token so it never gets confused with the global
+   scale.
+
+   THE NUMBERS ARE NOT THE POINT. You cannot out-bid Sonner at 999999999,
+   and you should not try. Two rules do the actual work:
+
+     1. Your app content lives inside an isolated stacking context, so
+        nothing in it can compete with anything outside it.
+     2. Portals are the only things that use the global scale, and they
+        use these names, never a literal number in a component.
+
+   Third-party portals still land where their authors put them. Configure
+   them where the library allows it and document where they sit when it
+   does not.
+   ============================================================================ */
+
+:root {
+  /* Local: lifting an element above its immediate siblings.       */
+  /* @use   lifting one element above its siblings on hover/focus
+     @avoid  anything global: a portal takes a named --z-* layer below.
+             Never write a literal z-index in a component. */
+  /* Below its own stacking context: frost/decoration pseudo layers. */
+  --z-behind: -1;
+  --z-raised: 1;
+  --z-raised-more: 2;
+
+  /* Global: portals only. Gaps of 100 leave room to insert.
+       --z-base marks the scale's floor for documentation; it has no
+       utility on purpose (nothing should ever ask for it). */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-popover: 500;
+  --z-toast: 600;
+  --z-tooltip: 700;
+}
+
+/* Everything that is not a portal goes in here. A new stacking context
+   means no z-index inside can escape to fight a portal, however large. */
+.app-root {
+  isolation: isolate;
+}
+
+/* ============================================================================
+   11. CONTROLS, BORDERS, FOCUS
+   ----------------------------------------------------------------------------
+   Focus is ONE treatment, ink: a 1.5px ring in the foreground colour
+   over a 2px background-coloured offset. Coloured
+   rings (blue, gray) are legacy dead ends; do not reintroduce them.
+   --ring points at --foreground (declared in the semantic layer), which
+   flips with the theme, so the ring is ink in light and white in dark
+   with no override.
+   ============================================================================ */
+
+:root,
+.light,
+.dark {
+  /* 32px is the most common control size (43% of usage). OUR house
+       default is xl (40): everyday fields, selects, and secondary
+       buttons all sit at 40; 32 (md) is the compact PRIMARY-action size
+       and toolbar tier. */
+  --control-xs: 1.5rem; /* 24px [decision], not 22: small
+       buttons render at h-6 = 24px, 24 sits on the 2px grid, and it
+       keeps xs and icon-xs the same size. Do not
+       "fix" this back to 22 without re-opening that call. */
+  --control-sm: 1.75rem; /* 28px */
+  --control-md: 2rem; /* 32px, the PRIMARY action's size */
+  --control-lg: 2.25rem; /* 36px */
+  --control-xl: 2.5rem; /* 40px, the house default control */
+  /* The control scale tops out at 40px, but 44px is the platform
+     touch-target floor. The size is real and the rule is ours: use it
+     on anything that ships to mobile. */
+  --control-touch: 2.75rem; /* 44px */
+
+  --border-width: 1px; /* every border in the system */
+  --border-width-thick: 2px;
+  /* The page-tabs active underline: 2px INK (1.5px gray reads too
+       faint; wider and darker, the sliding shadcn-style indicator).
+       Minted so no component writes a raw
+       height; consumed via the h-tab-indicator utility in tailwind.css. */
+  --tab-indicator-width: 2px;
+
+  /* Two focus mechanisms, both ink:
+       BUTTONS / links: a 1.5px ink outline, offset 2px (the .focus-ring
+                        treatment).
+       INPUTS:          the BORDER turns ink and a 0.5px ink ring is added,
+                        giving ~1.5px of ink. Do not put the offset outline
+                        on a bordered input; use --input-ring-width instead,
+                        or you get a doubled edge. */
+  --focus-width: 1.5px; /* trued to the .focus-ring recipe, not 2px:
+       1.5px foreground ring over a 2px
+       background-coloured offset ring. We keep outline + outline-offset
+       instead of painting the offset ring: the 2px offset gap lets the
+       surface show through, which is exactly what the background-coloured
+       ring was faking, and it works on any surface, not just --background. */
+  --focus-offset: 2px;
+  --focus-ring: var(--focus-width) solid var(--ring);
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* ============================================================================
+   12. BREAKPOINTS AND CONTAINERS
+   ----------------------------------------------------------------------------
+   Two corrections of record. 1758px appeared in .container rules with
+   no --screen-* variable: an undeclared ninth breakpoint, dropped. And
+   3xl was 1980px, almost certainly meant to be 1920 (standard FHD);
+   1980 isn't a standard anything. Corrected here.
+   ============================================================================ */
+
+:root {
+  --screen-2xs: 375px;
+  --screen-xs: 480px;
+  --screen-sm: 640px;
+  --screen-md: 768px;
+  --screen-lg: 1024px;
+  --screen-xl: 1280px;
+  --screen-2xl: 1536px;
+  --screen-3xl: 1920px; /* corrected from 1980 (see note) */
+
+  --container-sm: 384px;
+  --container-md: 448px;
+  --container-lg: 512px;
+  --container-xl: 576px;
+  --container-2xl: 672px;
+  --container-3xl: 768px;
+  --container-4xl: 896px;
+  --container-5xl: 1024px;
+  --container-6xl: 1152px;
+  --container-7xl: 1280px;
+
+  /* THE SHELL FRAME: the two structural dimensions every piece of app
+       chrome shares. The header bar is 50px and the rail's logo row
+       matches it, so the two chrome layers meet on one line; the docked
+       rail (and the nav drawer, which is the same sidebar floated) is
+       256px. Consumed through h-shell-header / w-shell-rail in
+       tailwind.css, never as raw numbers at a call site. */
+  --shell-header-height: 3.125rem; /* 50px */
+  --shell-rail-width: 16rem; /* 256px */
+  /* The rail collapsed to icons: a 32px icon button centered with
+       14px of air each side. 60px, not stock shadcn's 48: the reference
+       rail breathes wider. */
+  --shell-rail-icon-width: 3.75rem; /* 60px */
+  /* The topbar's centre search control's reference width: 36rem on a
+       wide viewport, scaling down with the viewport so the bar's two
+       flanks keep room for the trigger, the page label and the tail. */
+  --shell-search-width: min(36rem, 40vw);
+  /* The topbar field itself is half that. The 11.5rem floor keeps
+       "Search anything…" from truncating on a docked tablet, where 20vw
+       would be 154px. Only the field's grid track (cols-topbar) reads
+       this. */
+  --shell-search-trigger-width: max(
+    calc(var(--shell-search-width) / 2),
+    11.5rem
+  );
+  /* The command palette (dialog.tsx's "launcher" position) from md, after
+       ElevenLabs' ⌘K [decision]: a fixed 720 by 470 box, 20vh down, that
+       never resizes as results come and go (the list scrolls inside it).
+       The height gives way on a short window, keeping 2rem clear below. */
+  --shell-palette-width: min(45rem, calc(100vw - 2rem));
+  --shell-launcher-height: min(29.375rem, calc(80vh - 2rem));
+  --shell-launcher-top: 20vh;
+}
+
+/* ============================================================================
+   13. sRGB FALLBACK
+   ----------------------------------------------------------------------------
+   OKLCH is baseline (Chrome 111 / Safari 15.4 / Firefox 113) so this is
+   belt-and-braces. Coverage is DELIBERATELY partial: the raw neutral
+   ramp (both theme mappings are aliases over it), the page-critical
+   literals below, and the attention ramp (the newest tone, whose draft
+   chip is the one yellow on the screen; every alias over it re-resolves
+   from these literals). The older status ramps and tonal surfaces have no
+   fallback. On a pre-OKLCH browser they lose colour, not legibility.
+   Accepted.
+   ============================================================================ */
+
+@supports not (color: oklch(0% 0 0)) {
+  :root,
+  .light {
+    --ramp-50: #fafafa;
+    --ramp-62: #f4f4f4;
+    --ramp-75: #ededed;
+    --ramp-100: #e3e3e3;
+    --ramp-150: #d9d9d9;
+    --ramp-200: #cfcfcf;
+    --ramp-250: #c2c2c2;
+    --ramp-300: #b8b8b8;
+    --ramp-350: #adadad;
+    --ramp-400: #a3a3a3;
+    --ramp-450: #969696;
+    --ramp-500: #8c8c8c;
+    --ramp-550: #808080;
+    --ramp-600: #757575;
+    --ramp-650: #696969;
+    --ramp-700: #5c5c5c;
+    --ramp-750: #525252;
+    --ramp-800: #454545;
+    --ramp-850: #3b3b3b;
+    --ramp-900: #2e2e2e;
+    --ramp-925: #212121;
+    --ramp-938: #1c1c1c;
+    --ramp-950: #171717;
+    --attention-50: #fef9d6;
+    --attention-100: #feef97;
+    --attention-200: #efdb64;
+    --attention-300: #dec83a;
+    --attention-400: #c4ae07;
+    --attention-500: #a69306;
+    --attention-600: #8a7a00;
+    --attention-700: #736503;
+    --attention-800: #5f5402;
+    --attention-900: #514702;
+    --attention-950: #322b00;
+    --background: #ffffff;
+    --ink: #0f0f0f;
+    --surface-whisper: #fcfcfc;
+    --destructive-foreground: #ffffff;
+    --warning-foreground: #ffffff;
+    --success-foreground: #ffffff;
+    --attention-foreground: #ffffff;
+  }
+  .dark {
+    --background: #0f0f0f;
+    --ink: #ffffff;
+    --surface-raised: #151515;
+    --surface-whisper: #121212;
+    --surface-sunken: #191919;
+  }
+}
+
+/* ============================================================================
+   LOGO
+   ----------------------------------------------------------------------------
+   The mark's own colours. The teal IS the brand ramp's 500 (the mark was
+   drawn in it), so it reads the ramp rather than copying the literal. The
+   ink is the guidelines' navy (Pantone 7574 C), deliberately NOT
+   --foreground: the mark is a fixed artefact that has to survive on a
+   business card and a partner's site, so it carries its own dark rather
+   than drifting with a theme retune. Nothing outside the logo may read these.
+   ============================================================================ */
+
+:root {
+  --logo-ink: #151e28;
+  --logo-paper: #ffffff;
+  --logo-teal: var(--brand-500);
+}
+
+/* The mark's fill as a CLASS rather than Tailwind utilities on the SVG. The
+   mark ships from packages/ui but renders in bundles that may not scan that
+   directory, so a `fill-brand` on the element would compile to nothing there
+   and the glyph paints black. A class defined here is in the stylesheet
+   unconditionally, and it puts the dark-mode lift in one place. */
+.sirdab-mark {
+  --logo-fill: var(--logo-teal);
+}
+
+.sirdab-mark[data-tone="ink"] {
+  --logo-fill: var(--logo-ink);
+}
+
+.sirdab-mark[data-tone="paper"] {
+  --logo-fill: var(--logo-paper);
+}
+
+/* Ink on ink vanishes: the navy variant flips to paper in dark. Teal and
+   paper are already legible on the dark ground and stay put. */
+@scope (.dark) to (.light) {
+  .sirdab-mark[data-tone="ink"] {
+    --logo-fill: var(--logo-paper);
+  }
+}
+
+/* ============================================================================
+   AURORA
+   The one colourful thing in the workspace: the ring around an approval the
+   assistant is waiting on: that card is the moment the product acts for
+   the merchant, and it should look like it.
+   Hues the product palette does not use, so none of it can be mistaken for
+   a status. The ring and the avatars wear violet, blue and peach. The assistant's own mark adds a warm light, gold and pink, so it
+   reads as light falling into a cool shadow instead of one more purple:
+   Zid's brand and Shopify's AI mark are both purple, and a merchant who
+   knows them should not see ours as theirs. Gold sits at hue 82 to 92 and
+   pink at 350, clear of warning (58) and destructive (27). The tokens are
+   held at 20 degrees by `src/tests/aurora.test.ts` and the blends the mark
+   paints by `packages/ui/src/components/icons/tests/aurora-paint.test.tsx`,
+   so do not nudge either toward amber or coral.
+   Read by the `aurora-ring` utility, the unread mark, the assistant's mark
+   (through the `--aurora-mark-*` roles below), and the `aurora-avatar-*`
+   tiles (a recent order's or customer's face in the command palette, a
+   record that has no photo of its own); never text, never a fill bigger
+   than a 40px tile, never anywhere else.
+   ============================================================================ */
+
+:root {
+  --aurora-violet: oklch(68% 0.19 295);
+  --aurora-blue: oklch(72% 0.15 240);
+  --aurora-peach: oklch(80% 0.12 45);
+  /* The sweep every aurora ring and glow runs round, closed on the violet
+       it starts from. Wear it as `conic-gradient(in oklch from <angle>,
+       var(--aurora-sweep))`: in sRGB the blue-to-peach and peach-to-violet
+       stretches pass through gray. The pink keeps the warm turn bright. */
+  --aurora-sweep:
+    var(--aurora-violet), var(--aurora-blue), var(--aurora-pink),
+    var(--aurora-peach), var(--aurora-violet);
+  /* The same hues at ink strength, for marks drawn ON a light surface
+       (the unread dot, the assistant's mark in the topbar): the ring's
+       airy values wash out as a 6px dot or a 18px glyph on white. */
+  --aurora-violet-deep: oklch(46% 0.22 295);
+  --aurora-blue-deep: oklch(50% 0.17 255);
+  /* The warm light, for the assistant's mark only. Gold is the light
+       itself (the small spark) and runs to its deep form, pink is where the
+       big spark turns from the light into the violet. Each pair follows the
+       violet's logic: the airy value for a dark ground, the deep one for a
+       light ground. */
+  --aurora-gold: oklch(88% 0.16 92); /* #FDD343 */
+  --aurora-gold-deep: oklch(78% 0.155 82); /* #E8AC1D */
+  --aurora-pink: oklch(74% 0.15 350); /* #F080B8 */
+  --aurora-pink-deep: oklch(58% 0.22 350); /* #D0268C */
+  /* The unread mark: a 6px blue dot on a row she has not opened yet (an
+       alert in the bell's panel, a customer's unread messages, a tab or a
+       segment with something new). Blue because that is what unread means
+       in the products she already uses (Shopify's alerts, Mail, GitHub);
+       a neutral dot read as "something is here" and not "something new".
+       Never a fill larger than a mark, never text. */
+  --unread: oklch(55% 0.21 257);
+
+  /* A search result's title, in the product's search preview: the blue a
+       merchant knows from Google, so the card reads as "this is how you look
+       in search" at a glance. Text only, on that preview only. */
+  --search-link: oklch(36% 0.2 268);
+}
+
+/* The assistant's mark (SirdabAuroraIcon) reads these roles, never the
+   palette above: a dark ground needs lighter stops than a light one, and an
+   alias declared on a bare :root would freeze at its light value inside
+   every .dark scope (THEME SCOPES, src/tests/theme-scopes.test.ts).
+   The mark wears the ring's sweep (--aurora-sweep) minus the peach: the
+   peach sits inside 20 degrees of both destructive and warning, and a
+   saturated mark there reads as a status. The small spark runs violet into
+   blue (gold read as a yellow star, so it is out of the mark). The big
+   spark runs from pink (warm) through violet (cool) into a blue fold, the
+   ink-strength values in light and the airy ones in dark, so the sparks
+   still clear 3:1 on the shell and the landing's night. The big spark's
+   stops sit at 0.3, 0.52 and 0.76, with none at 0: its shape only ever
+   paints from about t 0.2 to 0.8, so a stop at 1 would leave the blue on
+   the tips alone, and a lit stop at 0 would show nowhere. */
+:root,
+.light {
+  --aurora-mark-warm: var(--aurora-pink-deep);
+  --aurora-mark-cool: var(--aurora-violet-deep);
+  --aurora-mark-fold: var(--aurora-blue-deep);
+  --aurora-mark-spark: var(--aurora-violet);
+  --aurora-mark-spark-edge: var(--aurora-blue-deep);
+}
+
+.dark {
+  --aurora-mark-warm: var(--aurora-pink);
+  --aurora-mark-cool: var(--aurora-violet);
+  --aurora-mark-fold: var(--aurora-blue);
+  --aurora-mark-spark: var(--aurora-violet);
+  --aurora-mark-spark-edge: var(--aurora-blue);
+}
+
+/* ============================================================================
+   BASE
+   ----------------------------------------------------------------------------
+   Logical properties only, everywhere. Arabic storefronts are a
+   first-class case and retrofitting padding-left to padding-inline-start
+   across a component library after launch is miserable. Mixed physical
+   properties (margin-right + padding-left on the same block) are exactly
+   the bug this avoids.
+   ============================================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-color: var(--border);
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: var(--text-body-quiet-size);
+  line-height: var(--text-body-quiet-leading);
+  font-weight: var(--text-body-quiet-weight);
+  letter-spacing: var(--text-body-quiet-tracking);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* A theme scope re-resolves the tokens, but `color` is inherited as the
+   parent's COMPUTED value, so text inside a .dark scope would stay ink
+   without this. color-scheme hands native parts (scrollbars, form controls)
+   the matching palette. The scope paints no background: the element that
+   wears the class decides its own surface. */
+.dark {
+  color: var(--foreground);
+  color-scheme: dark;
+}
+
+.light {
+  color: var(--foreground);
+  color-scheme: light;
+}
