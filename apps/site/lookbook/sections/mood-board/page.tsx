@@ -7,16 +7,6 @@ import {
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and usage live in ./notes.md.
-
-   The hex values below are the demo MODELS' colours: a concept's palette and
-   panel colours, a peek's sampled palette and photographs. Inside the board
-   is one of the two places the app is allowed colour (COLORS.md), and seeing
-   it is the point of this page. Synchronous, unlike most section pages, so
-   the page test can render it in jsdom. */
-
-/* A flat "photo" as an SVG data URI, so the demos render real <img>
-   elements without the package shipping sample photographs. */
 function photo(fill: string, mark: string): string {
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">` +
@@ -93,7 +83,6 @@ export default function MoodBoardPage({
         imageUrl: photo("#3b2418", "#c9862b"),
       },
       {
-        // A product the library found no photograph for: its panel.
         key: "khalas",
         title: s("Khalas dates"),
         priceMinor: 3900,
@@ -115,7 +104,6 @@ export default function MoodBoardPage({
     currency: "SAR",
   };
 
-  /* The first frame a guest's stream lands: the name, nothing else yet. */
   const drawing: MoodBoardModel = {
     ...concept,
     nameAlternatives: [],
@@ -133,8 +121,7 @@ export default function MoodBoardPage({
     nameTemporary: false,
     nameAlternatives: [],
     summary: null,
-    // A peek knows her products and colours, not her category, her type
-    // or her mood: those tiles are simply not on its board.
+
     category: null,
     palette: {
       ground: "#f3ece4",
@@ -187,7 +174,6 @@ export default function MoodBoardPage({
         imageUrl: photo("#e6ded2", "#1f1712"),
       },
       {
-        // A product page the peek could not price: no price line.
         key: "cup",
         title: s("Ceramic cup"),
         priceMinor: null,

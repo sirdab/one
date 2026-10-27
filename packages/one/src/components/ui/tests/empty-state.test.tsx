@@ -13,8 +13,7 @@ describe("EmptyState", () => {
     expect(well).not.toBeNull();
     expect(well.className).toContain("size-10");
     expect(well.className).toContain("rounded-full");
-    /* Decorative: the title carries the meaning, nothing announces twice.
-           jsdom SVG className is an SVGAnimatedString, so read the attribute. */
+
     const svg = well.querySelector("svg");
     expect(svg?.getAttribute("aria-hidden")).toBe("true");
   });
@@ -37,9 +36,6 @@ describe("EmptyState", () => {
     expect(screen.getByRole("button", { name: "Refresh" })).toBeDefined();
   });
 
-  /* A state that fills a whole panel reads as a statement, not a
-       leftover: the lg tier lifts the message to a heading in the
-       foreground, off the quiet body line the default keeps. */
   it("speaks up at lg and keeps the whisper by default", () => {
     const { rerender } = render(
       <EmptyState icon={AlertsIcon} title="No store yet" />,

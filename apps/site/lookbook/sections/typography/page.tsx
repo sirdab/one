@@ -2,8 +2,6 @@ import { MetricsProbe } from "../../../lookbook/components/metrics-probe";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 import { WeightLadder } from "../../../lookbook/components/weight-ladder";
 
-/* Gallery page: prose lives in ./notes.md. */
-
 const APP_ROLES = [
   {
     cls: "text-caption",

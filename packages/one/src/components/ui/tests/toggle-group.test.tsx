@@ -20,9 +20,6 @@ function renderChips(
   );
 }
 
-/* The scope chips of the studio's palette: nothing pressed means everything,
-   and the one that is pressed has to be unmistakable on a phone, so it
-   inverts to ink the way the page's filter chips do. */
 describe("ToggleGroup variant=filter", () => {
   it("is the filter chip's ink inversion on a button-sized chip", () => {
     renderChips({ defaultValue: "orders" });
@@ -40,14 +37,12 @@ describe("ToggleGroup variant=filter", () => {
     ]) {
       expect(classes).toContain(ink);
     }
-    // The chip's own faint pressed wash must not survive under the ink.
+
     expect(classes).not.toContain(
       "data-[state=on]:bg-btn-ghost-surface-active",
     );
   });
 
-  /* A 32px chip with the invisible 44px hit area a thumb needs, and no
-       plus: "+ Orders" reads as a new order. */
   it("is 32px with a touch target and no plus glyph", () => {
     renderChips();
     for (const chip of screen.getAllByRole("radio")) {

@@ -8,9 +8,6 @@ import { InfoIcon } from "@sirdab/one/icons/shell";
 import { Icon } from "@sirdab/one/components/icon";
 import { Input } from "@sirdab/one/components/input";
 
-/* Rule 6 of the token doc, live: identifiers are matched outside the app, so
-   every keystroke normalizes Arabic-Indic and Extended digits to Western
-   before the value ever reaches state: search for order ٢٤٩ must find 249. */
 export function DigitInputDemo({
   placeholder = "Type ٢٤٩ or 249: order number",
 }: {

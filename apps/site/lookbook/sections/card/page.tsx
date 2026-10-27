@@ -32,9 +32,6 @@ import { PhoneFieldDemo } from "../../../lookbook/components/phone-field-demo";
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and the rules live in ./notes.md. The cards stand on
-   the page's own white, as they do in the studio: the lookbook's usual
-   specimen frame would put a bordered box around a box. */
 export default async function CardPage({
   lang,
 }: {

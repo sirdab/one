@@ -7,9 +7,6 @@ import {
   type ReactNode,
 } from "react";
 
-/* A caller's strokeWidth reaches every stroked path. The drawings set their
-   own weight on each path (an attribute on the svg would lose to it), so an
-   override is written onto the paths themselves; fills are left alone. */
 function restroke(node: ReactNode, width: number | string): ReactNode {
   return Children.map(node, (child) => {
     if (!isValidElement<{ children?: ReactNode; stroke?: string }>(child)) {
@@ -31,9 +28,6 @@ function restroke(node: ReactNode, width: number | string): ReactNode {
   });
 }
 
-/* What every icon in the product takes, and what every icon is: the house
-   set, and anything else drawn to the same shape. <Icon> and every
-   component with an icon prop is typed by these, not by a library's. */
 export type IconProps = Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
   size?: string | number;
 };
@@ -54,8 +48,7 @@ export const shellIcon = (
         height={size}
         viewBox="0 0 24 24"
         fill="none"
-        /* Which glyph this is, the way lucide's class names it: a
-                   test (or a stylesheet) can ask for the tick by name. */
+
         data-icon={displayName}
         {...props}
       >

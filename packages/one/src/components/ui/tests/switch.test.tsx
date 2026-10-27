@@ -1,3 +1,4 @@
+import { Direction } from "radix-ui";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -16,9 +17,6 @@ function thumb(): HTMLElement {
 }
 
 describe("Switch geometry", () => {
-  /* One size: 20x36. A second size had no screen (rule 13: a knob with
-       no consumer is a knob). The track and the travel must stay on the
-       spacing scale or the thumb clips the track edge. */
   it("is one size: 20x36, with the checked ink and no size knob", () => {
     render(<Switch aria-label="a" />);
     const el = track();
@@ -40,10 +38,6 @@ describe("Switch geometry", () => {
     );
   });
 
-  /* The press stretch grows the thumb toward the track's middle. The
-       checked side pulls back 4px in LTR or the stretch overflows the
-       track; RTL hugs the physical left, so its correction is mirrored.
-       Lose either and the thumb escapes while held. */
   it("stretches the thumb while held, with the checked pullback", () => {
     render(<Switch aria-label="a" defaultChecked />);
     expect(thumb().className).toContain("group-active/switch:w-5");
@@ -63,7 +57,6 @@ describe("Switch geometry", () => {
     expect(thumb().className).toContain("duration-150");
   });
 
-  /* A phone taps a 44px square around the 20px look. */
   it("takes the 44px touch box", () => {
     render(<Switch aria-label="touch" />);
     expect(track().classList.contains("relative")).toBe(true);
@@ -72,10 +65,6 @@ describe("Switch geometry", () => {
 });
 
 describe("Switch states", () => {
-  /* Off must read as "off", not "disabled": the unchecked track is
-       alpha-300 (it was alpha-200, one shade from the dimmed disabled
-       switch), and on a mouse it deepens one rung on hover. A checked
-       switch never shifts its ink. */
   it("draws off at alpha-300, deepening to alpha-350 on a mouse", () => {
     render(<Switch aria-label="off" />);
     const cls = track().className;
@@ -99,5 +88,27 @@ describe("Switch states", () => {
     render(<Switch aria-label="off" disabled />);
     expect(track().className).toContain("disabled:opacity-50");
     expect(track().className).toContain("disabled:cursor-not-allowed");
+  });
+});
+
+describe("Switch direction changes", () => {
+  it("reanchors its thumb without replaying a state transition or replacing the focused control", () => {
+    const { rerender } = render(
+      <Direction.Provider dir="rtl">
+        <Switch aria-label="direction" defaultChecked />
+      </Direction.Provider>,
+    );
+    const control = track();
+    const previousThumb = thumb();
+    control.focus();
+    rerender(
+      <Direction.Provider dir="ltr">
+        <Switch aria-label="direction" defaultChecked />
+      </Direction.Provider>,
+    );
+    expect(track()).toBe(control);
+    expect(document.activeElement).toBe(control);
+    expect(control.getAttribute("data-state")).toBe("checked");
+    expect(thumb()).not.toBe(previousThumb);
   });
 });

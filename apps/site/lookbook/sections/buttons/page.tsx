@@ -1,13 +1,7 @@
 import * as React from "react";
 
-import {
-  ChevronDownIcon,
-  PlusCircleIcon,
-} from "@sirdab/one/icons/catalogue";
-import {
-  ArrowUpIcon,
-  ArrowUpRightIcon,
-} from "@sirdab/one/icons/general";
+import { ChevronDownIcon, PlusCircleIcon } from "@sirdab/one/icons/catalogue";
+import { ArrowUpIcon, ArrowUpRightIcon } from "@sirdab/one/icons/general";
 import {
   AlertsIcon,
   DeleteIcon,
@@ -23,9 +17,6 @@ import { PageHeader, Section } from "../../../lookbook/components/section";
 
 type ButtonVariant = React.ComponentProps<typeof Button>["variant"];
 
-/* The frozen columns pin each state's classes so the whole matrix is
-   visible without interaction; the Rest column (and every other cell)
-   is still a live button: hover, press, and tab through them. */
 const VARIANTS: {
   variant: ButtonVariant;
   label: string;
@@ -111,7 +102,7 @@ export default async function ButtonsPage({
         <div className="overflow-x-auto p-1">
           <div
             className="grid min-w-2xl items-center gap-x-4 gap-y-3"
-            // Structural layout, not a design value.
+
             style={{ gridTemplateColumns: "6rem repeat(6, 1fr)" }}
           >
             <div />
@@ -345,9 +336,6 @@ export default async function ButtonsPage({
 
       <Section title="In context" caption="a toolbar">
         <div className="border-border bg-card flex flex-wrap items-center justify-between gap-3 rounded-xl border p-2">
-          {/* ONE provider for the cluster: moving between
-                        adjacent icon buttons reopens instantly instead of
-                        re-waiting the 300ms delay each time. */}
           <TooltipProvider>
             <div className="flex items-center gap-1">
               <Button

@@ -1,34 +1,10 @@
-import * as React from "react";
+"use client";
 
-/* The Saudi acceptance marks, as house icons.
- *
- * PORTED FROM packages/storefront-scaffold/src/payments/CardBrandMarks.tsx,
- * which remains the annotated source of truth: it documents where each file
- * came from, what each brand's guidelines demand (mada's minimum size and
- * first-position rule, Visa's per-ground colours, Apple's fixed pill) and why
- * the geometry is what it is. This copy exists because the scaffold is a
- * standalone app package (internal "@/" aliases, no export map) that the
- * studio cannot import, and the landing needed the same artwork. If a brand
- * ships new artwork, update BOTH files.
- *
- * COLOUR CONTRACT, simplified from the scaffold's ground-block machinery to
- * what a design-system icon can promise:
- *   - mada: emblem squares keep mada's own colours; the wordmark fills
- *     currentColor (variant 01 on light ink, variant 02 on white).
- *   - Apple Pay: fixed black-on-white, never recoloured: Apple ships one
- *     mark and allows it on dark layouts as it is.
- *   - Visa: fills currentColor, and the CALL SITE owes Visa its standards:
- *     white on dark grounds, Visa Blue #1434CB on light ones. currentColor
- *     rather than a baked blue because the landing's only seat for it is a
- *     dark brand sheet, where white is the compliant form.
- *
- * SIZE at the call site via className (h-* w-auto): these are wordmark-shaped,
- * so height is the one honest knob and width follows each viewBox.
- */
+import * as React from "react";
 
 export interface PaymentMarkProps {
   className?: string;
-  /** Accessible name. Omitted = decorative (aria-hidden). */
+
   title?: string;
 }
 

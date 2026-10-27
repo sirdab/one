@@ -9,9 +9,6 @@ import {
 import { Input } from "@sirdab/one/components/input";
 import { Label } from "@sirdab/one/components/label";
 
-/* A stand-in photo painted on a canvas, so the demo needs no storage host
-   and its canvas stays readable for the render. Asymmetric on purpose: a
-   turn or a flip is easy to see. */
 function paintSample(): string {
   const canvas = document.createElement("canvas");
   canvas.width = 1200;
@@ -92,8 +89,6 @@ export function ImageEditorDemo(): React.JSX.Element {
   );
 }
 
-/* The profile picture: a round crop with a zoom slider, rendered square at
-   512px. The preview below is the result with the circle applied by CSS. */
 export function ImageEditorCircleDemo(): React.JSX.Element {
   const [src, setSrc] = React.useState("");
   const [result, setResult] = React.useState<string | null>(null);
@@ -113,8 +108,6 @@ export function ImageEditorCircleDemo(): React.JSX.Element {
     );
   }
   return (
-    /* The width of the profile picture dialog's body (max-w-lg less its
-           padding), so the crop circle here is the size she gets. */
     <div className="flex w-full max-w-md flex-col">
       <ImageEditor
         src={src}

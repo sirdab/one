@@ -16,7 +16,6 @@ const require = createRequire(import.meta.url);
 const dist = path.join(packageRoot, "dist");
 await rm(dist, { recursive: true, force: true });
 
-// TypeScript preserves module boundaries and client directives without bundling React.
 execFileSync(
   process.execPath,
   [
@@ -72,7 +71,6 @@ const css = await postcss([
 });
 await writeFile(path.join(dist, "styles.css"), css.css);
 
-// The optional host integration needs only the token utilities, never another reset.
 const glue = await readFile(
   path.join(packageRoot, "src/foundation/tailwind.css"),
   "utf8",
@@ -84,14 +82,18 @@ const animationCss = await readFile(
 );
 await writeFile(
   path.join(dist, "tailwind.css"),
-  glue.replace('@import "tw-animate-css";', animationCss),
+  [
+    '@source "./components";',
+    '@source "./hooks";',
+    '@source "./lib";',
+    glue.replace('@import "tw-animate-css";', animationCss),
+  ].join("\n"),
 );
 await cp(
   path.join(animationRoot, "LICENSE"),
   path.join(dist, "licenses/tw-animate-css-MIT.txt"),
 );
 
-/** @type {string[]} */
 const fonts = [];
 for (const family of ["inter", "ibm-plex-sans-arabic"]) {
   const root = path.dirname(

@@ -1,13 +1,8 @@
+"use client";
+
 import { forwardRef, useId } from "react";
 
 import { shellIcon, type IconProps } from "./house-icon";
-
-/* Sirdab's own icon set (the shell's glyphs; the catalogue's are in
-   catalogue.tsx). Drawn for the product rather than taken from
-   lucide, but built to lucide's component SHAPE (a `size` prop, currentColor
-   strokes/fills, 24px viewBox) so they pass through <Icon> like any other
-   icon, including its RTL `flip` handling and a11y wiring. Stroke weight is
-   baked into the paths at 1.5, so callers never set strokeWidth. */
 
 export const HomeIcon = shellIcon(
   "HomeIcon",
@@ -148,9 +143,6 @@ export const AnalyticsIcon = shellIcon(
   />,
 );
 
-/* The only one in the set drawn as a FILLED silhouette rather than strokes,
-   so its weight is baked into the path and there is no strokeWidth to match.
-   The two dots stay stroked, which is how they hold their size at 20px. */
 export const DiscountsIcon = shellIcon(
   "DiscountsIcon",
   <>
@@ -173,10 +165,6 @@ export const DiscountsIcon = shellIcon(
   </>,
 );
 
-/* The two WORKSPACE glyphs, for the topbar's Home ⇄ Studio switch. Named
-   apart from the nav's HomeIcon on purpose: that one is a house (the
-   dashboard row), this one is a storefront (the workspace you run the shop
-   from), and they appear on screen at the same time. */
 export const WorkspaceHomeIcon = shellIcon(
   "WorkspaceHomeIcon",
   <>
@@ -207,8 +195,7 @@ export const WorkspaceStudioIcon = shellIcon(
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    {/* The sparkles are filled, not stroked: at 16px in the switch a
-            stroked four-point star closes up into a blob. */}
+
     <path
       d="M12.1845 9.28984C12.2813 9.24145 12.3598 9.16299 12.4081 9.06623L13.0531 7.77639C13.2373 7.40787 13.7632 7.40787 13.9475 7.77639L14.5924 9.06623C14.6408 9.16299 14.7192 9.24145 14.816 9.28984L16.1058 9.93475C16.4744 10.119 16.4744 10.6449 16.1058 10.8292L14.816 11.4741C14.7192 11.5225 14.6408 11.6009 14.5924 11.6977L13.9475 12.9875C13.7632 13.3561 13.2373 13.3561 13.0531 12.9875L12.4081 11.6977C12.3598 11.6009 12.2813 11.5225 12.1845 11.4741L10.8947 10.8292C10.5262 10.6449 10.5262 10.119 10.8947 9.93475L12.1845 9.28984Z"
       fill="currentColor"
@@ -238,16 +225,6 @@ export const PanelStartIcon = shellIcon(
   </>,
 );
 
-/* PanelStartIcon for the COLLAPSED rail: the same frame, and the rail's
-   column filled in rather than a thin divider, so the trigger reads as
-   "the rail is shut" before the hint says so. The column is a rect, not a
-   thicker stroke, because a stroke's round cap has no radius of its own:
-   it is always half the stroke's width, so a wide line would round off
-   into a capsule where the divider's 1.5 line rounds off at 0.75. A rect
-   states the radius. Its box is the divider's own painted extent (1.5
-   wide centred on x=6.25, y 8.25 to 15.75, so with its caps x 5.5 to 7
-   and y 7.5 to 16.5), widened to x=11.75 to fill the column while holding
-   the same 2 of air off the frame's inner edge at 3.5. */
 export const PanelStartFilledIcon = shellIcon(
   "PanelStartFilledIcon",
   <>
@@ -315,8 +292,6 @@ export const NewChatIcon = shellIcon(
   />,
 );
 
-/* A clock rewinding: not flipped in RTL: clocks run clockwise in every
-   direction, so mirroring it would read as fast-forward. */
 export const HistoryIcon = shellIcon(
   "HistoryIcon",
   <>
@@ -344,8 +319,6 @@ export const HistoryIcon = shellIcon(
   </>,
 );
 
-/* The assistant header's own set: a heavier 2px stroke than the shell icons,
-   so the four controls read at the header's small size. */
 export const AssistantNewIcon = shellIcon(
   "AssistantNewIcon",
   <path
@@ -356,7 +329,6 @@ export const AssistantNewIcon = shellIcon(
   />,
 );
 
-/* Corners out: grow to the whole screen. */
 export const AssistantFullScreenIcon = shellIcon(
   "AssistantFullScreenIcon",
   <path
@@ -368,7 +340,6 @@ export const AssistantFullScreenIcon = shellIcon(
   />,
 );
 
-/* Corners in: the same four corners turned inward, back to the side. */
 export const AssistantExitFullScreenIcon = shellIcon(
   "AssistantExitFullScreenIcon",
   <path
@@ -380,8 +351,6 @@ export const AssistantExitFullScreenIcon = shellIcon(
   />,
 );
 
-/* A clock rewinding. Not flipped in RTL: clocks run clockwise in every
-   direction, so mirroring it would read as fast-forward. */
 export const AssistantHistoryIcon = shellIcon(
   "AssistantHistoryIcon",
   <>
@@ -419,7 +388,6 @@ export const AssistantCloseIcon = shellIcon(
   />,
 );
 
-/* The assistant's two-spark mark, retained from the Uqail icon set. */
 export const AssistantSparklesIcon = shellIcon(
   "AssistantSparklesIcon",
   <>
@@ -434,24 +402,9 @@ export const AssistantSparklesIcon = shellIcon(
   </>,
 );
 
-/* The assistant's own mark: a pointer, painted in the aurora (AURORA in
-   foundation.css) so the door to the assistant reads as the assistant
-   rather than as one more black glyph.
-
-   Two paints. Given a `texture` (an image URL: the studio renders the
-   aurora's grainy mesh orb and hands it in), the shape is filled with it.
-   Without one (before it lands, where WebGL is off, in the lookbook) it
-   wears a flat ramp from pink through violet into a blue fold; the pointer
-   only covers t 0 to 0.75 of the ramp's diagonal, so its stops sit inside
-   that (0.1, 0.4, 0.7) or the fold would never show. Every ramp
-   stop reads an --aurora-mark-* role, never a palette token, because each
-   theme scope resolves the roles (a dark ground gets lighter stops).
-   Paint ids are per instance, since two copies on a page sharing one id
-   would both paint from whichever defined it first. */
 export const AssistantAuroraIcon = forwardRef<
   SVGSVGElement,
   IconProps & {
-    /** An image to fill the mark with instead of the flat ramp. */
     texture?: string | null;
   }
 >(({ size = 24, texture = null, ...props }, ref) => {
@@ -517,9 +470,6 @@ export const AssistantCopyIcon = shellIcon(
   />,
 );
 
-/* The reply's rating. The outline is the unrated thumb; the rated one is
-   its filled twin, a different glyph rather than a fill over the outline,
-   so the cuff reads as cut out. */
 export const AssistantThumbsUpIcon = shellIcon(
   "AssistantThumbsUpIcon",
   <path
@@ -560,7 +510,6 @@ export const AssistantThumbsDownFilledIcon = shellIcon(
   />,
 );
 
-/* The conversation menu: rename and delete. */
 export const AssistantRenameIcon = shellIcon(
   "AssistantRenameIcon",
   <>
@@ -608,8 +557,6 @@ export const AssistantDeleteIcon = shellIcon(
   </>,
 );
 
-/* The global search's glyph: a magnifier with a spark, because the search
-   also asks the assistant. */
 export const SearchSparkleIcon = shellIcon(
   "SearchSparkleIcon",
   <>
@@ -632,8 +579,6 @@ export const SearchSparkleIcon = shellIcon(
   </>,
 );
 
-/* The record steps in the topbar: previous is up the list, next is down it,
-   the same in both reading directions. */
 export const StepUpIcon = shellIcon(
   "StepUpIcon",
   <>
@@ -674,7 +619,6 @@ export const StepDownIcon = shellIcon(
   </>,
 );
 
-/* The catalogue's Filters button. */
 export const FilterIcon = shellIcon(
   "FilterIcon",
   <>
@@ -744,7 +688,6 @@ export const FilterIcon = shellIcon(
   </>,
 );
 
-/* The catalogue's sort menu. */
 export const SortIcon = shellIcon(
   "SortIcon",
   <>
@@ -779,7 +722,6 @@ export const SortIcon = shellIcon(
   </>,
 );
 
-/* The catalogue laid out as cards. */
 export const CardsViewIcon = shellIcon(
   "CardsViewIcon",
   <>
@@ -814,7 +756,6 @@ export const CardsViewIcon = shellIcon(
   </>,
 );
 
-/* The catalogue laid out as a list. */
 export const ListViewIcon = shellIcon(
   "ListViewIcon",
   <>
@@ -842,7 +783,6 @@ export const ListViewIcon = shellIcon(
   </>,
 );
 
-/* Managing a set (the sections behind the products page). */
 export const ManageIcon = shellIcon(
   "ManageIcon",
   <>
@@ -892,7 +832,6 @@ export const ManageIcon = shellIcon(
   </>,
 );
 
-/* Bringing products in from another store. */
 export const ImportIcon = shellIcon(
   "ImportIcon",
   <>
@@ -913,8 +852,6 @@ export const ImportIcon = shellIcon(
   </>,
 );
 
-/* A website: a browser window with code in it (importing from a store's
-   address). */
 export const WebsiteIcon = shellIcon(
   "WebsiteIcon",
   <>
@@ -949,7 +886,6 @@ export const WebsiteIcon = shellIcon(
   </>,
 );
 
-/* Editing a record (the preview's way to the product's page). */
 export const EditIcon = shellIcon(
   "EditIcon",
   <>
@@ -970,7 +906,6 @@ export const EditIcon = shellIcon(
   </>,
 );
 
-/* The house plus: adding a record, a row, a store. */
 export const PlusIcon = shellIcon(
   "PlusIcon",
   <path
@@ -981,10 +916,8 @@ export const PlusIcon = shellIcon(
   />,
 );
 
-/* The assistant's glyphs under their general names, for everywhere else. */
-/** @alias */
 export const CloseIcon = AssistantCloseIcon;
-/** @alias */
+
 export const CopyIcon = AssistantCopyIcon;
-/** @alias */
+
 export const DeleteIcon = AssistantDeleteIcon;

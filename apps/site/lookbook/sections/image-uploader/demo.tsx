@@ -8,8 +8,6 @@ import {
   type UploadOutcome,
 } from "@sirdab/one/components/image-uploader";
 
-/* A stand-in upload: the local preview becomes the "stored" url after a
-   beat, and every third file fails so Retry can be tried. */
 let count = 0;
 async function fakeUpload(file: File): Promise<UploadOutcome> {
   await new Promise((resolve) => setTimeout(resolve, 900));

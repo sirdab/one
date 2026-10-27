@@ -1,9 +1,5 @@
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose lives in ./notes.md. Bars are drawn proportional to
-   3xl via inline widths; the values stay canonical in foundation.css
-   (--screen-*) and tailwind.css (--breakpoint-*). */
-
 const BREAKPOINTS: { name: string; px: number; ours?: boolean }[] = [
   { name: "2xs", px: 375, ours: true },
   { name: "xs", px: 480, ours: true },

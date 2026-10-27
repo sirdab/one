@@ -1,0 +1,87 @@
+name: Release alpha
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_ref:
+        description: Verified main or a vX.Y.Z-alpha.N tag already on main
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: npm-alpha
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/main' && github.repository == 'sirdab/one'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      sha: ${{ steps.verify.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Verify candidate with trusted main code
+        id: verify
+        run: node scripts/verify-release.mjs
+        env:
+          RELEASE_REF: ${{ inputs.release_ref }}
+          GH_TOKEN: ${{ github.token }}
+
+  release:
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.repository == 'sirdab/one'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    environment: npm-alpha
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      NX_DAEMON: "false"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.validate.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+      - run: npm install --global npm@11.21.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm nx run-many -t lint,typecheck,test,build
+      - run: pnpm nx run one:test:package
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm nx run verification:consumers
+      - name: Publish verified alpha with OIDC
+        run: npm publish artifacts/consumers/verified-package.tgz --access public --tag alpha --registry https://registry.npmjs.org
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: alpha-release-evidence
+          path: artifacts/consumers/
+          if-no-files-found: warn
+          retention-days: 30

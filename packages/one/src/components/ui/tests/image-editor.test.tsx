@@ -15,8 +15,6 @@ import {
   type ImageEditorLabels,
 } from "../image-editor";
 
-/* jsdom loads no images and has no canvas, so the cropper stands in: it
-   reports an 800x600 photo and a fixed crop, and shows what it was given. */
 vi.mock("react-easy-crop", () => ({
   default: function FakeCropper(props: {
     aspect?: number;
@@ -84,7 +82,7 @@ let drawn: { calls: string[] };
 
 beforeEach(() => {
   drawn = { calls: [] };
-  // An image that loads the moment it is given a src.
+
   vi.stubGlobal(
     "Image",
     class {
@@ -150,12 +148,12 @@ const cropper = (): HTMLElement => screen.getByTestId("cropper");
 describe("ImageEditor", () => {
   it("crops to the chosen ratio, and 'Original' follows the photo, turned or not", () => {
     renderEditor();
-    // Original on an 800x600 photo.
+
     expect(cropper().dataset.aspect).toBe((4 / 3).toFixed(4));
 
     fireEvent.click(screen.getByRole("radio", { name: "2:3" }));
     expect(cropper().dataset.aspect).toBe((2 / 3).toFixed(4));
-    // A pick-one stays picked: pressing the chosen ratio again keeps it.
+
     fireEvent.click(screen.getByRole("radio", { name: "2:3" }));
     expect(cropper().dataset.aspect).toBe((2 / 3).toFixed(4));
     expect(
@@ -178,7 +176,7 @@ describe("ImageEditor", () => {
     const flip = screen.getByRole("button", { name: "Flip horizontally" });
     fireEvent.click(flip);
     expect(flip.getAttribute("aria-pressed")).toBe("true");
-    // The mirror sits outside the rotation, so it stays horizontal.
+
     expect(cropper().dataset.transform).toMatch(
       /scale\(-1, 1\) rotate\(0deg\)/,
     );
@@ -202,7 +200,7 @@ describe("ImageEditor", () => {
       maxEdge: 1080,
     });
     expect(blob.type).toBe("image/webp");
-    // 500 wide is under the 1080 cap: no upscale.
+
     expect(drawn.calls).toContain("scale(1,1)");
   });
 
@@ -305,8 +303,6 @@ describe("ImageEditor", () => {
   });
 });
 
-/* The profile picture: a round 1:1 crop, a zoom slider and a turn, and
-   nothing else. The file stays square (CSS rounds the preview). */
 describe("ImageEditor shape=circle", () => {
   it("crops round at 1:1 and offers no ratios, flips or size", () => {
     renderEditor({ shape: "circle" });
@@ -335,12 +331,10 @@ describe("ImageEditor shape=circle", () => {
     expect(edit.aspect).toBe("1:1");
     expect(edit.maxEdge).toBe(512);
     expect(edit.flipH || edit.flipV).toBe(false);
-    // 500 wide crop under the 512 cap: no upscale, no shrink.
+
     expect(drawn.calls).toContain("scale(1,1)");
   });
 
-  /* In a dialog 448px wide, side by side left the crop circle 42px: the
-       round editor stacks at every breakpoint, the rect one from lg. */
   it("stacks at every width, while the rect editor goes side by side from lg", () => {
     const round = renderEditor({ shape: "circle" });
     const root = (): HTMLElement =>

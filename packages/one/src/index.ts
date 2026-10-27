@@ -13,6 +13,7 @@ export {
   ArtifactTitle,
 } from "./components/ui/artifact";
 export { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
+export { StoreAvatar } from "./components/ui/store-avatar";
 export type { AvatarSize } from "./components/ui/avatar";
 export {
   Badge,

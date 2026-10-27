@@ -85,8 +85,6 @@ describe("Callout", () => {
       />,
     );
 
-    // jsdom's viewport is 1024 wide; a 224px box pinned at 980 would sit
-    // mostly off screen, which is exactly what mirrors in RTL.
     expect(card(container).style.left).toBe("788px");
   });
 
@@ -116,8 +114,6 @@ describe("Callout", () => {
     );
     const el = card(container);
 
-    // Padded hole bottom is 10 + 40 + 8 = 58; the card clears it by the
-    // connector's elbow room rather than butting against it.
     expect(el.style.top).toBe("82px");
     expect(el.style.transform).toBe("");
   });
@@ -134,8 +130,6 @@ describe("Callout", () => {
     );
     const el = card(container);
 
-    // jsdom's viewport is 768 tall. The padded hole starts at 692, so the
-    // card hangs upward off that edge instead of running off screen.
     expect(el.style.top).toBe("668px");
     expect(el.style.transform).toBe("translateY(-100%)");
   });
@@ -146,13 +140,9 @@ describe("Callout", () => {
       <Callout rect={high} side="top" title="Publish" body="Makes it real." />,
     );
 
-    // Asked for top, but there is nothing above the anchor to hang from.
     expect(card(container).style.transform).toBe("");
   });
 
-  /* A studio panel is as tall as the window, so neither above nor below
-       exists. The card has to go BESIDE it or it hangs off the top edge,
-       which is what the first build of the studio walk actually did. */
   it("sits beside an anchor that is too tall for either side", () => {
     const panel = {
       top: 60,
@@ -170,11 +160,9 @@ describe("Callout", () => {
     );
     const el = card(container);
 
-    // Padded hole starts at 332, so a 224px card plus its elbow room fits
-    // between the viewport edge and the panel.
     expect(el.style.left).toBe("84px");
     expect(el.style.transform).toBe("");
-    // Vertically centred on the hole: 52 + 706 / 2 - 148 / 2.
+
     expect(el.style.top).toBe("331px");
   });
 
@@ -189,8 +177,6 @@ describe("Callout", () => {
       />,
     );
 
-    // Nothing fits before a panel pinned to the start edge, so the card
-    // takes the open ground after it: hole ends at 336, plus the elbow.
     expect(card(container).style.left).toBe("360px");
   });
 

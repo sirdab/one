@@ -16,8 +16,6 @@ import { PhoneFieldDemo } from "../../../lookbook/components/phone-field-demo";
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: the rules (labels name, placeholders exemplify, help
-   explains, errors say the fix) live in ./notes.md. */
 export default async function FormsPage({
   lang,
 }: {

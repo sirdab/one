@@ -38,7 +38,6 @@ import {
 } from "../../../lookbook/components/section";
 import { ComboboxDemo } from "../combobox/demo";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function SelectPage({
   lang,
 }: {
@@ -91,7 +90,7 @@ export default async function SelectPage({
         title="Field states"
         caption="the Input's chrome: the border deepens on hover, focus is the ink edge"
       >
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">
             <Select defaultValue="apparel">
               <SelectTrigger className="w-full">
@@ -149,7 +148,7 @@ export default async function SelectPage({
       >
         <div className="flex max-w-md flex-col gap-4">
           <div className="flex items-end gap-3">
-            <div className="flex flex-1 flex-col gap-1.5">
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <Label htmlFor="lb-select-price">{s("Price")}</Label>
               <Input
                 id="lb-select-price"
@@ -158,7 +157,7 @@ export default async function SelectPage({
                 inputClassName="latin tabular"
               />
             </div>
-            <div className="flex flex-1 flex-col gap-1.5">
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <Label htmlFor="lb-select-context">{s("Category")}</Label>
               <Select defaultValue="apparel">
                 <SelectTrigger id="lb-select-context" className="w-full">
@@ -406,7 +405,7 @@ export default async function SelectPage({
             close: s("Close"),
           }}
         >
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Select defaultValue="active">
                 <SelectTrigger className="w-full" aria-label={s("Status")}>

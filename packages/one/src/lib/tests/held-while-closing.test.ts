@@ -11,7 +11,7 @@ describe("useHeldWhileClosing", () => {
       { initialProps: { open: true, value: "step 1" } },
     );
     rerender({ open: true, value: "step 2" });
-    // The caller resets to its first step as it closes.
+
     rerender({ open: false, value: "step 1" });
     expect(result.current).toBe("step 2");
 

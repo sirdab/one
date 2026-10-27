@@ -1,7 +1,7 @@
 # Elevation notes
 
 Not rendered. The gallery page shows; this file explains. Shadow values
-stay canonical in `packages/foundation/TOKENS.md`.
+stay canonical in `packages/one/TOKENS.md`.
 
 ## Doctrine
 

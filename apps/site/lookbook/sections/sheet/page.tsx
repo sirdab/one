@@ -1,8 +1,4 @@
-import {
-  HomeIcon,
-  ListViewIcon,
-  ProductsIcon,
-} from "@sirdab/one/icons/shell";
+import { HomeIcon, ListViewIcon, ProductsIcon } from "@sirdab/one/icons/shell";
 import { ExternalLinkIcon } from "@sirdab/one/icons/system";
 import { Button } from "@sirdab/one/components/button";
 import { Icon } from "@sirdab/one/components/icon";
@@ -22,7 +18,6 @@ import {
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function SheetPage({
   lang,
 }: {

@@ -19,7 +19,6 @@ import { Icon } from "@sirdab/one/components/icon";
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function CommandPage({
   lang,
 }: {
@@ -96,7 +95,7 @@ export default async function CommandPage({
       </Section>
 
       <Section title="In context" caption="a ⌘K panel">
-        <div className="border-border shadow-popover-sm w-96 rounded-xl border">
+        <div className="border-border shadow-popover-sm w-96 max-w-full rounded-xl border">
           <Command>
             <CommandInput placeholder={s("Search everything…")} />
             <CommandList>

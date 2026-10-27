@@ -1,9 +1,3 @@
-/* Sample content for the Card and Forms sections, kept beside the main
-   dictionaries (samples.ts spreads these into each locale) so a section that
-   lands next to this one does not fight over the same lines. Keyed by the
-   English literal, like the rest; Arabic first and transcreated, French and
-   Turkish from the English in tu and sen. */
-
 export const FORMS_AR: Record<string, string> = {
   "Contact details": "بيانات التواصل",
   "Shown in the footer of your store's policy pages.":

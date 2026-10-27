@@ -2,8 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import { isTypingTarget } from "../is-typing-target";
 
-/* Global chords (⌘B for the rail, ⌘K for the palette) must never fire over
-   someone's typing. The rule for "is this a typing context" lives once. */
 describe("isTypingTarget", () => {
   it("owns a real input, a textarea and an editable region", () => {
     const input = document.createElement("input");

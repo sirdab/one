@@ -28,8 +28,6 @@ function renderDialog() {
 }
 
 describe("Dialog", () => {
-  /* One scrim for every blocking layer: the light gray-150/30 frost
-       with the 2.5px blur, never a black dim. */
   it("paints the frosted scrim, not a black dim", () => {
     renderDialog();
     const overlay = document.querySelector('[data-slot="dialog-overlay"]');
@@ -40,8 +38,6 @@ describe("Dialog", () => {
     expect(cls).not.toContain("bg-black");
   });
 
-  /* The panel recipe: surface-modal + shadow-modal + the 24px modal
-       radius at EVERY size (no responsive radius drop). */
   it("wears the modal panel recipe at every size", () => {
     renderDialog();
     const content = document.querySelector('[data-slot="dialog-content"]');
@@ -63,8 +59,6 @@ describe("Dialog", () => {
     expect(document.querySelector('[data-slot="dialog-close"]')).not.toBeNull();
   });
 
-  /* The footer stacks column-reverse on mobile: the primary action
-       lands on top, closest to the thumb. */
   it("reverses the footer stack on mobile", () => {
     renderDialog();
     const footer = document.querySelector('[data-slot="dialog-footer"]');
@@ -74,11 +68,6 @@ describe("Dialog", () => {
   });
 });
 
-/* The "launcher" position: a palette-style dialog that replaces a topbar
-   control, so it lands on that control's own top line at that control's
-   own width (both read the shell-search tokens) instead of floating
-   mid-screen, and drops the corner X, since Esc and outside-click are how
-   a launcher closes. */
 describe("Dialog launcher position", () => {
   function renderLauncher(
     props: Partial<React.ComponentProps<typeof DialogContent>> = {},
@@ -96,25 +85,20 @@ describe("Dialog launcher position", () => {
     renderLauncher();
     const content = document.querySelector('[data-slot="dialog-content"]');
     const cls = content?.className ?? "";
-    // A fixed top and height from md, so the panel does not jump as
-    // results grow and shrink.
+
     expect(cls).toContain("md:top-shell-launcher");
     expect(cls).toContain("md:h-shell-launcher");
     expect(cls).toContain("md:w-shell-palette");
     expect(cls).toContain("border-border");
     expect(cls).not.toContain("top-1/2");
     expect(cls).not.toContain("shadow-modal");
-    // Sized by the class, so the token wins: no inline mobile width.
+
     expect(content?.getAttribute("style") ?? "").not.toContain(
       "calc(100% - 2rem)",
     );
     expect(document.querySelector('[data-slot="dialog-close"]')).toBeNull();
   });
 
-  /* A phone has no field to land on, and a search is the whole job while
-       it is open: below md the launcher is the screen itself, no gutters,
-       no radius, no border. The trigger's width and centre only apply from
-       md. */
   it("is the whole screen below md, the token only from md", () => {
     renderLauncher();
     const classes = (
@@ -142,9 +126,6 @@ describe("Dialog launcher position", () => {
     expect(classes).not.toContain("left-1/2");
   });
 
-  /* The panel sizes itself (the list caps at half the viewport on a
-       desktop); the dialog's 100dvh-minus-4rem bound would clip a phone's
-       full screen. */
   it("carries no inline height bound of its own", () => {
     renderLauncher();
     const style =
@@ -154,9 +135,6 @@ describe("Dialog launcher position", () => {
     expect(style).not.toContain("max-height");
   });
 
-  /* h-dvh ignores the on-screen keyboard: on iOS the last rows of the list
-       and the keyboard's own Go key end up under it. Below md the launcher
-       follows the visual viewport instead. */
   describe("on a phone with the keyboard up", () => {
     afterEach(() => {
       vi.restoreAllMocks();

@@ -16,9 +16,6 @@ function classesOf(testId: string): string[] {
 }
 
 describe("Card", () => {
-  /* The page card: lifted by the card shadow, whose first layer is the
-       hairline, so there is no border to double it. 16px corner, no padding of
-       its own (the parts own it). */
   it("is the raised page card: 16px corner, card shadow, no border, no padding", () => {
     render(<Card data-testid="card" />);
     const cls = classesOf("card");
@@ -39,8 +36,6 @@ describe("Card", () => {
     expect(screen.getByTestId("card").dataset.variant).toBe("outline");
   });
 
-  /* Not yet churned out of the call sites: `raised` keeps working and means
-       the default. */
   it("keeps `raised` as an alias of the default", () => {
     render(
       <>
@@ -104,8 +99,6 @@ describe("Card parts", () => {
     screen.getByText("Footer");
   });
 
-  /* The parts own the padding: 24px from sm, 16px on a phone. A card that
-       also padded itself, with the bridge adding a third, was the 32px inset. */
   it("pads the header, content and footer themselves, 24px from sm and 16px below", () => {
     render(
       <Card>
@@ -133,9 +126,6 @@ describe("Card parts", () => {
     );
   });
 
-  /* The header's own bottom padding is zero because the content below it
-       brings the 16px; a header that is the last thing in the card has
-       nothing below it, and the primitive closes the card, not the board. */
   it("gives a header-only card its own bottom padding", () => {
     render(
       <Card>
@@ -169,9 +159,6 @@ describe("Card parts", () => {
     expect(cls).not.toContain("text-subtle");
   });
 
-  /* The action sits in the header's second column, top-aligned with the
-       title, on the END edge. Logical utilities only: the same classes put it
-       left in Arabic and right in English. */
   it.each(["rtl", "ltr"] as const)(
     "puts the action at the header's end, top-aligned, in %s",
     (dir) => {

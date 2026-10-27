@@ -4,27 +4,6 @@ import { monoOn } from "@sirdab/one/foundation";
 
 import { cn } from "../../lib/utils";
 
-/* The Sirdab product panel: one square of the store the mood board is
-   drawing.
-
-   With the mood board, it is one of the two primitives in this package that
-   paint a literal colour. The colour is the merchant's, not ours: a concept's `panelColor` for a product
-   nobody has photographed yet, or a photograph over it. That is the
-   exception COLORS.md makes (chroma-zero everywhere, colour only inside the
-   board or the store), so the fill is an inline style from the
-   model and never a token, and `className` stays layout-only.
-
-   The silhouette is drawn in the mono that wins on the panel (`monoOn`,
-   the foundation's copy of the scaffold's rule), at the scaffold's own 0.82
-   opacity, from the scaffold's own paths: when the store unveils over the
-   board, the same shape in the same colour is what makes it read as "it
-   became real" rather than "it became something else". Decorative, and
-   marked so: the panel carries the accessible name, the svg draws no text.
-
-   A photograph (a concept's sample, a peek's real one) covers the square and
-   replaces the silhouette; the colour stays underneath as the frame while
-   the image loads. */
-
 export const SKETCH_SHAPES = [
   "bottle",
   "bag",
@@ -47,18 +26,8 @@ export function isSketchShape(value: unknown): value is SketchShape {
   );
 }
 
-/* The paper gray a panel paints when the model gave it no colour: a peek
-   whose image has not arrived, a concept product the model left unpainted.
-   A literal because the board's tiles take no tokens; warm so it sits in
-   the same family as the default ground the board paints. */
 export const PANEL_FALLBACK_COLOR = "#e9e6e0";
 
-/* The ten silhouettes, verbatim from
-   packages/storefront-scaffold/src/lib/shapes.tsx. Every path is drawn
-   inside the same 100x120 box so swapping the shape never changes the
-   figure's footprint on the card. Geometric rather than illustrative: they
-   must read at card size and at detail size from the same paths, and sit on
-   ANY panel colour a freed palette produces. */
 const SHAPES: Record<SketchShape, React.ReactElement> = {
   bottle: (
     <>
@@ -66,7 +35,7 @@ const SHAPES: Record<SketchShape, React.ReactElement> = {
       <path d="M38 4h24v6H38z" />
     </>
   ),
-  // A tied sack: gathered top, tie band, bulging body.
+
   bag: (
     <>
       <path d="M36 6q14 10 28 0l6 16H30z" />
@@ -130,7 +99,7 @@ const SHAPES: Record<SketchShape, React.ReactElement> = {
       <rect x="40" y="30" width="20" height="16" rx="4" opacity="0.6" />
     </>
   ),
-  // A hand grinder: body, domed cap, crank arm with a knob.
+
   tool: (
     <>
       <rect x="30" y="44" width="40" height="48" rx="6" />
@@ -145,7 +114,7 @@ const SHAPES: Record<SketchShape, React.ReactElement> = {
       <rect x="36" y="96" width="28" height="10" rx="3" opacity="0.6" />
     </>
   ),
-  // A hanging product tag, hole cut out via even-odd fill.
+
   mark: (
     <path
       fillRule="evenodd"
@@ -162,13 +131,13 @@ export function ProductPanel({
   className,
 }: {
   shape: SketchShape | null;
-  /** The model's colour for this product; null paints the paper gray. */
+
   color: string | null;
-  /** A real photograph (a peek); null draws the silhouette. */
+
   imageUrl: string | null;
-  /** The accessible name: the product's title. */
+
   label: string;
-  /** Layout only (width, grid placement); the panel owns its chrome. */
+
   className?: string;
 }): React.JSX.Element {
   const ground = color ?? PANEL_FALLBACK_COLOR;

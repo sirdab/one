@@ -8,7 +8,6 @@ import {
   monoOn,
 } from "../index";
 
-/* Direct numerical contracts for the shared legibility helpers. */
 describe("contrastRatio", () => {
   it("is 21 for black on white and 1 for a colour on itself", () => {
     expect(contrastRatio("#000000", "#ffffff")).toBe(21);
@@ -30,8 +29,6 @@ describe("ensureContrast", () => {
   });
 
   it("tries the other direction when the preferred one cannot reach", () => {
-    // #808080 reads dark to a luminance test, so white is preferred, but
-    // white on it tops out below 4:1. The answer has to come from black.
     const ink = ensureContrast("#777777", "#808080", 4.5);
     expect(isDarkColor(ink)).toBe(true);
   });
@@ -53,8 +50,6 @@ describe("monoOn", () => {
   });
 
   it("measures both ways instead of trusting lightness on a mid gold", () => {
-    // #c8a24b is dark to a luminance test (white wanted) and black on it
-    // still wins by more than three to one.
     expect(isDarkColor("#c8a24b")).toBe(true);
     expect(monoOn("#c8a24b")).toBe("#000000");
   });

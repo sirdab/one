@@ -25,5 +25,9 @@ tabular figures. The `font:` shorthand would silently reset them.
 ## Usage
 
 ```tsx
-import { formatIdentifier, formatPrice, formatValue } from "@sirdab/one/foundation";
+import {
+  formatIdentifier,
+  formatPrice,
+  formatValue,
+} from "@sirdab/one/foundation";
 ```

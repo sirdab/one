@@ -1,11 +1,6 @@
 import { cn } from "@sirdab/one/lib/utils";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose lives in ./notes.md. Each tile must demonstrate
-   the tier it names: the 100 tile carries NO duration class (bare
-   transition-colors runs at the 100ms default), the 150 tile is the
-   floating enters' duration-150, and the 200/300 tiles move a bar because size
-   and layout changes opt UP explicitly. */
 const TIERS = [
   {
     name: "100 · controls, colour, exits",

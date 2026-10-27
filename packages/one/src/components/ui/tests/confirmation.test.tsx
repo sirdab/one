@@ -3,9 +3,6 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Confirmation } from "../confirmation";
 
-/* The approval card is a two-button contract while pending and a quiet
-   record once decided: a decided card that still offered buttons would
-   invite a second decision on a turn that already moved on. */
 describe("Confirmation", () => {
   it("calls onApprove and onDeny from its two buttons while pending", () => {
     const onApprove = vi.fn();

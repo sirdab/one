@@ -67,10 +67,6 @@ describe("Dialog focus on open", () => {
   });
 });
 
-/* Regression (2026-09-30): the product page's Delete opens its confirm from
-   the ⋯ menu. The dialog focused its primary while the menu was still
-   closing; the menu's focus trap took focus back and its unmount dropped it
-   on <body>, so Enter confirmed nothing. */
 describe("a dialog opened from a menu item", () => {
   function MenuThenConfirm(): React.JSX.Element {
     const [open, setOpen] = React.useState(false);

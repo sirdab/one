@@ -110,10 +110,6 @@ describe("formatMinor", () => {
   });
 });
 
-/* The inverse of formatMinor for a person's input (SAI-1214): the tray
-   sheet's price field and, later, any field that reads riyals back. Pinned
-   here beside the formatters because money.ts has no test file of its own;
-   these tests cover the shared implementation directly. */
 describe("toMinor", () => {
   it("reads riyals into halalas, rounded, in either digit form", () => {
     expect(toMinor("49")).toBe(4900);
@@ -170,9 +166,6 @@ describe("formatField", () => {
     expect(formatField("phone", "٠٥٥١٢٣٤٥٦٧")).toBe(`${LRI}0551234567${PDI}`);
   });
 
-  /* Regression: money fields once rendered as bare numbers (no riyal, no
-       fixed decimals), percentages as their raw ratio, dates as epoch
-       numbers. Each kind must hit its real formatter. */
   it("routes money through formatPrice", () => {
     expect(formatField("price", 124950)).toBe(formatPrice(124950));
     expect(formatField("total", 4900, "en-US")).toContain("49.00");
@@ -189,9 +182,6 @@ describe("formatField", () => {
   });
 });
 
-// The money fixture set (SAR minor units) over the four ui languages; fr
-// and tr fall to Western digits by the numerals rule. This table is the
-// contract for what a merchant reads in the app.
 describe("formatPrice fixture table", () => {
   const FIXTURES = [0, 1, 99, 100, 1050, 123456789, -1050] as const;
   const LRM = "\u200E";
@@ -205,8 +195,6 @@ describe("formatPrice fixture table", () => {
     `${LRI}${RIYAL} -10.50${PDI}`,
   ];
   const EXPECTED: Record<string, readonly string[]> = {
-    /* Arabic's only difference is the bidi mark ar-SA puts before a
-           minus; the digits are the checkout's. */
     ar: [...WESTERN.slice(0, -1), `${LRI}${RIYAL} ${LRM}-10.50${PDI}`],
     en: WESTERN,
     fr: WESTERN,

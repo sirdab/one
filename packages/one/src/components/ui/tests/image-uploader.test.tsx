@@ -57,7 +57,6 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-/* Controlled like the real form: the harness owns the list. */
 function Harness({
   upload,
   initial = [],
@@ -121,12 +120,10 @@ describe("ImageUploader", () => {
       ]),
     );
     expect(upload.mock.calls.map(([f]) => f.name)).toEqual(["1.jpg", "2.jpg"]);
-    // The first image is the cover.
+
     expect(screen.getByText(labels.cover)).toBeTruthy();
   });
 
-  /* Once there are photos the grid is the drop target too, not only the
-       add tile: a second drop anywhere on the uploader adds to the set. */
   it("takes a drop anywhere on a filled uploader", async () => {
     const upload = vi.fn(async (file: File): Promise<UploadOutcome> => ({
       url: `https://x/${file.name}`,
@@ -198,7 +195,6 @@ describe("ImageUploader", () => {
     expect(onValue).toHaveBeenLastCalledWith([two[1]]);
   });
 
-  /* The keyboard path: moving the second photo earlier makes it the cover. */
   it("reorders with the move buttons, which changes the cover", () => {
     const onValue = vi.fn();
     render(<Harness upload={vi.fn()} initial={two} onValue={onValue} />);

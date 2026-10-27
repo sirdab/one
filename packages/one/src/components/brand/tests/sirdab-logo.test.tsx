@@ -3,8 +3,6 @@ import { describe, expect, it } from "vitest";
 
 import { SirdabLogo, SirdabMark } from "../sirdab-logo";
 
-/* The logo paints through a class-scoped token so it survives bundles that
-   never scan this package; these pin that contract and the script switch. */
 describe("SirdabMark", () => {
   it("paints through --logo-fill under the .sirdab-mark class, teal by default", () => {
     const { container } = render(<SirdabMark />);

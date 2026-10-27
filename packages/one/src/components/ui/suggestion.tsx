@@ -5,20 +5,6 @@ import * as React from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "./button";
 
-/* The Sirdab suggestions: the quick asks under an empty conversation ("Which
-   orders are late?"). Taken from the shadcn.io AI Elements suggestion and
-   trued: they WRAP instead of scrolling sideways (the rail is 360px wide,
-   and a hidden horizontal scroll there is a row of suggestions nobody
-   sees; the scroll-area primitive it needed is not ours either), and each
-   one is the house chip Button, the quiet one, never an outline pill.
-
-   Usage:
-       <Suggestions>
-           {ids.map((id) => (
-               <Suggestion key={id} suggestion={t(`suggestions.${id}`)} onPick={send} />
-           ))}
-       </Suggestions>
-*/
 function Suggestions({
   className,
   ...props
@@ -38,7 +24,7 @@ interface SuggestionProps extends Omit<
 > {
   suggestion: string;
   onPick(suggestion: string): void;
-  /** Defaults to the suggestion itself. */
+
   children?: React.ReactNode;
 }
 

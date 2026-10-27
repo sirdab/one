@@ -23,12 +23,6 @@ import { sampler } from "./samples";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/* Where Save goes, working: a bar standing in for the studio's topbar, and a
-   card form under it. Save is not on the page at all. It springs into the
-   bar's tail once the field differs from what is stored AND would save, and
-   leaves again when it does. A bad address says why under the field after the
-   field is left (never while it is being typed), and Save stays away. Enter in
-   the field saves. */
 export function FormCardDemo({
   locale = "en",
 }: {

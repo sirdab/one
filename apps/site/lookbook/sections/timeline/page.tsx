@@ -15,8 +15,6 @@ import {
 import { toNumeralLocale } from "../../../lookbook/components/numeral-locale";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: the rules live in ./notes.md. Both boards render here, each
-   in its own direction, whatever the lookbook locale is. */
 interface Copy {
   locale: "ar" | "en";
   today: string;

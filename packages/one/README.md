@@ -1,5 +1,8 @@
 # Sirdab One
 
+Built on [shadcn/ui](https://ui.shadcn.com/), with Sirdab’s shared foundations,
+typography, Arabic and RTL support. Familiar components, brought together as One.
+
 React components and semantic design tokens with light, dark and system themes,
 Arabic typography and RTL behavior. Alpha package: `@sirdab/one@0.1.0-alpha.0`.
 

@@ -6,11 +6,6 @@ import { Field, FieldError, FieldLabel } from "@sirdab/one/components/field";
 import { PhoneInput } from "@sirdab/one/components/phone-input";
 import { isValidE164, parsePhone } from "@sirdab/one/lib/phone";
 
-/* A phone field as a form builds it: the label, the box, and the fix under it
-   once the number is left half-typed. The PhoneInput is controlled, so the
-   gallery's server pages hand it to this wrapper. `explain` shows the error
-   straight away for a number that starts invalid, so the specimen has
-   something to show without a click; a live form shows it after blur. */
 export function PhoneFieldDemo({
   id,
   locale,

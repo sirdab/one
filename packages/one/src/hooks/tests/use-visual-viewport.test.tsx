@@ -3,9 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useVisualViewport } from "../use-visual-viewport";
 
-/* The visible part of the screen, which on a phone is not the layout
-   viewport: the on-screen keyboard shrinks the first and leaves the second
-   alone, so a panel sized to 100dvh keeps its bottom rows under the keys. */
 class FakeViewport extends EventTarget {
   height = 800;
   offsetTop = 0;

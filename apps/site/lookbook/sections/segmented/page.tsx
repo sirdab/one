@@ -17,7 +17,6 @@ import {
 } from "../../../lookbook/components/section";
 import { SegmentedConcealedDemo } from "../../../lookbook/components/segmented-concealed-demo";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function SegmentedPage({
   lang,
 }: {

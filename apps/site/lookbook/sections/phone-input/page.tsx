@@ -7,7 +7,6 @@ import {
   SpecimenLabel,
 } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function PhoneInputPage({
   lang,
 }: {

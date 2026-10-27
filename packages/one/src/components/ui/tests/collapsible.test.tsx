@@ -8,9 +8,6 @@ import {
 } from "../collapsible";
 
 describe("CollapsibleContent", () => {
-  /* Every disclosure grows and fades on the house keyframes (180ms
-       open, 150 close, the drawer curve) without the caller restating
-       them; the caller's own classes still land. */
   it("carries the house open and close motion, and keeps the caller's classes", () => {
     render(
       <Collapsible defaultOpen>

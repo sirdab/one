@@ -1,7 +1,5 @@
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose lives in ./notes.md. */
-
 export default function ElevationPage(): React.JSX.Element {
   return (
     <>
@@ -16,8 +14,6 @@ export default function ElevationPage(): React.JSX.Element {
         bare
       >
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Tier 1 is genuinely WHITE: the demo's own frame
-                        (border) marks its edge, not a tint. */}
           <div className="border-border rounded-xl border bg-background p-4">
             <p className="text-caption text-muted-foreground pb-3">
               1 · background

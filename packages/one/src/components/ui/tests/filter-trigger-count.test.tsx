@@ -19,9 +19,6 @@ function count(): HTMLElement {
   return node;
 }
 
-/* «ملابس2+»: the count kept CLDR's own order (sign first, left to right) but
-   sat 4px from the Arabic word in the same ink, so it read as the word's
-   suffix. It takes a wider gap and the quiet tier so it reads as a count. */
 describe("FilterTrigger's +N count", () => {
   it("sits apart from the first pick, in the quiet tier, left to right", () => {
     render(

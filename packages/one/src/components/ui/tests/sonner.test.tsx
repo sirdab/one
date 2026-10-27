@@ -24,7 +24,7 @@ async function toasterIn(
   act(() => {
     toast("Saved");
   });
-  /* Sonner adds the toast on its own tick. */
+
   return waitFor(() => {
     const toaster = document.querySelector<HTMLElement>(
       "[data-sonner-toaster]",
@@ -34,8 +34,6 @@ async function toasterIn(
   });
 }
 
-/* Toasts sit at the bottom end corner, which flips with the language:
-   sonner itself only knows physical corners. */
 describe("Toaster", () => {
   it("stacks at the bottom right in a left-to-right page", async () => {
     const toaster = await toasterIn("ltr");

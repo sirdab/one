@@ -10,8 +10,6 @@ import {
   DialogTitle,
 } from "../dialog";
 
-/* The local lift ladder (foundation.css --z-*): the dialog panel is its own
-   stacking context (fixed, z-modal), so these only race each other. */
 const LOCAL_Z: Record<string, number> = {
   "z-behind": -1,
   "z-raised": 1,
@@ -40,11 +38,6 @@ function renderDialog(title = "تعديل الاسم"): void {
   );
 }
 
-/* The close X and the sticky header share a corner. The header comes later in
-   the DOM with an opaque fill, so an X on the same layer is painted over:
-   invisible and untappable (a hit test at its centre lands on the title) while
-   still in the accessibility tree and reachable by Tab. jsdom has no paint, so
-   this pins the layer order that decides it. */
 describe("Dialog close X", () => {
   it("is painted above the sticky header that spans its corner", () => {
     renderDialog();
@@ -63,8 +56,6 @@ describe("Dialog close X", () => {
     expect(close.getAttribute("data-slot")).toBe("dialog-close");
   });
 
-  /* Once it can be seen, a long title must not run under it: the title keeps
-       clear of the corner, symmetrically on a phone where it is centred. */
   it("keeps the title clear of the X", () => {
     renderDialog("حذف متجر بإسم طويل جدًا يملأ السطر كله");
     const title = screen.getByRole("heading").className;

@@ -19,12 +19,10 @@ describe("Popover content", () => {
     expect(cls).toContain("bg-popover-surface");
     expect(cls).toContain("backdrop-blur-popover");
     expect(cls).not.toContain("border-border");
-    // the panel shadow: its 1px 6% ring IS the hairline
+
     expect(cls).toContain("shadow-popover-sm");
   });
 
-  /* A w-96 panel on a 360px phone ran into the screen edge: the viewport
-       less both 16px gutters caps whatever width the call site asks for. */
   it("never grows wider than the viewport less a 16px gutter each side", () => {
     render(
       <Popover open>
@@ -43,9 +41,6 @@ describe("Popover content", () => {
 });
 
 describe("Command", () => {
-  /* The one opaque strip on the frosted panel: the frost must never
-       show through the search header. (No sticky needed: the scroller is
-       CommandList, a sibling below the header.) */
   it("renders a solid search header above the scroller", () => {
     render(
       <Command>
@@ -64,8 +59,6 @@ describe("Command", () => {
     expect(cls).toContain("border-b");
   });
 
-  /* foundation has no --accent: shadcn's aria-selected:bg-accent would
-       highlight with nothing. */
   it("highlights items with the ghost fill and sizes icons at 16px", () => {
     render(
       <Command>
@@ -79,7 +72,7 @@ describe("Command", () => {
     expect(cls).toContain("aria-selected:bg-btn-ghost-surface-hover");
     expect(cls).not.toContain("bg-accent");
     expect(cls).toContain("[&>svg:not([class*='size-'])]:size-4");
-    // 400-weight labels: the picker's font-normal, not text-body's 500.
+
     expect(cls).toContain("text-body-quiet");
   });
 });
@@ -131,9 +124,6 @@ describe("Combobox", () => {
     });
   }
 
-  /* The trigger is the select's field, so a sections list in a form sits
-       flush with the Input above it: its border, its focus, its corner, and
-       a chevron that turns over 200ms ease-out like the select's. */
   it("wears the select's field chrome and chevron", () => {
     render(<Harness />);
     const trigger = screen.getByRole("button", { name: "Sections" });
@@ -149,8 +139,6 @@ describe("Combobox", () => {
     expect(trigger.className).toContain("focus-visible:outline-hidden");
   });
 
-  /* The chevron's box is 16px; an unsized house icon is 24 and overflows
-       it. It is sized on the glyph, as the select's is. */
   it("draws the chevron at 16px inside its 16px box", () => {
     render(<Harness />);
     const trigger = screen.getByRole("button", { name: "Sections" });

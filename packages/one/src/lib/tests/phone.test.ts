@@ -33,9 +33,6 @@ describe("parsePhone", () => {
     expect(parsePhone("۰۵۵۱۷۸۵۱۵۱", "SA").national).toBe("551785151");
   });
 
-  /* Regression guard: matching dial codes shortest-first turns +971 into
-       country 9 (nonexistent) or worse, +9 71…, so the table is walked
-       longest-first. */
   it("retargets the country when the input carries a different prefix", () => {
     expect(parsePhone("+971501234567", "SA")).toEqual({
       country: "AE",
@@ -48,19 +45,17 @@ describe("parsePhone", () => {
   });
 
   it("keeps bare digits in the selected country", () => {
-    // Not "+1 555…": no plus means the user is typing, not pasting.
     expect(parsePhone("15551234567", "SA").country).toBe("SA");
   });
 
   it("treats a bare country code as a prefix only once a number follows", () => {
-    // Mid-typing in KSA, "9665" is the start of a 966-5 subscriber line.
     expect(parsePhone("9665", "SA").national).toBe("9665");
     expect(parsePhone("966551785151", "SA").national).toBe("551785151");
   });
 
   it("strips a trunk zero only where one exists", () => {
     expect(parsePhone("0501234567", "AE").national).toBe("501234567");
-    // Kuwait writes no trunk 0, so a leading digit is subscriber data.
+
     expect(parsePhone("+96550123456", "SA")).toEqual({
       country: "KW",
       national: "50123456",
@@ -97,8 +92,8 @@ describe("formatNational", () => {
 describe("isValidNational", () => {
   it("holds Saudi to the exact mobile shape", () => {
     expect(isValidNational("SA", "551785151")).toBe(true);
-    expect(isValidNational("SA", "51785151")).toBe(false); // 8 digits
-    // A landline 011… is a real number but not one we can SMS.
+    expect(isValidNational("SA", "51785151")).toBe(false);
+
     expect(isValidNational("SA", "112345678")).toBe(false);
   });
 
@@ -115,7 +110,7 @@ describe("toE164", () => {
   it("emits the canonical string and nothing for an empty field", () => {
     expect(toE164("SA", "551785151")).toBe("+966551785151");
     expect(toE164("AE", "501234567")).toBe("+971501234567");
-    // Never a bare "+966": an empty field has no number in it.
+
     expect(toE164("SA", "")).toBe("");
   });
 
@@ -140,8 +135,6 @@ describe("flagEmoji", () => {
     expect(flagEmoji("sa")).toBe(flagEmoji("SA"));
   });
 
-  /* The dial code always renders beside the flag, so an empty glyph
-       degrades to "+966" rather than to nothing. */
   it("returns nothing for anything that is not two letters", () => {
     expect(flagEmoji("S")).toBe("");
     expect(flagEmoji("966")).toBe("");

@@ -49,15 +49,11 @@ describe("Spotlight", () => {
     const { container } = render(<Spotlight rect={rect} />);
     const [top, bottom, start, end] = bands(container);
 
-    // The bands stop exactly at the padded rect's edges, which is what
-    // leaves the control itself sharp.
-    expect(top?.style.height).toBe("92px"); // hole.top
-    expect(bottom?.style.top).toBe("148px"); // hole.top + hole.height
-    expect(start?.style.width).toBe("192px"); // hole.left
-    expect(end?.style.left).toBe("328px"); // hole.left + hole.width
+    expect(top?.style.height).toBe("92px");
+    expect(bottom?.style.top).toBe("148px");
+    expect(start?.style.width).toBe("192px");
+    expect(end?.style.left).toBe("328px");
 
-    // The side bands only span the hole's own rows; the full-width bands
-    // above and below cover everything else.
     expect(start?.style.top).toBe("92px");
     expect(start?.style.height).toBe("56px");
     expect(end?.style.top).toBe("92px");
@@ -73,8 +69,7 @@ describe("Spotlight", () => {
     expect(el.style.width).toBe("136px");
     expect(el.style.height).toBe("56px");
     expect(el.className).toContain("rounded-lg");
-    // The dim is the scrim token spread outward from a rounded box, so the
-    // rounding is real rather than a rectangle with a decorative ring.
+
     expect(el.style.boxShadow).toContain("var(--scrim-surface)");
   });
 
@@ -113,8 +108,6 @@ describe("SpotlightConnector", () => {
     const path = container.querySelector("path");
     if (path === null) throw new Error("no connector path rendered");
 
-    // Out of the spotlight, across at the midpoint, into the card: an
-    // elbow rather than a diagonal, so it never crosses the spotlit rect.
     expect(path.getAttribute("d")).toBe("M 260 148 V 224 H 40 V 300");
     expect(path.getAttribute("fill")).toBe("none");
   });

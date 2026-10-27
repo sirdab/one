@@ -5,9 +5,6 @@ import { toast } from "sonner";
 import { Button } from "@sirdab/one/components/button";
 import { sampler } from "./samples";
 
-/* Button labels name the VARIANT (chrome, English); what the toast
-   SHOWS is content and localizes. The locale comes down as a prop: the
-   lookbook carries no [locale] route segment for useParams to read. */
 export function ToastDemo({
   locale = "en",
 }: {

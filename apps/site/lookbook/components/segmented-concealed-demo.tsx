@@ -5,8 +5,6 @@ import * as React from "react";
 import { Button } from "@sirdab/one/components/button";
 import { Segmented, SegmentedItem } from "@sirdab/one/components/segmented";
 
-/* The slot is held while the group is concealed, so the button beside it
-   does not move when the group springs in. */
 export function SegmentedConcealedDemo({
   ariaLabel,
   toggleLabel,

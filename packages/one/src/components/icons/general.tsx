@@ -1,9 +1,7 @@
+"use client";
+
 import { shellIcon } from "./house-icon";
 
-/* General glyphs: arrows, states, people, files, devices; the house set
-   beyond the shell and the catalogue. Same shape as shell.tsx. */
-
-/* Up, or send. */
 export const ArrowUpIcon = shellIcon(
   "ArrowUpIcon",
   <>
@@ -24,7 +22,6 @@ export const ArrowUpIcon = shellIcon(
   </>,
 );
 
-/* Down. */
 export const ArrowDownIcon = shellIcon(
   "ArrowDownIcon",
   <>
@@ -45,7 +42,6 @@ export const ArrowDownIcon = shellIcon(
   </>,
 );
 
-/* Out to somewhere else; flipped for RTL by the caller. */
 export const ArrowUpRightIcon = shellIcon(
   "ArrowUpRightIcon",
   <path
@@ -57,7 +53,6 @@ export const ArrowUpRightIcon = shellIcon(
   />,
 );
 
-/* A caret pointing up. */
 export const ChevronUpIcon = shellIcon(
   "ChevronUpIcon",
   <path
@@ -69,7 +64,6 @@ export const ChevronUpIcon = shellIcon(
   />,
 );
 
-/* A picker that opens either way. */
 export const ChevronUpDownIcon = shellIcon(
   "ChevronUpDownIcon",
   <>
@@ -90,7 +84,6 @@ export const ChevronUpDownIcon = shellIcon(
   </>,
 );
 
-/* Return: the Enter key. */
 export const CornerDownLeftIcon = shellIcon(
   "CornerDownLeftIcon",
   <>
@@ -111,13 +104,11 @@ export const CornerDownLeftIcon = shellIcon(
   </>,
 );
 
-/* An empty ring. */
 export const CircleIcon = shellIcon(
   "CircleIcon",
   <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />,
 );
 
-/* Something is wrong. */
 export const AlertCircleIcon = shellIcon(
   "AlertCircleIcon",
   <>
@@ -130,7 +121,6 @@ export const AlertCircleIcon = shellIcon(
   </>,
 );
 
-/* Failed, or cleared. */
 export const CircleXIcon = shellIcon(
   "CircleXIcon",
   <path
@@ -142,7 +132,6 @@ export const CircleXIcon = shellIcon(
   />,
 );
 
-/* A question, or help. */
 export const HelpIcon = shellIcon(
   "HelpIcon",
   <>
@@ -169,7 +158,6 @@ export const HelpIcon = shellIcon(
   </>,
 );
 
-/* An account. */
 export const UserCircleIcon = shellIcon(
   "UserCircleIcon",
   <>
@@ -188,7 +176,6 @@ export const UserCircleIcon = shellIcon(
   </>,
 );
 
-/* Not allowed, or blocked. */
 export const BanIcon = shellIcon(
   "BanIcon",
   <>
@@ -207,7 +194,6 @@ export const BanIcon = shellIcon(
   </>,
 );
 
-/* Verified: the seal with a tick. */
 export const VerifiedIcon = shellIcon(
   "VerifiedIcon",
   <>
@@ -227,7 +213,6 @@ export const VerifiedIcon = shellIcon(
   </>,
 );
 
-/* Protected, or verified by a third party. */
 export const ShieldCheckIcon = shellIcon(
   "ShieldCheckIcon",
   <path
@@ -239,7 +224,6 @@ export const ShieldCheckIcon = shellIcon(
   />,
 );
 
-/* Locked until something else is done. */
 export const LockIcon = shellIcon(
   "LockIcon",
   <>
@@ -267,7 +251,6 @@ export const LockIcon = shellIcon(
   </>,
 );
 
-/* Less, or partly chosen. */
 export const MinusIcon = shellIcon(
   "MinusIcon",
   <path
@@ -278,7 +261,6 @@ export const MinusIcon = shellIcon(
   />,
 );
 
-/* A square: stop. */
 export const SquareIcon = shellIcon(
   "SquareIcon",
   <path
@@ -288,7 +270,6 @@ export const SquareIcon = shellIcon(
   />,
 );
 
-/* Working: turned by the caller's spin. */
 export const LoaderIcon = shellIcon(
   "LoaderIcon",
   <path
@@ -300,7 +281,6 @@ export const LoaderIcon = shellIcon(
   />,
 );
 
-/* Undo, retry, or restore. */
 export const RotateCcwIcon = shellIcon(
   "RotateCcwIcon",
   <>
@@ -321,7 +301,6 @@ export const RotateCcwIcon = shellIcon(
   </>,
 );
 
-/* Turn, or run again. */
 export const RotateCwIcon = shellIcon(
   "RotateCwIcon",
   <>
@@ -342,7 +321,6 @@ export const RotateCwIcon = shellIcon(
   </>,
 );
 
-/* Repeats, like a subscription. */
 export const RepeatIcon = shellIcon(
   "RepeatIcon",
   <>
@@ -377,7 +355,6 @@ export const RepeatIcon = shellIcon(
   </>,
 );
 
-/* A store. */
 export const StoreIcon = shellIcon(
   "StoreIcon",
   <>
@@ -412,7 +389,6 @@ export const StoreIcon = shellIcon(
   </>,
 );
 
-/* A shopping bag. */
 export const ShoppingBagIcon = shellIcon(
   "ShoppingBagIcon",
   <path
@@ -423,7 +399,6 @@ export const ShoppingBagIcon = shellIcon(
   />,
 );
 
-/* A cart. */
 export const CartIcon = shellIcon(
   "CartIcon",
   <path
@@ -435,7 +410,6 @@ export const CartIcon = shellIcon(
   />,
 );
 
-/* A receipt with its lines: an invoice. */
 export const ReceiptTextIcon = shellIcon(
   "ReceiptTextIcon",
   <path
@@ -447,7 +421,6 @@ export const ReceiptTextIcon = shellIcon(
   />,
 );
 
-/* A receipt with the currency sign: money paid. */
 export const ReceiptIcon = shellIcon(
   "ReceiptIcon",
   <>
@@ -473,7 +446,6 @@ export const ReceiptIcon = shellIcon(
   </>,
 );
 
-/* A card payment. */
 export const CreditCardIcon = shellIcon(
   "CreditCardIcon",
   <path
@@ -485,7 +457,6 @@ export const CreditCardIcon = shellIcon(
   />,
 );
 
-/* Money: coins. */
 export const CoinsIcon = shellIcon(
   "CoinsIcon",
   <path
@@ -495,7 +466,6 @@ export const CoinsIcon = shellIcon(
   />,
 );
 
-/* A bank. */
 export const BankIcon = shellIcon(
   "BankIcon",
   <>
@@ -538,7 +508,6 @@ export const BankIcon = shellIcon(
   </>,
 );
 
-/* Shipping. */
 export const TruckIcon = shellIcon(
   "TruckIcon",
   <>
@@ -583,7 +552,6 @@ export const TruckIcon = shellIcon(
   </>,
 );
 
-/* A price tag, or a variant's details. */
 export const TagIcon = shellIcon(
   "TagIcon",
   <>
@@ -610,7 +578,6 @@ export const TagIcon = shellIcon(
   </>,
 );
 
-/* Several tags: discounts and promotions. */
 export const TagsIcon = shellIcon(
   "TagsIcon",
   <>
@@ -644,7 +611,6 @@ export const TagsIcon = shellIcon(
   </>,
 );
 
-/* A product that is gone, or out of stock. */
 export const PackageXIcon = shellIcon(
   "PackageXIcon",
   <>
@@ -669,7 +635,6 @@ export const PackageXIcon = shellIcon(
   </>,
 );
 
-/* Weight, or a balance. */
 export const ScaleIcon = shellIcon(
   "ScaleIcon",
   <path
@@ -681,7 +646,6 @@ export const ScaleIcon = shellIcon(
   />,
 );
 
-/* People: customers, or a team. */
 export const UsersIcon = shellIcon(
   "UsersIcon",
   <>
@@ -716,7 +680,6 @@ export const UsersIcon = shellIcon(
   </>,
 );
 
-/* One person. */
 export const UserIcon = shellIcon(
   "UserIcon",
   <>
@@ -737,7 +700,6 @@ export const UserIcon = shellIcon(
   </>,
 );
 
-/* Adding a person. */
 export const UserPlusIcon = shellIcon(
   "UserPlusIcon",
   <>
@@ -765,7 +727,6 @@ export const UserPlusIcon = shellIcon(
   </>,
 );
 
-/* Finding a person. */
 export const UserSearchIcon = shellIcon(
   "UserSearchIcon",
   <>
@@ -797,7 +758,6 @@ export const UserSearchIcon = shellIcon(
   </>,
 );
 
-/* A person removed, or blocked. */
 export const UserXIcon = shellIcon(
   "UserXIcon",
   <>
@@ -825,7 +785,6 @@ export const UserXIcon = shellIcon(
   </>,
 );
 
-/* A document. */
 export const FileTextIcon = shellIcon(
   "FileTextIcon",
   <>
@@ -856,7 +815,6 @@ export const FileTextIcon = shellIcon(
   </>,
 );
 
-/* Downloading a file. */
 export const FileDownIcon = shellIcon(
   "FileDownIcon",
   <>
@@ -891,7 +849,6 @@ export const FileDownIcon = shellIcon(
   </>,
 );
 
-/* Several documents: pages. */
 export const FilesIcon = shellIcon(
   "FilesIcon",
   <>
@@ -919,7 +876,6 @@ export const FilesIcon = shellIcon(
   </>,
 );
 
-/* A scroll: a policy, a log, or terms. */
 export const ScrollIcon = shellIcon(
   "ScrollIcon",
   <>
@@ -961,7 +917,6 @@ export const ScrollIcon = shellIcon(
   </>,
 );
 
-/* Saving to disk: a backup or an export. */
 export const SaveIcon = shellIcon(
   "SaveIcon",
   <>
@@ -989,7 +944,6 @@ export const SaveIcon = shellIcon(
   </>,
 );
 
-/* An inbox: messages in. */
 export const InboxIcon = shellIcon(
   "InboxIcon",
   <path
@@ -1001,7 +955,6 @@ export const InboxIcon = shellIcon(
   />,
 );
 
-/* A guide. */
 export const BookOpenIcon = shellIcon(
   "BookOpenIcon",
   <path

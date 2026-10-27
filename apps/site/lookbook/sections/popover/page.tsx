@@ -13,7 +13,6 @@ import { Segmented, SegmentedItem } from "@sirdab/one/components/segmented";
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function PopoverPage({
   lang,
 }: {
@@ -59,9 +58,8 @@ export default async function PopoverPage({
               </div>
             </PopoverContent>
           </Popover>
-          {/* The panel drops over this ink tile: open it and the
-                        tile ghosts through the frost. */}
-          <div className="flex w-96 flex-col gap-3 rounded-xl bg-foreground p-6">
+
+          <div className="flex w-96 max-w-full flex-col gap-3 rounded-xl bg-foreground p-6">
             <p className="text-heading-sm text-primary-foreground">
               {s("Generate store")}
             </p>

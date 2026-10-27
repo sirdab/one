@@ -5,7 +5,6 @@ import { assert, describe, expect, it } from "vitest";
 const read = (name: string): string =>
   readFileSync(join(__dirname, "..", name), "utf8");
 
-// A capture group is only absent when the pattern itself changed, so fail loud.
 const group = (match: RegExpMatchArray, index: number): string => {
   const value = match[index];
   assert(value, `capture ${index} missing in ${match[0]}`);
@@ -18,31 +17,17 @@ const pair = (match: RegExpMatchArray): [string, string] => [
 ];
 
 describe("shadcn-bridge guards", () => {
-  /* Regression (2026-07-26): the bridge reassigning --secondary made
-       --muted-foreground resolve to a 4% wash (invisible de-emphasised
-       text) whenever the bridge cascaded after foundation. The fill remap
-       lives ONLY in the Tailwind utility mapping. */
   it("never reassigns --secondary or --secondary-foreground", () => {
     const bridge = read("shadcn-bridge.css");
     expect(bridge).not.toMatch(/^\s*--secondary(-foreground)?\s*:/m);
   });
 
-  /* Regression: bare element selectors (input:not(…), select, button[class*=…])
-       reached past shadcn into composite primitives: the inner bare field got
-       the standalone-input padding on top of its wrapper's (23px inset). The
-       bridge targets [data-slot] names only. */
-  /* Regression: the bridge's overlay density rule padded select-content
-       4px UNDER the trued panel's viewport padding, so items sat 8px in
-       instead of the intended 4. Trued components own their chrome. */
   it("never styles the trued panels", () => {
     const bridge = read("shadcn-bridge.css");
     expect(bridge).not.toMatch(/\[data-slot="select-content"\]/);
-    // its solid background once painted under the frost pseudo and
-    // made every popover fully opaque
+
     expect(bridge).not.toMatch(/\[data-slot="popover-content"\]/);
-    // left 2026-07-28 when their components were built/trued. The one
-    // sanctioned exception is the menu-to-dialog exit rule (CUS-07): it
-    // styles no chrome, it only cancels the closed menu's exit animation.
+
     const withoutMenuExit = bridge.replace(
       /body:has\(\[data-slot="dialog-content"\]\[data-state="open"\]\)\s*\[data-slot="dropdown-menu-content"\]\[data-state="closed"\]\s*\{\s*animation:\s*none\s*!important;\s*\}/,
       "",
@@ -51,8 +36,7 @@ describe("shadcn-bridge guards", () => {
     expect(withoutMenuExit).not.toMatch(/\[data-slot="dialog-content"\]/);
     expect(bridge).not.toMatch(/\[data-slot="select-item"\]/);
     expect(bridge).not.toMatch(/\[data-slot="command-item"\]/);
-    // left 2026-07-28 when the Table family was trued; the component
-    // owns its row/header chrome now
+
     expect(bridge).not.toMatch(/\[data-slot="table"\]/);
   });
 
@@ -82,11 +66,6 @@ describe("tailwind glue guards", () => {
     expect(glue).toMatch(/&:hover:not\(:disabled, \[aria-disabled="true"\]\)/);
   });
 
-  /* Regression: the pointer-cursor rule guarded aria-disabled on the
-       [role=button] selector only, so a refused control (a real <button>
-       kept out of the disabled attribute on purpose, so it stays
-       focusable and hoverable for its reason) advertised a pointer while
-       refusing every click. */
   it("keeps the pointer cursor off aria-disabled controls", () => {
     expect(glue).toMatch(
       /button:not\(:disabled\):not\(\[aria-disabled="true"\]\)/,
@@ -99,23 +78,10 @@ describe("tailwind glue guards", () => {
     expect(glue).toContain("select:-webkit-autofill");
   });
 
-  /* Regression: px breakpoints among Tailwind's rem defaults break v4's
-       breakpoint sorting. */
   it("declares custom breakpoints in rem", () => {
     expect(glue).not.toMatch(/--breakpoint-[\w-]+:\s*\d+px/);
   });
 
-  /* Regression: a --color-icon-quiet theme mapping once generated a
-       colour utility that name-matched the sanctioned icon-quiet utility
-       but painted alpha ink, reintroducing the double-paint the utility
-       exists to prevent. Quiet icons are opacity-token-only. */
-  /* Colon-anchored so the live --icon-quiet-opacity* tokens don't match;
-       -hover/-disabled included because they SOUND like they should exist. */
-  /* The brand ramp is the one non-status hue. The glue exposes it as
-       aliases (bg-brand, text-brand-foreground, ...) and as raw steps for
-       marketing chrome; both must resolve to foundation tokens or the
-       classes compile and paint nothing, which is how the old bg-night
-       dangled for months. */
   it("maps the brand aliases and every ramp step onto foundation tokens", () => {
     const foundation = read("foundation.css");
     for (const name of [
@@ -144,15 +110,7 @@ describe("tailwind glue guards", () => {
   });
 });
 
-/* The Arabic weight dial is per role, so every role it sets has to be
-   restated in the Latin-island block. Miss one and a .latin span inside
-   Arabic (a SKU, an order ID, a brand name) renders Inter at the Arabic
-   weight while the rest of the Latin UI sits a rung below. */
 describe("script weight knobs", () => {
-  /* Line endings normalised because git checks this file out with CRLF on
-       Windows, and the selectors below span two lines. A literal \n then matches
-       nothing and the whole suite fails on the platform rather than on the
-       stylesheet. */
   const css = read("foundation.css").replace(/\r\n/g, "\n");
   const block = (selector: RegExp): string => {
     const start = css.search(selector);
@@ -181,8 +139,6 @@ describe("script weight knobs", () => {
     expect(island).toEqual(arabic);
   });
 
-  /* The island restates the LATIN constants: if one drifts to an
-       Arabic value, islands stop escaping. */
   it("resets islands to the :root weights, not the Arabic ones", () => {
     const root = Object.fromEntries(
       [...css.matchAll(/--(text-[\w-]+-weight)\s*:\s*(\d+);/g)]
@@ -199,14 +155,6 @@ describe("script weight knobs", () => {
   });
 });
 
-/* The ramp is a MIRROR: light maps step N, dark maps step (1000 - N). That
-   invariant is what stops the two themes drifting apart, and it is entirely
-   convention: nothing in CSS enforces it, and a missing partner fails
-   silently, in one theme only, on whichever screen first uses the new step.
-
-   Adding step 62 for the sunken plane [Sirdab 2026-08-26] is what made this
-   worth pinning. The trap is real: a light-only step leaves --gray-62
-   resolving to nothing in dark. */
 describe("the neutral ramp's mirror", () => {
   const css = read("foundation.css");
 
@@ -214,13 +162,10 @@ describe("the neutral ramp's mirror", () => {
     ...new Set([...css.matchAll(/--ramp-(\d+):/g)].map((m) => Number(m[1]))),
   ];
 
-  /* Both mappings live in the same file, so scope each read to its own
-       block rather than to the file: a step declared twice anywhere would
-       otherwise look like a step declared in both themes. */
   const mappingFor = (theme: "light" | "dark"): Set<number> => {
     const marker =
       theme === "light"
-        ? "/* Light mapping: identity. */"
+        ? "--gray-50: var(--ramp-50);"
         : "--gray-50: var(--ramp-950);";
     const from = css.indexOf(marker);
     expect(from).toBeGreaterThan(-1);
@@ -248,7 +193,7 @@ describe("the neutral ramp's mirror", () => {
     for (const theme of ["light", "dark"] as const) {
       const marker =
         theme === "light"
-          ? "/* Light mapping: identity. */"
+          ? "--gray-50: var(--ramp-50);"
           : "--gray-50: var(--ramp-950);";
       const from = css.indexOf(marker);
       const block = css.slice(from, css.indexOf("}", from));
@@ -261,8 +206,6 @@ describe("the neutral ramp's mirror", () => {
     }
   });
 
-  /* The sRGB fallback re-declares the raw ramp for pre-OKLCH browsers. A
-       step added to one list and not the other loses its colour there. */
   it("carries every raw step into the sRGB fallback", () => {
     const from = css.indexOf("@supports not (color: oklch(0% 0 0))");
     expect(from).toBeGreaterThan(-1);

@@ -82,7 +82,6 @@ function model(overrides: Partial<MoodBoardModel> = {}): MoodBoardModel {
   };
 }
 
-/* Nothing the board draws has landed yet: the first frame a stream sends. */
 const NAME_ONLY: Partial<MoodBoardModel> = {
   nameAlternatives: [],
   summary: null,
@@ -132,7 +131,6 @@ describe("MoodBoard", () => {
     expect(board(container).getAttribute("dir")).toBe("ltr");
   });
 
-  /* A brand board, generic on purpose: her system, not her store. */
   it("draws her colours, her two fonts, the radii and the spacing, and nothing of the store itself", () => {
     const { container } = render(<MoodBoard model={model()} labels={LABELS} />);
     const titles = [...container.querySelectorAll("h3")].map(
@@ -238,7 +236,7 @@ describe("MoodBoard", () => {
     const specimen = slot(container, "mood-board-specimen");
     expect(specimen?.textContent).toBe("أب Aa");
     expect(specimen?.style.fontFamily).toContain("Aref Ruqaa");
-    // The house face behind hers, so nothing is invisible while it loads.
+
     expect(specimen?.style.fontFamily).toContain("var(--font-display)");
     const headline = slot(container, "mood-board-display-sample");
     expect(headline?.textContent).toBe("تشكيلة الموسم");

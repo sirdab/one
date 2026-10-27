@@ -19,10 +19,6 @@ function classesOf(testId: string): string[] {
 }
 
 describe("Field", () => {
-  /* The stacked recipe: label, control, then help or error, 6px apart.
-       Stock gap-3 was 12px, and its invalid rule painted the label red, which
-       the field chrome forbids (invalid never colours; the text under the
-       field carries it). */
   it("stacks label, control and help 6px apart, and never paints the label red", () => {
     render(<Field data-testid="field" />);
     const cls = classesOf("field");
@@ -42,9 +38,6 @@ describe("Field", () => {
     expect(screen.getByTestId("field").dataset.orientation).toBe("horizontal");
   });
 
-  /* Rule 1: a field is 44px tall on a phone. The rung is the Field's, so
-       Input, Select and Combobox inside it all take it with no call-site
-       size prop and no pointer-coarse patch. */
   it("raises the controls inside it to the 44px touch rung below sm", () => {
     render(<Field data-testid="field" />);
     const cls = classesOf("field");
@@ -86,8 +79,6 @@ describe("FieldGroup", () => {
 });
 
 describe("FieldRow", () => {
-  /* Two-up only when the group is wide enough for a pair, so a side column
-       and a phone both stack. */
   it("goes two-up by container width, not by viewport", () => {
     render(<FieldRow data-testid="row" />);
     const cls = classesOf("row");
@@ -96,8 +87,6 @@ describe("FieldRow", () => {
     expect(cls).not.toContain("md:grid-cols-2");
   });
 
-  /* Short numbers (length, width, height) are the one trio that stays
-       three across on a phone. */
   it("stays three across for a trio of short numbers", () => {
     render(<FieldRow data-testid="row" columns={3} />);
     const cls = classesOf("row");
@@ -107,8 +96,6 @@ describe("FieldRow", () => {
 });
 
 describe("FieldDescription", () => {
-  /* Help is read, not decoration: muted-foreground, not the quieter subtle
-       tone that measures 3.4:1. */
   it("is the quiet caption in a readable tone", () => {
     render(<FieldDescription data-testid="d">Shape: 05 1234</FieldDescription>);
     const cls = classesOf("d");

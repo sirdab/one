@@ -1,14 +1,6 @@
-/* Lookbook sample content, keyed by the English literal in the page. The
-   chrome (titles, notes, usage) stays English. This localizes only what
-   renders INSIDE components, so the Arabic/RTL pass exercises real content.
-   Keyed-by-English is fine here and only here: the lookbook is internal and
-   the fallback is the key itself. Identifiers (store handles, API keys)
-   never localize: that is the point of the numerals rule. */
-
 import { FORMS_AR, FORMS_FR, FORMS_TR } from "./samples-forms";
 
 const AR: Record<string, string> = {
-  // buttons
   "What needs your attention": "اللي محتاج انتباهك",
   "Store settings": "إعدادات المتجر",
   "Narrow this list": "ضيّق القائمة",
@@ -39,7 +31,6 @@ const AR: Record<string, string> = {
   "New collection": "مجموعة جديدة",
   Small: "صغير",
 
-  // inputs
   "Search…": "ابحث…",
   "Search products…": "ابحث في المنتجات…",
   "Search library voices…": "ابحث في المكتبة…",
@@ -67,17 +58,15 @@ const AR: Record<string, string> = {
   "Inline: store is live": "المتجر شغال",
   "Inline: track inventory": "تتبّع المخزون",
 
-  // phone
   Phone: "الجوال",
   Country: "الدولة",
   "Enter a valid mobile number.": "اكتب رقم جوال صحيح.",
 
-  // selection
   Category: "التصنيف",
   "Choose a category": "اختر التصنيف",
   "No results.": "ما فيه نتائج.",
   "Nothing by that name.": "ما فيه شي بهالاسم.",
-  // palette
+
   "Quick actions": "إجراءات سريعة",
   "Create product": "أضف منتج",
   "Add a new product to your catalog": "منتج جديد ينضاف لمتجرك",
@@ -140,13 +129,11 @@ const AR: Record<string, string> = {
   "Restock the items automatically when an order is refunded or cancelled, even if the product is hidden":
     "أعد الكميات إلى المخزون تلقائيا عند استرجاع الطلب أو إلغائه، حتى لو كان المنتج مخفيا",
 
-  // tooltip, textarea, label
   "Copy link": "انسخ الرابط",
   "Description is required.": "الوصف مطلوب.",
   "Store handle": "معرّف المتجر",
   Close: "إغلاق",
 
-  // gallery pass: actions, dialogs, toasts (2026-07-28)
   "API key": "مفتاح API",
   Add: "إضافة",
   Alerts: "التنبيهات",
@@ -182,7 +169,6 @@ const AR: Record<string, string> = {
   "Your storefront is being generated.": "قاعدين نجهز متجرك…",
   results: "نتيجة",
 
-  // sheet / delivery picker (2026-07-28)
   "Pick a delivery time": "اختر وقت التوصيل",
   "We'll prepare your order as soon as possible.": "بنجهز طلبك بأسرع وقت ممكن.",
   "Standard delivery": "التوصيل العادي",
@@ -191,7 +177,6 @@ const AR: Record<string, string> = {
   "Most popular · High demand": "الأكثر طلبًا · عليه إقبال",
   "Confirm delivery time": "تأكيد وقت التوصيل",
 
-  // tables (2026-07-28)
   Product: "المنتج",
   Status: "الحالة",
   Active: "معروض",
@@ -200,7 +185,6 @@ const AR: Record<string, string> = {
   "Scented candle": "شمعة معطّرة",
   "Linen summer dress": "فستان كتان صيفي",
 
-  // tooltip: explaining a terse control (2026-07-28)
   "A still product photo": "صورة ثابتة للمنتج",
   "A short clip, takes longer": "مقطع قصير، ياخذ وقت أطول",
   "Only products on your storefront": "المعروض في متجرك فقط",
@@ -209,7 +193,6 @@ const AR: Record<string, string> = {
   "Shows only the products that are live on your storefront right now, not drafts or archived ones":
     "يعرض فقط المنتجات المعروضة في متجرك الحين، من غير المسودات والمؤرشفة",
 
-  // sidebar / commerce rail (2026-07-31)
   "Alnoor Store": "متجر النور",
   "Sales today": "مبيعات اليوم",
   Orders: "الطلبات",
@@ -218,7 +201,6 @@ const AR: Record<string, string> = {
   Workspace: "مساحة العمل",
   Studio: "الاستوديو",
 
-  // chat bubble / empty state / spinner (2026-08-02)
   "Make the hero photo bigger": "كبّر صورة الواجهة",
   "Done. The hero now spans the full width.":
     "تم. صورة الواجهة صارت بكامل العرض.",
@@ -230,10 +212,8 @@ const AR: Record<string, string> = {
   "No products yet": "ما فيه منتجات بعد",
   "Add your first product to see it here.": "أضف أول منتج لك وبيظهر هنا.",
 
-  // chart (2026-08-03)
   Visitors: "الزوار",
 
-  // date picker (2026-09-11)
   Starts: "يبدأ",
   Ends: "ينتهي",
   "Right away": "من الحين",
@@ -241,7 +221,7 @@ const AR: Record<string, string> = {
   Time: "الوقت",
   Hour: "ساعة",
   Minute: "دقيقة",
-  // mood board (2026-10-04)
+
   "Your store at a glance": "ملامح متجرك",
   "Temporary name": "اسم مؤقت",
   "Brand font": "خط الهوية",
@@ -286,7 +266,7 @@ const AR: Record<string, string> = {
   Cardamom: "هيل",
   "Pour-over kit": "طقم تقطير",
   "Ceramic cup": "كوب سيراميك",
-  // assistant (2026-09-28)
+
   "Which orders are late?": "وش الطلبات المتأخرة؟",
   "Thought for 8s": "فكّر ٨ ثواني",
   "I checked your orders from this week and the late ones first.":
@@ -311,7 +291,7 @@ const AR: Record<string, string> = {
   "Ask about your store…": "اسأل عن متجرك…",
   Send: "إرسال",
   Stop: "إيقاف",
-  // badge (2026-10-10)
+
   Fulfilled: "تم التنفيذ",
   "Payouts on hold": "الحوالات موقوفة",
   Failed: "فشلت",
@@ -327,7 +307,6 @@ const AR: Record<string, string> = {
 };
 
 const FR: Record<string, string> = {
-  // buttons
   "What needs your attention": "Ce qui demande votre attention",
   "Store settings": "Réglages de la boutique",
   "Narrow this list": "Affiner la liste",
@@ -358,7 +337,6 @@ const FR: Record<string, string> = {
   "New collection": "Nouvelle collection",
   Small: "Petit",
 
-  // inputs
   "Search…": "Rechercher…",
   "Search products…": "Rechercher des produits…",
   "Search library voices…": "Rechercher dans la bibliothèque…",
@@ -387,17 +365,15 @@ const FR: Record<string, string> = {
   "Inline: store is live": "La boutique est en ligne",
   "Inline: track inventory": "Suivre le stock",
 
-  // phone
   Phone: "Téléphone",
   Country: "Pays",
   "Enter a valid mobile number.": "Saisissez un numéro de mobile valide.",
 
-  // selection
   Category: "Catégorie",
   "Choose a category": "Choisir une catégorie",
   "No results.": "Aucun résultat.",
   "Nothing by that name.": "Rien sous ce nom.",
-  // palette
+
   "Quick actions": "Actions rapides",
   "Create product": "Créer un produit",
   "Add a new product to your catalog": "Ajoutez un produit à votre catalogue",
@@ -462,13 +438,11 @@ const FR: Record<string, string> = {
   "Restock the items automatically when an order is refunded or cancelled, even if the product is hidden":
     "Remettre automatiquement les articles en stock lorsqu'une commande est remboursée ou annulée, même si le produit est masqué",
 
-  // tooltip, textarea, label
   "Copy link": "Copier le lien",
   "Description is required.": "La description est obligatoire.",
   "Store handle": "Identifiant de la boutique",
   Close: "Fermer",
 
-  // gallery pass: actions, dialogs, toasts (2026-07-28)
   "API key": "Clé API",
   Add: "Ajouter",
   Alerts: "Alertes",
@@ -505,7 +479,6 @@ const FR: Record<string, string> = {
     "Votre boutique est en cours de génération.",
   results: "résultats",
 
-  // sheet / delivery picker (2026-07-28)
   "Pick a delivery time": "Choisissez une heure de livraison",
   "We'll prepare your order as soon as possible.":
     "Nous préparerons votre commande dès que possible.",
@@ -515,7 +488,6 @@ const FR: Record<string, string> = {
   "Most popular · High demand": "Le plus demandé · Forte affluence",
   "Confirm delivery time": "Confirmer l'heure de livraison",
 
-  // tables (2026-07-28)
   Product: "Produit",
   Status: "Statut",
   Active: "En ligne",
@@ -524,7 +496,6 @@ const FR: Record<string, string> = {
   "Scented candle": "Bougie parfumée",
   "Linen summer dress": "Robe d'été en lin",
 
-  // tooltip: explaining a terse control (2026-07-28)
   "A still product photo": "Une photo fixe du produit",
   "A short clip, takes longer": "Un court clip, plus long à générer",
   "Only products on your storefront": "Uniquement ce qui est en ligne",
@@ -533,7 +504,6 @@ const FR: Record<string, string> = {
   "Shows only the products that are live on your storefront right now, not drafts or archived ones":
     "Affiche uniquement les produits en ligne sur votre boutique en ce moment, sans les brouillons ni les produits archivés",
 
-  // sidebar / commerce rail (2026-07-31)
   "Alnoor Store": "Boutique Alnoor",
   "Sales today": "Ventes du jour",
   Orders: "Commandes",
@@ -542,7 +512,6 @@ const FR: Record<string, string> = {
   Workspace: "Espace de travail",
   Studio: "Studio",
 
-  // chat bubble / empty state / spinner (2026-08-02)
   "Make the hero photo bigger": "Agrandis la photo d'accueil",
   "Done. The hero now spans the full width.":
     "C'est fait. La photo d'accueil occupe toute la largeur.",
@@ -556,10 +525,8 @@ const FR: Record<string, string> = {
   "Add your first product to see it here.":
     "Ajoute ton premier produit pour le voir ici.",
 
-  // chart (2026-08-03)
   Visitors: "Visiteurs",
 
-  // date picker (2026-09-11)
   Starts: "Début",
   Ends: "Fin",
   "Right away": "Tout de suite",
@@ -567,7 +534,7 @@ const FR: Record<string, string> = {
   Time: "Heure",
   Hour: "Heures",
   Minute: "Minutes",
-  // mood board (2026-10-04)
+
   "Your store at a glance": "Votre boutique en un coup d'œil",
   "Temporary name": "Nom provisoire",
   "Brand font": "Police de marque",
@@ -614,7 +581,7 @@ const FR: Record<string, string> = {
   Cardamom: "Cardamome",
   "Pour-over kit": "Kit pour-over",
   "Ceramic cup": "Tasse en céramique",
-  // assistant (2026-09-28)
+
   "Which orders are late?": "Quelles commandes sont en retard ?",
   "Thought for 8s": "Réflexion : 8 s",
   "I checked your orders from this week and the late ones first.":
@@ -639,7 +606,7 @@ const FR: Record<string, string> = {
   "Ask about your store…": "Posez une question sur votre boutique…",
   Send: "Envoyer",
   Stop: "Arrêter",
-  // badge (2026-10-10)
+
   Fulfilled: "Traitée",
   "Payouts on hold": "Versements suspendus",
   Failed: "Échec",
@@ -656,7 +623,6 @@ const FR: Record<string, string> = {
 };
 
 const TR: Record<string, string> = {
-  // buttons
   "What needs your attention": "Dikkatinizi bekleyenler",
   "Store settings": "Mağaza ayarları",
   "Narrow this list": "Listeyi daralt",
@@ -687,7 +653,6 @@ const TR: Record<string, string> = {
   "New collection": "Yeni koleksiyon",
   Small: "Küçük",
 
-  // inputs
   "Search…": "Ara…",
   "Search products…": "Ürünlerde ara…",
   "Search library voices…": "Kitaplıkta ara…",
@@ -715,17 +680,15 @@ const TR: Record<string, string> = {
   "Inline: store is live": "Mağaza yayında",
   "Inline: track inventory": "Stok takibi",
 
-  // phone
   Phone: "Telefon",
   Country: "Ülke",
   "Enter a valid mobile number.": "Geçerli bir cep telefonu numarası girin.",
 
-  // selection
   Category: "Kategori",
   "Choose a category": "Kategori seçin",
   "No results.": "Sonuç bulunamadı.",
   "Nothing by that name.": "Bu adla bir şey yok.",
-  // palette
+
   "Quick actions": "Hızlı işlemler",
   "Create product": "Ürün oluştur",
   "Add a new product to your catalog": "Kataloğunuza yeni bir ürün ekleyin",
@@ -789,13 +752,11 @@ const TR: Record<string, string> = {
   "Restock the items automatically when an order is refunded or cancelled, even if the product is hidden":
     "Sipariş iade edildiğinde veya iptal edildiğinde ürünleri otomatik olarak stoğa geri ekle, ürün gizli olsa bile",
 
-  // tooltip, textarea, label
   "Copy link": "Bağlantıyı kopyala",
   "Description is required.": "Açıklama zorunludur.",
   "Store handle": "Mağaza kimliği",
   Close: "Kapat",
 
-  // gallery pass: actions, dialogs, toasts (2026-07-28)
   "API key": "API anahtarı",
   Add: "Ekle",
   Alerts: "Uyarılar",
@@ -831,7 +792,6 @@ const TR: Record<string, string> = {
   "Your storefront is being generated.": "Mağazanız oluşturuluyor.",
   results: "sonuç",
 
-  // sheet / delivery picker (2026-07-28)
   "Pick a delivery time": "Teslimat saati seçin",
   "We'll prepare your order as soon as possible.":
     "Siparişinizi en kısa sürede hazırlayacağız.",
@@ -841,7 +801,6 @@ const TR: Record<string, string> = {
   "Most popular · High demand": "En popüler · Yoğun talep",
   "Confirm delivery time": "Teslimat saatini onayla",
 
-  // tables (2026-07-28)
   Product: "Ürün",
   Status: "Durum",
   Active: "Yayında",
@@ -850,7 +809,6 @@ const TR: Record<string, string> = {
   "Scented candle": "Kokulu mum",
   "Linen summer dress": "Keten yazlık elbise",
 
-  // tooltip: explaining a terse control (2026-07-28)
   "A still product photo": "Sabit bir ürün fotoğrafı",
   "A short clip, takes longer": "Kısa bir klip, daha uzun sürer",
   "Only products on your storefront": "Yalnızca mağazanızdaki ürünler",
@@ -859,7 +817,6 @@ const TR: Record<string, string> = {
   "Shows only the products that are live on your storefront right now, not drafts or archived ones":
     "Yalnızca şu anda mağazanda yayında olan ürünleri gösterir; taslakları ve arşivlenenleri göstermez",
 
-  // sidebar / commerce rail (2026-07-31)
   "Alnoor Store": "Alnoor Mağazası",
   "Sales today": "Bugünkü satışlar",
   Orders: "Siparişler",
@@ -868,7 +825,6 @@ const TR: Record<string, string> = {
   Workspace: "Çalışma alanı",
   Studio: "Stüdyo",
 
-  // chat bubble / empty state / spinner (2026-08-02)
   "Make the hero photo bigger": "Vitrin fotoğrafını büyüt",
   "Done. The hero now spans the full width.":
     "Tamam. Vitrin fotoğrafı artık tam genişlikte.",
@@ -881,10 +837,8 @@ const TR: Record<string, string> = {
   "Add your first product to see it here.":
     "İlk ürününü ekle, burada görünsün.",
 
-  // chart (2026-08-03)
   Visitors: "Ziyaretçiler",
 
-  // date picker (2026-09-11)
   Starts: "Başlangıç",
   Ends: "Bitiş",
   "Right away": "Hemen",
@@ -892,7 +846,7 @@ const TR: Record<string, string> = {
   Time: "Saat",
   Hour: "Saat",
   Minute: "Dakika",
-  // mood board (2026-10-04)
+
   "Your store at a glance": "Mağazanıza bir bakış",
   "Temporary name": "Geçici ad",
   "Brand font": "Marka yazı tipi",
@@ -938,7 +892,7 @@ const TR: Record<string, string> = {
   Cardamom: "Kakule",
   "Pour-over kit": "Pour-over seti",
   "Ceramic cup": "Seramik fincan",
-  // assistant (2026-09-28)
+
   "Which orders are late?": "Hangi siparişler gecikti?",
   "Thought for 8s": "8 sn düşündü",
   "I checked your orders from this week and the late ones first.":
@@ -963,7 +917,7 @@ const TR: Record<string, string> = {
   "Ask about your store…": "Mağazanla ilgili bir şey sor…",
   Send: "Gönder",
   Stop: "Durdur",
-  // badge (2026-10-10)
+
   Fulfilled: "Karşılandı",
   "Payouts on hold": "Ödemeler beklemede",
   Failed: "Başarısız",

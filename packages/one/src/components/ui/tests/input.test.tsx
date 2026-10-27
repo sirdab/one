@@ -16,11 +16,6 @@ function wrapperOf(placeholder: string): HTMLElement {
 }
 
 describe("Input read-only hover gate", () => {
-  /* Regression: :read-only means "not :read-write", which is true of every
-       plain span/div, so an UNSCOPED :has(:read-only) matches the wrapper's
-       own inner spans and silently kills hover on every input. The gate must
-       stay scoped to actual form elements. Same trap would bite :has(:enabled)
-       or :has(:optional). */
   it("scopes the read-only check to form elements", () => {
     render(<Input placeholder="probe" />);
     const wrapper = wrapperOf("probe");
@@ -64,10 +59,6 @@ describe("Input trailing slot", () => {
 });
 
 describe("Input direction", () => {
-  /* Regression: dir="auto" on the wrapper let a Latin value ("M") flip the
-       whole box to LTR on an Arabic page, moving the trailing delete button
-       to the right. Auto is about the text, so only the field takes it; a
-       fixed direction (the phone field's ltr) still pins the box. */
   it("lets dir=auto reach the text without mirroring the box", () => {
     render(<Input placeholder="value" dir="auto" />);
     expect(wrapperOf("value").hasAttribute("dir")).toBe(false);
@@ -83,10 +74,6 @@ describe("Input direction", () => {
 });
 
 describe("Input leading control slot", () => {
-  /* The icon gutter QUIETS its content and lights it with focus. A live
-       control (the phone field's country select) must not inherit that: it
-       owns its own hover ladder, and dimming it at rest would say it is not
-       pressable. Two slots, two jobs. */
   it("does not quiet a leading control the way it quiets a leading icon", () => {
     render(
       <>
@@ -117,15 +104,12 @@ describe("Input leading control slot", () => {
       </>,
     );
     expect(wrapperOf("bare").className).not.toContain("ps-1");
-    // 4 + 32 + 4 fills the 40px box exactly, mirroring the trailing slot.
+
     expect(wrapperOf("prefixed").className).toContain("ps-1");
   });
 });
 
 describe("Input disabled", () => {
-  /* Decision: the trailing slot stays LIVE next to a disabled field (a copy
-       button still works), so the wrapper must not kill pointer events or
-       dim the slot. */
   it("keeps the trailing button clickable and undimmed", () => {
     let clicks = 0;
     render(
@@ -149,7 +133,6 @@ describe("Input disabled", () => {
 });
 
 describe("Input invalid", () => {
-  /* Decision: invalid NEVER colours the border. The error is text. */
   it("keeps neutral chrome on aria-invalid", () => {
     render(<Input placeholder="bad" aria-invalid />);
     expect(wrapperOf("bad").className).not.toMatch(/border-destructive/);
@@ -157,10 +140,6 @@ describe("Input invalid", () => {
 });
 
 describe("Input loading", () => {
-  /* Regression: an absolutely-positioned spinner with a halo centered 4px
-       off the trailing-icon column. The spinner is an in-flow trailing slot
-       member (32px box) and the wrapper snugs its end padding like any
-       trailing content. */
   it("renders the spinner in-flow and snugs the end padding", () => {
     render(<Input placeholder="busy" loading />);
     const wrapper = wrapperOf("busy");
@@ -169,15 +148,13 @@ describe("Input loading", () => {
     expect(spinner).not.toBeNull();
     expect(spinner?.parentElement?.className).toContain("size-8");
     expect(spinner?.parentElement?.className).not.toContain("absolute");
-    // ink, not the quiet ladder: activity must read at full strength
+
     expect(spinner?.parentElement?.className).toContain("text-foreground");
     expect(spinner?.parentElement?.className).not.toContain("icon-quiet");
   });
 });
 
 describe("Input leading icon scale", () => {
-  /* The 40px default renders 20px icons (half the control height); the
-       compact md/sm rungs hold 16px. */
   it("runs 20px on the default and 16px on md", () => {
     render(
       <>
@@ -197,7 +174,6 @@ describe("Input leading icon scale", () => {
 });
 
 describe("Input default size", () => {
-  /* Decision (2026-07-26): 40 is the house default; 36 is size="md". */
   it("is the 40px rounded-xl rung", () => {
     render(<Input placeholder="d" />);
     const cls = wrapperOf("d").className;
@@ -207,8 +183,6 @@ describe("Input default size", () => {
 });
 
 describe("Input focus forwarding", () => {
-  /* Regression: the wrapper hovered as one box but only the inner input
-       was clickable. The padding and icon gutter were dead space. */
   it("forwards a click on the wrapper's dead space to the field", () => {
     render(
       <Input placeholder="findable" leading={<Icon icon={SearchIcon} />} />,
@@ -243,11 +217,6 @@ describe("Input focus forwarding", () => {
   });
 });
 
-/* The bare field's ONLY focus cue is the global focus-visible outline. The
-   bordered field suppresses that outline because its own border plus ring
-   already paint the ink. Hoisting outline-none out of the ternary reads like
-   a harmless dedupe and would leave the inline-edit title with no focus
-   affordance at all, so both directions are pinned. */
 describe("Input bare mode", () => {
   it("drops the box so the caller owns the chrome", () => {
     render(<Input bare placeholder="title" />);
@@ -265,9 +234,6 @@ describe("Input bare mode", () => {
     expect(cls).not.toContain("outline-hidden");
   });
 
-  /* outline-hidden (a transparent outline), not outline-none: the ink
-       border and ring are box-shadows that forced-colors mode strips, and a
-       transparent outline is what Windows High Contrast still paints. */
   it("still suppresses the outline when it has a border to pair with", () => {
     render(<Input placeholder="boxed" />);
     const cls = screen.getByPlaceholderText("boxed").className;
@@ -289,9 +255,6 @@ describe("Input direction", () => {
   });
 });
 
-/* The browser's own cancel glyph ignores the system; a search field clears
-   through the house ghost button instead, and the caller's onChange sees the
-   empty value as if it were typed. */
 describe("a search field's clear button", () => {
   function SearchField(): React.JSX.Element {
     const [value, setValue] = React.useState("oud");
@@ -321,9 +284,6 @@ describe("a search field's clear button", () => {
   });
 });
 
-/* The floating label is the field's name, and :placeholder-shown is the only
-   way CSS can tell the box is empty, so a floating field always carries a
-   placeholder, blank unless the caller gave an example. */
 describe("Input with a floating label", () => {
   it("names the field and keeps a placeholder for the empty check", () => {
     render(<Input floatingLabel="Email" defaultValue="" />);

@@ -8,12 +8,6 @@ import { Segmented, SegmentedItem } from "../segmented";
 import { Switch } from "../switch";
 import { Textarea } from "../textarea";
 
-/* Anything unavailable says WHY, and the reason has to stay REACHABLE.
-   The `disabled` attribute drops an element from the tab order and
-   suppresses hover, which are the two ways anyone would look for the
-   explanation, so a control with a reason goes aria-disabled instead.
-   These pin the contract on every control that can refuse. */
-
 const REASON = "اختر خطة مدفوعة أولاً";
 
 describe("disabledReason, controls", () => {
@@ -37,7 +31,7 @@ describe("disabledReason, controls", () => {
     render(node);
     const target = document.querySelector("[aria-disabled='true']");
     expect(target).not.toBeNull();
-    // the real attribute would make the reason unreachable
+
     expect(target?.hasAttribute("disabled")).toBe(false);
   });
 
@@ -54,9 +48,6 @@ describe("disabledReason, controls", () => {
 });
 
 describe("disabledReason, fields", () => {
-  /* A field cannot refuse the way a button does: aria-disabled alone
-       still accepts typing, so readOnly is what actually stops editing
-       while keeping the field focusable. */
   it.each([
     ["input", <Input key="i" aria-label="السعر" disabledReason={REASON} />],
     [

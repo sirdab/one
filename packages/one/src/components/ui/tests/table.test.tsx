@@ -47,14 +47,10 @@ const PLAIN_HOVER =
 const band = (): Element | null =>
   document.querySelector('[data-slot="table-cell-band"]');
 
-/** The header renders a TableRow too, so always ask the body for a row. */
 const bodyRow = (): Element | null =>
   document.querySelector('[data-slot="table-body"] [data-slot="table-row"]');
 
 describe("Table", () => {
-  /* Rows are DATA, not controls: the 52px --row-height rhythm, on the
-       band inside each cell (a shared TableRow cannot set height without
-       forcing the 40px header to 52). */
   it("keeps rows on the 52px data rhythm", () => {
     renderTable();
     expect(band()?.className).toContain("h-row");
@@ -66,8 +62,6 @@ describe("Table", () => {
     expect(band()?.closest("td")?.className).toContain("align-top");
   });
 
-  /* The header is the control tier: 40px cells reading text-label at
-       muted-foreground, so data outranks its labels. */
   it("renders 40px label-tone header cells", () => {
     renderTable();
     const head = document.querySelector('[data-slot="table-head"]');
@@ -77,9 +71,6 @@ describe("Table", () => {
     expect(cls).toContain("text-muted-foreground");
   });
 
-  /* Every row is divided, header included [Sirdab 2026-07-28]. The
-       line rides the CELL box (p-0, so it runs edge to edge) while the
-       band's 6px of air keeps the pill clear of it. */
   it("divides every row at the band's edge", () => {
     renderTable();
     for (const slot of ["table-head", "table-cell"]) {
@@ -93,9 +84,6 @@ describe("Table", () => {
     expect(band()?.className).toContain("my-1.5");
   });
 
-  /* Hover is a rounded PILL, painted by the bands of the row's cells: the
-       bands touch, so their fills read as one. It needs border-separate, a
-       collapsed table refuses border-radius. */
   it("hovers as one rounded pill, painted on the cell bands", () => {
     renderTable({ interactive: true });
     const table = document.querySelector('[data-slot="table"]');
@@ -108,15 +96,10 @@ describe("Table", () => {
     ) ?? []) {
       expect(cell.className).toContain(PLAIN_HOVER);
     }
-    // the fill is the bands', never the row's
+
     expect(row?.className).not.toContain("row-surface");
   });
 
-  /* A <tr> with an out-of-flow child (a pseudo-element with position:
-       absolute) gets that child wrapped in an
-       anonymous table cell: every body row grew a column its header lacks
-       and the whole table sat one column off its headings from 640px up.
-       jsdom cannot see that, so the rule is pinned where it starts. */
   it("hangs nothing off a row: no pseudo-element, no positioned child", () => {
     render(
       <Table>
@@ -149,8 +132,6 @@ describe("Table", () => {
     }
   });
 
-  /* A highlight on a row that opens nothing is a lie: the fill is
-       gated on the row declaring itself interactive. */
   it("leaves a display-only row unlit and unpointered", () => {
     renderTable();
     const row = bodyRow();
@@ -158,8 +139,6 @@ describe("Table", () => {
     expect(row?.className).not.toContain("cursor-pointer");
   });
 
-  /* The row-wide target is a real LINK stretched over the row, not a
-       div[role=button] swallowing the controls inside it. */
   it("opens the row through a stretched link, actions above it", () => {
     render(
       <Table>
@@ -183,16 +162,13 @@ describe("Table", () => {
     const link = screen.getByRole("link", { name: "شنطة جلد" });
     expect(link.className).toContain("after:absolute");
     expect(link.className).toContain("after:inset-0");
-    // the button stays reachable: flattened under the overlay it
-    // would be unclickable
+
     expect(screen.getByRole("button", { name: "حذف" })).not.toBeNull();
     const actions = document.querySelector('[data-slot="table-row-actions"]');
     expect(actions?.className).toContain("z-raised");
     expect(actions?.className).toContain("relative");
   });
 
-  /* numeric ends the column and sets tabular figures, so digits line
-       up down the column instead of drifting with their glyph widths. */
   it("ends and tabularises numeric columns", () => {
     renderTable();
     const heads = document.querySelectorAll('[data-slot="table-head"]');
@@ -204,24 +180,17 @@ describe("Table", () => {
     expect(bands[0].className).not.toContain("tabular");
   });
 
-  /* …and the number column hugs the PHYSICAL right in Arabic too: a
-       number is internally left-to-right, so its least significant digit
-       is always rightmost. Aligning by the logical end there staggered
-       the decimals by up to 12px (measured in the browser). */
   it("keeps numbers right-flush under RTL", () => {
     renderTable();
     const heads = document.querySelectorAll('[data-slot="table-head"]');
     expect(heads[1].className).toContain("rtl:text-start");
     const bands = document.querySelectorAll('[data-slot="table-cell-band"]');
     expect(bands[1].className).toContain("rtl:justify-start");
-    // the text column must NOT flip: it follows the page direction
+
     expect(heads[0].className).not.toContain("rtl:");
     expect(bands[0].className).not.toContain("rtl:");
   });
 
-  /* A long name in an auto-sized table widened every column into a
-       sideways scroll. The fill column claims the leftover width and gives
-       back its min-content, so its text truncates in the row instead. */
   it("lets one fill column take the rest and give back its min-content", () => {
     render(
       <Table>
@@ -249,11 +218,6 @@ describe("Table", () => {
     expect(cells[1].className).not.toContain("max-w-0");
   });
 
-  /* A ticked row is tinted (alpha-100, one step past the hover's
-       alpha-50) and deepens under the pointer, so the pointer is still seen
-       on it. The bands read the row's data-selected, so the plain hover
-       steps aside on a ticked row instead of racing the deeper one on the
-       stylesheet's order. */
   it("tints a selected row's bands, and deepens the tint under the pointer", () => {
     render(
       <Table>
@@ -296,8 +260,6 @@ describe("Table", () => {
     expect(row?.hasAttribute("data-interactive")).toBe(true);
   });
 
-  /* The list kit's tap layer covers the row, so a row that can be selected
-       is the positioned box it measures from, link or no link. */
   it("flags and anchors a selectable row that opens nothing", () => {
     render(
       <Table>
@@ -320,10 +282,6 @@ describe("Table", () => {
     expect(rest.className).not.toContain("row-surface");
   });
 
-  /* A phone hides columns (hidden, hidden sm:table-cell, max-sm:hidden), so
-       the first and last CHILD are not always the first and last cell it
-       shows. The edge gutters and the pill's outer corners both read the cells
-       a phone shows, so a hidden cell at an end never squares the pill. */
   it("insets and rounds the cells a phone shows at its edges, not the DOM's first and last", () => {
     render(
       <Table>
@@ -353,18 +311,16 @@ describe("Table", () => {
       expect(band.className).toContain(
         `max-sm:[td:nth-last-child(1_of_${shown})>&]:rounded-e-xl`,
       );
-      // from sm the DOM's own ends are the ends; logical, so RTL holds
+
       expect(band.className).toContain("[td:first-child>&]:rounded-s-xl");
       expect(band.className).toContain("[td:last-child>&]:rounded-e-xl");
     }
-    // the corner is the band's: a cell box has no radius of its own
+
     for (const cell of document.querySelectorAll('[data-slot="table-cell"]')) {
       expect(cell.className).not.toContain("rounded");
     }
   });
 
-  /* The doctrine's list-of-rows look must not cost the semantics that
-       make a <table> worth shipping. */
   it("keeps real table semantics", () => {
     renderTable();
     expect(screen.getByRole("table")).not.toBeNull();

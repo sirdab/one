@@ -18,31 +18,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 import { Toggle } from "./toggle";
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 
-/* The Sirdab photo editor: crop to a ratio, turn, mirror, cap the size, then
-   hand back the settings and the rendered file. Built on react-easy-crop,
-   which owns the drag, pinch and wheel zoom.
-
-   - Controlled from the outside by two things: `src` is always the ORIGINAL
-     (the upload as the merchant made it), and `initialEdit` the settings
-     last applied to it. The editor replays them rather than editing an
-     already edited file, so repeated edits never lose quality.
-   - `onApply(edit, blob)` gets both halves: the settings to store and the
-     file they produce (WebP where the browser can encode it, JPEG where it
-     cannot). `onCancel` discards; Esc is the same as Cancel.
-   - The canvas takes all the room it can and the photo sits in it large,
-     on the quiet sunken ground, with the modal shadow and soft corners on
-     the kept area; what falls outside the crop is ghosted, not hidden, so
-     the merchant can see what they are cutting.
-   - The side panel (under the canvas on a phone) takes the caller's own
-     fields first through `children` (the product form's captions), then
-     the crop and transform controls, then the size cap, then the actions.
-   - Every word comes from `labels`: a primitive takes no copy of its own.
-
-   The crop is kept in the original's pixels, measured on the image as the
-   editor shows it: turned by `rotation`, then mirrored. That is the frame
-   react-easy-crop reports in once the flips ride its media transform in
-   screen space, and it is the frame `renderImageEdit` draws in. */
-
 export const IMAGE_EDITOR_PORTRAIT = ["1:1", "2:3", "5:7", "9:16"] as const;
 export const IMAGE_EDITOR_LANDSCAPE = ["3:2", "7:5", "16:9"] as const;
 export const IMAGE_EDITOR_SIZES = [null, 1080, 1600, 2048] as const;
@@ -54,7 +29,6 @@ export type ImageEditorAspect =
 
 export type ImageEditorRotation = 0 | 90 | 180 | 270;
 
-/** Structurally the stored ImageEdit, so the caller passes it straight through. */
 export type ImageEditorEdit = {
   aspect: ImageEditorAspect;
   crop: { x: number; y: number; width: number; height: number };
@@ -65,32 +39,29 @@ export type ImageEditorEdit = {
 };
 
 export type ImageEditorLabels = {
-  /** The crop and transform group's heading. */
   transform: string;
   portrait: string;
   landscape: string;
-  /** The ratio chip that keeps the photo's own shape. */
+
   original: string;
   rotate: string;
   flipHorizontal: string;
   flipVertical: string;
-  /** The size cap group's heading and its "no cap" choice. */
+
   size: string;
   sizeOriginal: string;
-  /** One size choice, by its long edge in pixels. */
+
   sizeEdge: (px: number) => string;
-  /** The canvas's accessible name: what it is and that it drags. */
+
   canvas: string;
   apply: string;
   cancel: string;
-  /** Shown when the photo could not be read or rendered. */
+
   failed: string;
-  /** The zoom slider's name; the round shape needs it. */
+
   zoom?: string;
 };
 
-/** `circle` is the profile picture: a round 1:1 crop with a zoom slider and
- *  a turn, rendered square at 512px (the circle is CSS). */
 export type ImageEditorShape = "rect" | "circle";
 
 const CIRCLE_EDGE = 512;
@@ -98,16 +69,15 @@ const ZOOM_MIN = 1;
 const ZOOM_MAX = 3;
 
 export type ImageEditorProps = {
-  /** The original photo, never a previous render. */
   src: string;
   initialEdit?: ImageEditorEdit | null;
   labels: ImageEditorLabels;
   onApply: (edit: ImageEditorEdit, blob: Blob) => void | Promise<void>;
   onCancel: () => void;
-  /** The caller is still storing the last apply: hold the actions. */
+
   busy?: boolean;
   shape?: ImageEditorShape;
-  /** The caller's own fields, shown first in the side panel. */
+
   children?: React.ReactNode;
   className?: string;
 };
@@ -143,7 +113,6 @@ function turnsSideways(rotation: ImageEditorRotation): boolean {
   return rotation === 90 || rotation === 270;
 }
 
-/** The long-edge cap, never an upscale. */
 function outputScale(crop: ImageEditorEdit["crop"], maxEdge: number | null) {
   const edge = Math.max(crop.width, crop.height);
   return maxEdge != null && edge > maxEdge ? maxEdge / edge : 1;
@@ -157,8 +126,6 @@ function toBlob(
   return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
 }
 
-/* Crossorigin so the canvas stays readable: the photos live on a storage
-   host, and a tainted canvas refuses toBlob. */
 export function loadEditorImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -169,7 +136,6 @@ export function loadEditorImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-/** Replays an edit on the original and encodes the result. */
 export async function renderImageEdit(
   image: HTMLImageElement,
   edit: ImageEditorEdit,
@@ -186,9 +152,7 @@ export async function renderImageEdit(
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("no 2d canvas");
   ctx.imageSmoothingQuality = "high";
-  // Read bottom up: turn the photo about its centre, mirror it in the
-  // frame the editor showed, seat it in its rotated box, cut the crop
-  // out, then scale to the cap.
+
   ctx.scale(scale, scale);
   ctx.translate(-edit.crop.x, -edit.crop.y);
   ctx.translate(boxW / 2, boxH / 2);
@@ -198,8 +162,7 @@ export async function renderImageEdit(
 
   const webp = await toBlob(canvas, "image/webp", 0.9);
   if (webp && webp.type === "image/webp") return webp;
-  // No WebP encoder (older Safari hands back a PNG): JPEG has no alpha,
-  // so a transparent photo gets a white ground rather than a black one.
+
   const flat = document.createElement("canvas");
   flat.width = canvas.width;
   flat.height = canvas.height;
@@ -256,8 +219,6 @@ export function ImageEditor({
   const [failed, setFailed] = React.useState(false);
   const working = busy || rendering;
 
-  // The restore only means anything for the first layout of this photo;
-  // a turn or a ratio change puts the stored rectangle out of frame.
   const [restore, setRestore] = React.useState<Area | undefined>(
     initialEdit?.crop,
   );
@@ -282,7 +243,6 @@ export function ImageEditor({
   });
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent): void {
-      // A menu or popover inside the side slot closes itself first.
       if (event.key !== "Escape" || event.defaultPrevented) return;
       onCancelRef.current();
     }
@@ -328,7 +288,7 @@ export function ImageEditor({
     setFailed(false);
     try {
       const blob = await renderImageEdit(await loadEditorImage(src), edit);
-      // Encoding can finish after cancellation or after the host closes.
+
       if (version !== renderVersion.current) return;
       await onApply(edit, blob);
     } catch {
@@ -343,16 +303,8 @@ export function ImageEditor({
   return (
     <div
       className={cn(
-        /* Side by side from lg, the editor fills its frame and
-                   only the controls column scrolls. Stacked below lg it is
-                   its natural height, so the frame around it scrolls and
-                   that frame's bottom padding lands under the buttons: a
-                   flex-1 min-h-0 editor shrank to the frame and spilled
-                   past it, and padding never follows a spill. */
         "flex flex-col gap-4",
-        // The round editor always stacks: it lives in a dialog about
-        // 448px wide, where side by side left the canvas 136px and
-        // the crop circle 42px.
+
         !round && "lg:min-h-0 lg:flex-1 lg:flex-row",
         className,
       )}
@@ -377,9 +329,7 @@ export function ImageEditor({
             initialCroppedAreaPixels={restore}
             showGrid={false}
             cropShape={round ? "round" : "rect"}
-            // The flips ride the media transform in SCREEN space
-            // (outside the rotation), so a horizontal flip stays
-            // horizontal on a turned photo.
+
             transform={`translate(${position.x}px, ${position.y}px) ${mirror} rotate(${rotation}deg) scale(${zoom})`}
             mediaProps={{ crossOrigin: "anonymous" }}
             classes={{
@@ -389,12 +339,7 @@ export function ImageEditor({
               containerStyle: { background: "transparent" },
               cropAreaStyle: {
                 border: "none",
-                // The kept area floats on the modal shadow;
-                // the rest of the photo is ghosted by the
-                // ground colour, not blacked out (a dark
-                // scrim was too heavy). 72%, not more: at
-                // 86% the ghost was so close to the ground
-                // that the cut-away photo vanished into it.
+
                 boxShadow:
                   "var(--shadow-modal), 0 0 0 9999em color-mix(in srgb, var(--surface-sunken) 72%, transparent)",
               },
@@ -456,8 +401,6 @@ export function ImageEditor({
                 reframe();
               }}
             >
-              {/* Clockwise in either direction: a turn is a
-                                turn of the photo, not of the reading order. */}
               <Icon icon={RotateIcon} />
             </Button>
             {round ? null : (
@@ -567,7 +510,7 @@ function RatioRow({
   value: ImageEditorAspect;
   onChange: (next: ImageEditorAspect) => void;
   originalLabel: string;
-  /** The group's name: the orientation tab it sits under. */
+
   label: string;
 }): React.JSX.Element {
   const choices: ImageEditorAspect[] = ["original", ...ratios];
@@ -586,7 +529,6 @@ function RatioRow({
           {choice === "original" ? (
             originalLabel
           ) : (
-            // Ratios read width first in every language.
             <span dir="ltr" className="tabular-nums">
               {choice}
             </span>

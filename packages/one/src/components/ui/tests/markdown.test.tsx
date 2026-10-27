@@ -3,11 +3,6 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Markdown, type MarkdownLinkProps } from "../markdown";
 
-/* Two jobs the studio relies on: GFM tables render as real tables (the
-   assistant answers "top products" with one), and every link goes through
-   the host's renderLink so an order link routes in-app instead of reloading
-   the page. Plus the streaming promise: half-written syntax is completed,
-   never painted as raw asterisks. */
 describe("Markdown", () => {
   it("renders a table and routes links through renderLink", async () => {
     const renderLink = vi.fn(({ href, children }: MarkdownLinkProps) => (

@@ -24,11 +24,6 @@ import {
   SelectValue,
 } from "../select";
 
-/* Below md a Select opens the house tray instead of the popover. The decision
-   is made inside the open event from the viewport, so every case here stubs
-   the media query the way a phone answers it; the setup's default stub says
-   "wide", which is why every other select test stays on the popover. */
-
 const realMatchMedia = window.matchMedia;
 
 function stubViewport(belowMd: boolean): void {
@@ -490,11 +485,6 @@ describe("the tray's search", () => {
   });
 
   it("keeps its filtered rows while closing, and empties only on the next open", async () => {
-    // jsdom runs no animations, so the exit is faked: a closed node
-    // reports a named animation that never fires animationend, which keeps
-    // the content mounted the way the slide does on a phone. Presence
-    // captures the style object when the node mounts, so the stub must be
-    // in place before the tray opens.
     const realStyle = globalThis.getComputedStyle.bind(globalThis);
     vi.spyOn(globalThis, "getComputedStyle").mockImplementation(
       (element: Element, pseudo?: string | null) => {

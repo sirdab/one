@@ -4,17 +4,6 @@ import { describe, expect, it } from "vitest";
 
 import { contrastRatio } from "../index";
 
-/* THE STATUS TONE SCALE (foundation.css, sections 3 and 4). Five tones,
-   neutral, attention, warning, critical, success, each with a wash, a text
-   step and a glyph step. The numbers the app's chips rely on are pinned
-   here from the oklch declarations themselves, the way a browser resolves
-   them, so retuning a ramp step shows up as a failing ratio and not as a
-   chip somebody squints at on a phone in sunlight.
-
-   The rule behind every pair: a WORD on its wash needs 4.5:1, an ICON on a
-   card needs 3:1. The 700 text step at icon size reads as a dull brown, so
-   icons take the brighter -glyph step. */
-
 const css = readFileSync(join(__dirname, "..", "foundation.css"), "utf8")
   .replace(/\/\*[\s\S]*?\*\//g, "")
   .replace(/@supports[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, "");
@@ -40,8 +29,6 @@ for (const block of css.matchAll(/([^{};]+)\{([^{}]*)\}/g)) {
   }
 }
 
-/* A .dark element takes its own block's declaration, or inherits the page's
-   when it has none; a light element only ever sees the page's. */
 const raw = (name: string, scope: Scope): string => {
   const named = decls.filter((d) => d.name === name);
   const page = named.filter(
@@ -51,7 +38,7 @@ const raw = (name: string, scope: Scope): string => {
   const pool = scope === "dark" && dark.length > 0 ? dark : page;
   const last = pool.sort((a, b) => a.at - b.at).at(-1);
   if (!last) throw new Error(`${name} is not declared for ${scope}`);
-  /* Prettier wraps a long var() across lines; the cascade does not care. */
+
   return last.value.replace(/\(\s+/g, "(").replace(/\s+\)/g, ")");
 };
 
@@ -92,8 +79,6 @@ const hex = (lin: Rgb): string =>
     )
     .join("");
 
-/* Follows var() aliases to the oklch literal and returns it as the 8-bit
-   hex a browser paints. */
 const colour = (name: string, scope: Scope): string => {
   let value = raw(name, scope);
   for (let hops = 0; hops < 8; hops++) {
@@ -118,8 +103,6 @@ const literal = (name: string, scope: Scope): string => {
   return value;
 };
 
-/* An #rrggbbaa wash composited over an opaque page, the way the browser
-   paints --muted over the card. */
 const composite = (wash: string, page: string): string => {
   const m = wash.match(/^#([0-9a-f]{6})([0-9a-f]{2})$/i);
   if (!m) throw new Error(`${wash} is not an 8-digit hex`);
@@ -154,9 +137,6 @@ describe("the attention ramp", () => {
   });
 
   it("stays inside sRGB at every step", () => {
-    /* 700, 800 and 900 were first drawn at chroma 0.106, 0.093 and 0.083,
-           where the blue channel goes negative and the browser clips it to a
-           different, duller colour than the declaration says. */
     for (const step of steps) {
       const lin = parseOklch(raw(`--attention-${step}`, "light"));
       expect(lin, `--attention-${step}`).not.toBeNull();
@@ -172,8 +152,6 @@ describe("the attention ramp", () => {
   });
 
   it("shares the warning wash's lightness and differs by hue", () => {
-    /* The two 100 steps sit at the same 94.5% lightness (1.01:1 apart);
-           what tells a draft from a warning is the hue, 100 against 58. */
     expect(raw("--attention-100", "light")).toMatch(/^oklch\(94\.5% /);
     expect(raw("--warning-100", "light")).toMatch(/^oklch\(94\.5% /);
     expect(raw("--attention-100", "light")).toMatch(/ 100\)$/);
@@ -183,9 +161,6 @@ describe("the attention ramp", () => {
 
 describe("the tone washes", () => {
   it("read neutral's word on its wash, in light and inside a .dark scope", () => {
-    /* Neutral has no ramp: its wash is --muted, a gray alpha over the
-           page, and its word is --foreground. Composite the wash over the
-           page the way the browser does and pin the pair like the others. */
     for (const scope of ["light", "dark"] as const) {
       const page = colour("--background", scope);
       const ink = colour("--foreground", scope);
@@ -260,8 +235,6 @@ describe("the glyph steps", () => {
   });
 
   it("give neutral the gray that holds 3:1, not the quiet-icon opacity", () => {
-    /* icon-quiet composites to 2.96:1 on the rail grey; gray-500 is the
-           ramp's fixed point, the same in both themes. */
     expect(alias("--neutral-glyph", "light")).toBe("var(--gray-500)");
     expect(alias("--neutral-glyph", "dark")).toBe("var(--gray-500)");
   });

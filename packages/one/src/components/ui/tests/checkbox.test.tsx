@@ -22,8 +22,6 @@ describe("Checkbox states", () => {
   });
 
   it("indeterminate takes the same ink fill but with a minus, never the check", () => {
-    // The one signal a tri-state must never send: a check for a
-    // partial selection.
     render(<Checkbox aria-label="all" checked="indeterminate" />);
     const el = box();
     expect(el.getAttribute("data-state")).toBe("indeterminate");
@@ -47,7 +45,7 @@ describe("Checkbox states", () => {
       expect(cls).toContain("opacity-0");
       expect(cls).toContain("ease-out");
       expect(cls).toContain("motion-reduce:transition-none");
-      // Rule 8: no overshoot, so no spring and no half-size start.
+
       expect(cls).not.toContain("ease-spring");
       expect(cls).not.toContain("scale-50");
     }
@@ -55,9 +53,6 @@ describe("Checkbox states", () => {
 });
 
 describe("Checkbox geometry", () => {
-  /* 16px with a 4px corner on a mouse; on a touch screen the box is 20px
-       with a 6px corner (the nearest on-scale corner to the same
-       proportion) and a 44px tap box around it. */
   it("is 16px on a mouse and 20px on touch, with the corner to match", () => {
     render(<Checkbox aria-label="size" />);
     const cls = box().className;
@@ -73,9 +68,6 @@ describe("Checkbox geometry", () => {
     expect(box().classList.contains("touch-target")).toBe(true);
   });
 
-  /* The tick is drawn at 14px (18 on touch) at stroke 3, so it renders at
-       1.75px (2.25) instead of the 1px hairline it was at 12px, which read
-       grey at 2x. */
   it("draws the glyphs in a 14px box (18 on touch) at stroke 3", () => {
     render(<Checkbox aria-label="glyph" />);
     const glyphBox = box().querySelector("svg")?.parentElement;
@@ -90,8 +82,6 @@ describe("Checkbox geometry", () => {
     }
   });
 
-  /* Only the one box recipe exists: CheckboxMark, the same box inside a
-       menu row, can never drift from the control. */
   it("shares the box recipe with CheckboxMark", () => {
     render(
       <>
@@ -146,7 +136,6 @@ describe("CheckboxMark", () => {
 
 describe("Checkbox interaction", () => {
   it("hover deepens the border one rung, gated to unchecked", () => {
-    // The checked ink must never get a hover border repaint.
     render(<Checkbox aria-label="hover" />);
     expect(box().className).toContain(
       "hover:data-[state=unchecked]:border-input-border-hover-form",

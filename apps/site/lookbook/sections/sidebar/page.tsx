@@ -18,7 +18,6 @@ import {
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function SidebarPage({
   lang,
 }: {
@@ -56,13 +55,7 @@ export default async function SidebarPage({
               ))}
             </SidebarMenu>
           </SidebarGroup>
-          {/* A second group under a LABEL rather than a rule: the
-                        rail is one list with a differently-named thing after
-                        it, not a divided list. The label animates away on
-                        collapse, so the icon rail below stays a clean column
-                        of glyphs. The rail takes gap-0 and
-                        this group pt-0, so the seam is one group's pb-3 and
-                        not three helpings of the same space. */}
+
           <SidebarGroup className="pt-0">
             <SidebarGroupLabel>{s("Workspace")}</SidebarGroupLabel>
             <SidebarMenu>
@@ -82,9 +75,6 @@ export default async function SidebarPage({
     );
   }
 
-  /* The studio's rail. Peeked, the container comes back over the page with
-       the popover shadow while the gap stays shut: the trigger next to it
-       does not move. Static here; the shell owns the hover and the timer. */
   function OffcanvasRail({
     peek = false,
   }: {
@@ -121,8 +111,6 @@ export default async function SidebarPage({
         title="Expanded"
         caption="256px, the nav recipe at rest and current"
       >
-        {/* transform-gpu on every card that mounts a rail: the
-                    Offcanvas card below explains why. */}
         <div className="border-border h-80 transform-gpu overflow-hidden rounded-xl border">
           <SidebarProvider className="min-h-full">
             <Rail active="orders" />
@@ -148,10 +136,6 @@ export default async function SidebarPage({
         title="Offcanvas"
         caption="the rail leaves entirely, for a full-bleed workspace"
       >
-        {/* transform-gpu: the containing block for the primitive's
-                    FIXED container (the shell does the same on its workspace
-                    card), so a rail that comes back on screen floats inside
-                    this box and not over the lookbook's own nav. */}
         <div className="border-border h-80 transform-gpu overflow-hidden rounded-xl border">
           <SidebarProvider defaultOpen={false} className="min-h-full">
             <OffcanvasRail />

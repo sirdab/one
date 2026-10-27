@@ -4,50 +4,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 import { Label } from "./label";
 
-/* The Sirdab field: the form layout, one recipe for every form in the studio.
-   Taken from shadcn's `field` and trued; what a field LOOKS like is
-   field-chrome.ts (Input, Textarea, Select and Combobox all read it), so this
-   file only decides how a field is laid out, labelled and explained.
-
-   The stack, 6px apart, always in this order:
-
-       <Field>
-           <FieldLabel htmlFor="email">Contact email</FieldLabel>
-           <Input id="email" aria-describedby="email-help" placeholder="hello@matjar.sa" />
-           <FieldDescription id="email-help">Shown in the footer of your policy pages.</FieldDescription>
-       </Field>
-
-   LABELS name (1 to 3 words), PLACEHOLDERS exemplify (an example value, never
-   "optional", never an instruction, never the label again), HELP explains the
-   shape or the reason in one line, ERRORS say the fix. Required is the
-   unmarked majority; the minority carries its word in the label's `hint`
-   ("(optional)"), never an asterisk (label.tsx has the rule and its flip for a
-   majority-optional form).
-
-   FieldDescription is the quiet caption in `text-muted-foreground`: help is
-   read, so it takes the readable tone, not the quieter subtle one.
-   FieldError is destructive caption text, `role="alert"` so it is read when it
-   appears, and replaces the description in the same slot. The border never
-   turns red (invalid colours nothing; the text under the field carries it):
-   show an error after the field is left or a save is refused, never on an
-   untouched field. Wire both to the control with aria-describedby.
-
-   Every control inside a Field is 44px tall below sm (Input's touch rung,
-   --control-touch), 40px from sm: a thumb needs the floor, and a form that
-   asks for 16px type on a phone should not hand it a 40px box. The rung is
-   here rather than at each call site so a field never has to be told.
-
-   GROUPING. FieldGroup is a 16px stack and the container FieldRow queries.
-   FieldRow is the two-up pair that belongs together (first and last name, type
-   and amount, start and end, GA4 and Meta ids): two columns once the GROUP is
-   28rem wide, one below, so a side column and a phone both stack. Three-up
-   (`columns={3}`) is for short numbers only (length, width, height) and stays
-   three across on a phone. FieldSet with a FieldLegend names a group; past
-   five fields, split into sections (a Separator between CardContent blocks)
-   or into cards.
-
-   A switch or checkbox row is `orientation="horizontal"`: the control and its
-   text on one axis, 12px apart. */
 const fieldVariants = cva("group/field flex w-full", {
   variants: {
     orientation: {
@@ -75,10 +31,6 @@ function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
   );
 }
 
-/* A legend is not a flex item (the browser renders it on the fieldset's top
-   edge), so the gap does not reach it: its own bottom margin stands in for it,
-   and a description straight after it pulls back up to sit 4px under, the
-   title and description rhythm of a card header. */
 function FieldLegend({
   className,
   variant = "legend",
@@ -112,9 +64,6 @@ function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-/* Two fields that belong together, side by side by the width of their
-   FieldGroup (28rem, the container query), one column under it. The house
-   addition to shadcn's set. */
 function FieldRow({
   className,
   columns = 2,
@@ -162,8 +111,6 @@ function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-/* Our Label, so the name, the hint and the control-row alignment are one
-   implementation. */
 function FieldLabel({
   className,
   ...props

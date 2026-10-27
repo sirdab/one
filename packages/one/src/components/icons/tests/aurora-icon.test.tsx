@@ -3,12 +3,6 @@ import { describe, expect, it } from "vitest";
 
 import { AssistantAuroraIcon } from "../shell";
 
-/* The assistant's mark paints from role tokens the theme scopes resolve
-   (AURORA in packages/foundation/src/foundation.css), or from a texture the
-   app hands in. A stop that names a palette token directly would keep its
-   light-scope color inside a .dark scope, which is how the mark once went
-   missing on the landing's night ground. */
-
 const MARK_ROLE = /^var\(--aurora-mark-[\w-]+\)$/;
 
 const stopColor = (stop: Element): string =>

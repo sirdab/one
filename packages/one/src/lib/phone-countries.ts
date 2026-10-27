@@ -1,9 +1,3 @@
-/* Imported from Uqail scripts/phone-countries.mjs, do not edit by hand: every
-   country Twilio Programmable Messaging sends SMS to (its daily pricing
-   sheet, 2026-10-18), with numbering data from libphonenumber-js
-   1.13.15. The hand-checked rows in phone.ts override these. `shared`
-   marks a country that shares its dial code with a bigger one (+1, +44,
-   +7), which a pasted number with that code resolves to instead. */
 import type { PhoneCountry } from "./phone";
 
 export const GENERATED_PHONE_COUNTRIES: readonly PhoneCountry[] = [

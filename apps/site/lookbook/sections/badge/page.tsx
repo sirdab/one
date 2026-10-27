@@ -20,8 +20,6 @@ import { toNumeralLocale } from "../../../lookbook/components/numeral-locale";
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: the rules (whose move it is, which domain value takes which
-   tone) live in ./notes.md and in the badge's header comment. */
 const MEANING: Record<StatusTone, string> = {
   neutral: "Nothing for you to do",
   attention: "Your move, nothing is wrong",
@@ -38,9 +36,6 @@ const WORD: Record<StatusTone, string> = {
   success: "Live",
 };
 
-/* An icon on a card takes the tone's -glyph step (3:1), never the 700 text
-   step, which at icon size reads as a dull brown. A solid disc cuts its
-   mark out in the page colour. */
 const GLYPH: Record<StatusTone, { icon: IconComponent; className: string }> = {
   neutral: {
     icon: ArchivedIcon,

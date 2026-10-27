@@ -1,8 +1,9 @@
+"use client";
+
 import * as React from "react";
 
 import type { IconProps } from "./house-icon";
 
-/* The house theme toggle sun. It has no reading direction. */
 const ThemeSun = React.forwardRef<SVGSVGElement, IconProps>(function ThemeSun(
   { size = 24, ...props },
   ref,

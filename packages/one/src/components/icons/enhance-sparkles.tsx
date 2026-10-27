@@ -1,24 +1,9 @@
+"use client";
+
 import * as React from "react";
 
 import type { IconProps } from "./house-icon";
 
-/* Three four-point sparks: the enhance-prompt glyph.
- *
- * Custom art like TranslateSparkle, and checked against the set first: lucide
- * ships `Sparkles`, but this drawing (one large outlined-and-filled spark with
- * two small companions) is the one the design asked for. Everything else in
- * the product still comes from lucide; these two are the exceptions, not a
- * second icon set.
- *
- * SHAPED LIKE A LUCIDE ICON ON PURPOSE: IconProps, forwarded ref, a 24 box,
- * so it drops into <Icon icon={EnhanceSparkles} /> and inherits Icon's
- * aria-hidden/role pairing.
- *
- * CURRENTCOLOR, NOT BLACK: the source art hardcoded black fills; the variant
- * paints the glyph here, same argument as TranslateSparkle's.
- *
- * It does NOT mirror in RTL: sparks have no reading direction.
- */
 const EnhanceSparkles = React.forwardRef<SVGSVGElement, IconProps>(
   function EnhanceSparkles({ size = 24, ...props }, ref) {
     return (

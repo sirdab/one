@@ -9,47 +9,6 @@ import { formatValue } from "@sirdab/one/foundation";
 import { cn } from "../../lib/utils";
 import { overlayPanelChrome } from "./overlay";
 
-/* The Sirdab chart: recharts wearing house clothes. This is the ONE place
-   recharts' hardcoded defaults (#ccc grids, #fff dot strokes) get mapped
-   onto foundation tokens, so consumers never restyle a chart at the call
-   site: they pass a ChartConfig and compose recharts primitives inside
-   <ChartContainer>.
-
-   Trued after the shadcn add:
-   - Type comes from the roles: text-caption replaces the stock x-small
-     utility on the container and the tooltip, so axis ticks and readouts
-     follow the script scale (Arabic sets larger) instead of a frozen 12px.
-   - The tooltip panel is the shared overlayPanelChrome, the same frosted
-     surface every other floating panel in the system uses, not a stock
-     bordered box with an extra-large shadow.
-   - Swatch geometry uses house radii (rounded-xs) and the default border
-     width; the stock 2px radius and 1.5px dashed border were arbitrary
-     values.
-   - Series colours ride inline style rather than the stock arbitrary-var
-     utilities: the value is per-series runtime data, so no utility can
-     carry it.
-
-   Colour: series colours are the CALLER's decision, declared once in the
-   config and read by recharts as var(--color-<key>). Point them at
-   foundation tokens (chart data is de-emphasised information, not status),
-   never at raw ramp steps.
-
-   Usage:
-       const config = {
-           visitors: { label: "الزوار", color: "var(--color-primary)" },
-       } satisfies ChartConfig;
-
-       <ChartContainer config={config} className="h-64 w-full">
-           <AreaChart data={rows}>
-               <XAxis dataKey="day" tickLine={false} axisLine={false} />
-               <ChartTooltip content={<ChartTooltipContent />} />
-               <Area dataKey="visitors" fill="var(--color-visitors)" />
-           </AreaChart>
-       </ChartContainer>
-*/
-
-// Format: { THEME_NAME: CSS_SELECTOR }. Light only: the product has no dark
-// theme, so a `theme` config carries the one colour.
 const THEMES = { light: "" } as const;
 
 const INITIAL_DIMENSION = { width: 320, height: 200 } as const;
@@ -108,10 +67,6 @@ function ChartContainer({
         data-slot="chart"
         data-chart={chartId}
         className={cn(
-          // The bracket selectors target recharts' own hardcoded
-          // stroke/fill literals, which is why they keep the raw
-          // hex: they are SELECTORS matching what recharts emits,
-          // and the declarations they carry are all tokens.
           "text-caption [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border flex aspect-video justify-center [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-hidden",
           className,
         )}
@@ -128,9 +83,6 @@ function ChartContainer({
   );
 }
 
-/* Series colours reach recharts as CSS custom properties scoped to this
-   chart's data-chart id, so a page can host several charts with different
-   palettes and the same config keys. */
 function ChartStyle({
   id,
   config,
@@ -172,10 +124,6 @@ ${colorConfig
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
-/* The value's text, when no `valueFormatter` is given. Pinned rather than
-   left to toLocaleString(), whose ambient locale is the browser's: a Saudi
-   browser set to Arabic would hand back Arabic-Indic digits, and every
-   number in the studio is Western (foundation numerals.ts). */
 function defaultValueText(value: number | string): string {
   return typeof value === "number"
     ? formatValue(value, "en-US")
@@ -204,9 +152,7 @@ function ChartTooltipContent({
     indicator?: "line" | "dot" | "dashed";
     nameKey?: string;
     labelKey?: string;
-    /** The value's text only, keeping the swatch and the series label
-            the component draws. `formatter` replaces the whole row; this
-            replaces just the digits, which is what a numerals rule needs. */
+
     valueFormatter?: (value: number | string) => string;
   } & Omit<
     RechartsPrimitive.DefaultTooltipContentProps<
@@ -300,9 +246,7 @@ function ChartTooltipContent({
                               indicator === "dashed",
                             "my-0.5": nestLabel && indicator === "dashed",
                           })}
-                          // The series colour is runtime
-                          // data, so it rides inline;
-                          // no utility can carry it.
+
                           style={{
                             backgroundColor:
                               indicator === "dashed"
@@ -397,9 +341,6 @@ function ChartLegendContent({
   );
 }
 
-/* A payload entry can name its config key three ways: the key itself, a
-   string field on the entry, or a string field on its nested payload
-   (grouped/stacked series). Resolve in that order. */
 function getPayloadConfigFromPayload(
   config: ChartConfig,
   payload: unknown,

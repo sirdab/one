@@ -4,7 +4,6 @@ import {
 } from "../../../lookbook/components/chart-demo";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default function ChartPage({
   lang = "en",
 }: {

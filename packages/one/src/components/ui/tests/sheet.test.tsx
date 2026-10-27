@@ -17,8 +17,6 @@ function renderSheet(side?: "start" | "end" | "bottom") {
 }
 
 describe("Sheet", () => {
-  /* The one-scrim doctrine: the drawer shares the dialog's frosted
-       veil. The stock dark off-canvas dim is the pattern this replaces. */
   it("shares the dialog's frosted scrim", () => {
     renderSheet();
     const overlay = document.querySelector('[data-slot="sheet-overlay"]');
@@ -28,9 +26,6 @@ describe("Sheet", () => {
     expect(cls).not.toContain("bg-black");
   });
 
-  /* The drawer pattern [Sirdab 2026-07-28]: a FLOATING inset panel
-       (8px off the viewport, rounded on every corner) on bg-background
-       with shadow-modal-lg. */
   it("floats inset and rounded on our tokens", () => {
     renderSheet();
     const content = document.querySelector('[data-slot="sheet-content"]');
@@ -54,9 +49,9 @@ describe("Sheet", () => {
     expect(content.className).toContain("inset-x-2");
     expect(content.className).toContain("bottom-2");
     expect(content.className).toContain("rounded-2xl");
-    // the vaul grab handle
+
     expect(content.querySelector(".rounded-full.bg-muted")).not.toBeNull();
-    // structural height cap rides in style
+
     expect(content.style.maxHeight).toBe("80dvh");
   });
 });

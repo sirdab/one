@@ -22,9 +22,6 @@ import { cn } from "@sirdab/one/lib/utils";
 
 type Item = { value: string; label: string };
 
-/* The combobox composition: a secondary Button trigger (Popover stamps
-   data-state, so Button's open pair and the chevron rotation both fire),
-   the frosted panel, and the Command list with its solid sticky search. */
 export function SearchableSelectDemo({
   items,
   placeholder,

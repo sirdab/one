@@ -4,8 +4,6 @@ import { describe, expect, it } from "vitest";
 import { FilterChip, FilterChipSelect } from "../filter-chip";
 
 describe("FilterChip", () => {
-  /* One real toggle button: nesting a button inside a role=button
-       div is the trap; ours must never. */
   it("is a single real button with pressed semantics", () => {
     render(<FilterChip>Video</FilterChip>);
     const chip = screen.getByRole("button", { name: "Video" });
@@ -53,11 +51,10 @@ describe("FilterChipSelect", () => {
     expect(chip.textContent).toContain("Alpha");
     const clear = chip.querySelector('[data-slot="filter-chip-clear"]');
     expect(clear).not.toBeNull();
-    // The X is a pointer-only affordance: no nested role inside the
-    // button (invalid nesting would flatten it out of the tree anyway).
+
     expect(clear?.getAttribute("role")).toBeNull();
     expect(clear?.getAttribute("aria-hidden")).toBe("true");
-    // one glyph only: the X (no chevron anywhere on this family)
+
     expect(chip.querySelectorAll("svg").length).toBe(1);
   });
 
@@ -87,7 +84,6 @@ describe("FilterChipSelect", () => {
     expect(reveal?.textContent).toContain("Alpha");
   });
 
-  /* The keyboard clear path: Delete/Backspace on the focused chip. */
   it("clears from the keyboard with Delete", async () => {
     render(
       <FilterChipSelect
@@ -103,13 +99,12 @@ describe("FilterChipSelect", () => {
     fireEvent.keyDown(chip, { key: "Delete" });
     expect(chip.className).not.toContain("bg-foreground");
     expect(chip.getAttribute("data-state")).toBe("closed");
-    // The value leaves the accessible name; its text rides the collapse out.
+
     const reveal = chip.querySelector(".reveal-inline");
     expect(reveal?.hasAttribute("data-open")).toBe(false);
     expect(reveal?.getAttribute("aria-hidden")).toBe("true");
   });
 
-  /* Pressing the X clears without opening the menu. */
   it("clears from the X and stays closed", async () => {
     render(
       <FilterChipSelect
@@ -129,16 +124,14 @@ describe("FilterChipSelect", () => {
     ) as HTMLElement;
     expect(chip.className).not.toContain("bg-foreground");
     expect(chip.getAttribute("data-state")).toBe("closed");
-    // The value leaves the accessible name; its text rides the collapse out.
+
     const reveal = chip.querySelector(".reveal-inline");
     expect(reveal?.hasAttribute("data-open")).toBe(false);
     expect(reveal?.getAttribute("aria-hidden")).toBe("true");
-    // still exactly one glyph: the plus (no chevron [decision])
+
     expect(chip.querySelectorAll("svg").length).toBe(1);
   });
 
-  /* Same trap as Segmented: a hint must not cost the toggle its
-       data-state, which is what drives the inversion to ink. */
   it("keeps the toggle's data-state when it carries a hint", () => {
     render(
       <FilterChip defaultPressed hint="المعروض في متجرك فقط">
@@ -150,8 +143,6 @@ describe("FilterChipSelect", () => {
     expect(chip?.className).toContain("data-[state=on]:bg-foreground");
   });
 
-  /* The opening chip has a THIRD data-state owner: the popover marks
-       the trigger open/closed. A hint must not take that either. */
   it("keeps the popover's data-state on a hinted FilterChipSelect", () => {
     render(
       <FilterChipSelect

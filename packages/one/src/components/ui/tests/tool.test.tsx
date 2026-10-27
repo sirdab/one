@@ -4,9 +4,6 @@ import { describe, expect, it, vi } from "vitest";
 import { ConversationHold } from "../conversation";
 import { Tool, ToolDetail } from "../tool";
 
-/* A step is a status line first: the state drives the icon and the
-   data attribute the studio's tests select on. Detail is opt-in: a step
-   with nothing behind it must not wear a chevron that opens nothing. */
 describe("Tool", () => {
   it("renders a static row with its state and no trigger when there is no detail", () => {
     const { container } = render(

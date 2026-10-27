@@ -21,30 +21,6 @@ import {
   type TraceStatus,
 } from "./trace";
 
-/* The Sirdab tool step: one line saying what the assistant did, "✓ Looked at
-   14 orders", with what it read or changed folded behind it. It is a Trace
-   line (trace.tsx): the same row every agent step in the product draws, so
-   a tool call, the build's stages and its files read as one list.
-
-   States (the icon carries them; the label never changes colour except
-   failure, which reports in the destructive text tone):
-     running            spinner, the label shimmers (trace `running`)
-     done               check
-     failed             cross, destructive text (trace `error`)
-     awaiting_approval  clock; the approval card sits below the row
-     denied             ban
-     expired            clock
-
-   No children means no chevron and no button: a step with nothing behind
-   it must not look like it opens. Opening one holds the conversation's
-   scroll, so the detail unfolds under the reader's eye.
-
-   Usage:
-       <Tool state="done" label={t("steps.list_orders.done", { count })}>
-           <OrdersTable ... />
-           <ToolDetail title={t("details.output")} value={output} />
-       </Tool>
-*/
 type ToolState =
   "running" | "done" | "failed" | "awaiting_approval" | "denied" | "expired";
 
@@ -68,9 +44,9 @@ interface ToolProps extends Omit<
   "children"
 > {
   state: ToolState;
-  /** The step's words, already interpolated by the caller. */
+
   label: string;
-  /** What opens under the row. Absent: a static row. */
+
   children?: React.ReactNode;
 }
 
@@ -103,8 +79,6 @@ function Tool({
   className,
   ...props
 }: ToolProps): React.JSX.Element {
-  /* data-tool-state, not data-state: Radix owns data-state on the
-       Collapsible (open/closed) and would clobber it. */
   const hold = useConversationHold();
   if (children == null) {
     return (
@@ -125,9 +99,7 @@ function Tool({
         <TraceCollapsibleTrigger>
           <StepLine state={state} label={label} />
         </TraceCollapsibleTrigger>
-        {/* Its artifacts and JSON wells carry their own ground, so
-                    the detail keeps the foreground rather than the
-                    trace's muted text. */}
+
         <TraceCollapsibleContent
           data-slot="tool-content"
           className="flex flex-col gap-3 text-foreground"
@@ -143,15 +115,11 @@ interface ToolDetailProps extends Omit<
   React.ComponentProps<"div">,
   "children" | "title"
 > {
-  /** The block's heading, caller-worded ("What it read"). */
   title: string;
-  /** Printed as-is when a string, as indented JSON otherwise. */
+
   value: unknown;
 }
 
-/* The verbose view: exactly what the tool received or returned, for the
-   merchant (or us) who wants to check the assistant's work. Always LTR:
-   it is JSON, and a flipped brace reads as broken. */
 function ToolDetail({
   title,
   value,

@@ -8,23 +8,19 @@ export const packageRoot = fileURLToPath(new URL("../", import.meta.url));
 const require = createRequire(new URL("../package.json", import.meta.url));
 export const vaulRoot = path.dirname(path.dirname(require.resolve("vaul")));
 
-/** @param {string} source @returns {string} */
 export function adaptVaulDialog(source) {
-  // Both the drawer and our DialogTitle must see the same Radix context.
   return source.replace(
     "import * as DialogPrimitive from '@radix-ui/react-dialog';",
     "import { Dialog as DialogPrimitive } from 'radix-ui';",
   );
 }
 
-/** @returns {Promise<string>} */
 export async function vaulRuntime() {
   return adaptVaulDialog(
     await readFile(path.join(vaulRoot, "dist/index.mjs"), "utf8"),
   );
 }
 
-/** @param {string} source @param {string} filename @returns {string} */
 export function portableImports(source, filename) {
   const file = ts.createSourceFile(
     filename,
@@ -32,9 +28,9 @@ export function portableImports(source, filename) {
     ts.ScriptTarget.Latest,
     true,
   );
-  /** @type {{ start: number, end: number, value: string }[]} */
+
   const edits = [];
-  /** @param {string} target @returns {string} */
+
   function relativeImport(target) {
     const relative = path
       .relative(path.dirname(filename), target)
@@ -42,7 +38,7 @@ export function portableImports(source, filename) {
       .join("/");
     return relative.startsWith(".") ? relative : `./${relative}`;
   }
-  /** @param {ts.Node} node @returns {void} */
+
   function visit(node) {
     if (ts.isStringLiteral(node)) {
       const parent = node.parent;
@@ -77,16 +73,15 @@ export function portableImports(source, filename) {
   return source;
 }
 
-// Source tests exercise the same adapter that is shipped in the compiled package.
 export function vaulTestPlugin() {
   return {
     name: "one-vaul-dialog",
-    enforce: /** @type {const} */ ("pre"),
-    /** @param {string} id */
+    enforce: "pre",
+
     resolveId(id) {
       return id === "vaul" ? "\0one-vaul" : undefined;
     },
-    /** @param {string} id */
+
     async load(id) {
       return id === "\0one-vaul" ? vaulRuntime() : undefined;
     },

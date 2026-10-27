@@ -48,7 +48,7 @@ describe("PhoneInput default and display", () => {
   it("opens on Saudi and shows the dial code alone as the face", () => {
     render(<Harness />);
     expect(field().value).toBe("");
-    // Flags are out by ruling: the dial code is the whole face.
+
     expect(trigger().textContent).toBe("+966");
   });
 
@@ -67,8 +67,7 @@ describe("PhoneInput default and display", () => {
     render(<Harness />);
     expect(field().getAttribute("dir")).toBe("ltr");
     expect(field().className).toContain("latin");
-    // The BOX, not only the field: on an RTL page the flex row is what
-    // decides whether +966 sits before or after the digits.
+
     expect(
       field().closest('[data-slot="input-wrapper"]')?.getAttribute("dir"),
     ).toBe("ltr");
@@ -76,9 +75,6 @@ describe("PhoneInput default and display", () => {
 });
 
 describe("PhoneInput in Arabic", () => {
-  /* Radix stamps the document's direction on the Select trigger, which
-       beats the box's inherited ltr: in Arabic the trigger read "966+" with
-       its chevron first. The trigger and the code are pinned themselves. */
   it("keeps the country trigger and its +966 left to right on an RTL page", async () => {
     const { Direction } = await import("radix-ui");
     render(
@@ -89,7 +85,7 @@ describe("PhoneInput in Arabic", () => {
       </div>,
     );
     expect(trigger().getAttribute("dir")).toBe("ltr");
-    // Innermost match: the face wraps the code in a span of its own.
+
     const code = [...trigger().querySelectorAll("span")]
       .filter((span) => span.textContent === "+966")
       .at(-1);
@@ -120,8 +116,6 @@ describe("PhoneInput value contract", () => {
     expect(onValue).toHaveBeenLastCalledWith("+966551785151");
   });
 
-  /* A Saudi keyboard produces Arabic-Indic digits, and the phone is a
-       dedupe key and an OTP target: it has to leave in Latin every time. */
   it("converts Arabic-Indic digits", () => {
     const onValue = vi.fn();
     render(<Harness onValue={onValue} />);
@@ -155,14 +149,13 @@ describe("PhoneInput country selection", () => {
   it("lists the countries Saudi-first, each with its dial code", () => {
     render(<Harness locale="ar" />);
     const options = openCountries();
-    // Every country we can text, with the +1 islands folded into one row.
+
     expect(options.length).toBeGreaterThan(190);
     expect(
       options.filter((option) => option.textContent?.endsWith("+1")),
     ).toHaveLength(2);
     expect(options[0].textContent).toContain("+966");
-    // Country names come from the runtime's CLDR data, so the primitive
-    // carries no copy of its own (UI AGENTS: i18n-free primitives).
+
     expect(options[0].textContent).toContain("سعود");
   });
 
@@ -190,8 +183,6 @@ describe("PhoneInput country selection", () => {
   });
 });
 
-/* Typing into the search re-filters every country row at once, which a busy
-   CI runner has taken past the 5s default twice (PR #672 and its merge). */
 describe("PhoneInput flags and search", { timeout: 20_000 }, () => {
   it("draws package-owned flags on the trigger and on every row", () => {
     render(<Harness locale="en" />);
@@ -224,9 +215,6 @@ describe("PhoneInput flags and search", { timeout: 20_000 }, () => {
     expect(rows()).toHaveLength(0);
   });
 
-  /* \D does not know Arabic-Indic digits: counting the digits before the
-       caret read zero, the caret jumped to the start, and a number typed one
-       digit at a time on an Arabic keyboard came out reversed. */
   it("puts the caret after Arabic-Indic digits, not at the start", async () => {
     render(<Harness />);
     const input = field();
@@ -265,8 +253,6 @@ describe("PhoneInput flags and search", { timeout: 20_000 }, () => {
     expect(saudi.textContent).toContain("+966");
   });
 
-  /* A panel portals out of whatever theme scope the field sits in, so the
-       caller hands the scope across with the list. */
   it("lands contentClassName on the country list", () => {
     render(<Harness contentClassName="landing-theme font-sans" />);
     openCountries();
@@ -277,8 +263,6 @@ describe("PhoneInput flags and search", { timeout: 20_000 }, () => {
 });
 
 describe("PhoneInput composition", () => {
-  /* Two boxes, side by side: the country is its own outline control
-       beside the number, not a slot inside the number's box. */
   it("puts the country control beside the input box, not inside it", () => {
     render(<Harness />);
     const box = field().closest('[data-slot="input-wrapper"]');
@@ -291,8 +275,6 @@ describe("PhoneInput composition", () => {
     ).not.toBeNull();
   });
 
-  /* The label is copy and reads from the page's start; only the digits
-       are pinned. A dir on the row put an Arabic label on the left. */
   it("pins the number box ltr but leaves the row in the page's direction", () => {
     render(<Harness />);
     const row = field().closest('[data-slot="phone-input"]');
@@ -303,9 +285,6 @@ describe("PhoneInput composition", () => {
     ).toBe("ltr");
   });
 
-  /* FND-16: the 36px face is not a 36px target. The ghost trigger inherits
-       buttonVariants' base, which paints a 44px hit area around it; pin it so
-       a refactor of the trigger cannot quietly drop it. */
   it("keeps a 44px hit area on the country face at the touch size", () => {
     render(<Harness size="touch" />);
     expect(trigger().className).toContain("relative");
@@ -320,9 +299,6 @@ describe("PhoneInput composition", () => {
   });
 });
 
-/* Below md the country list is a bottom tray. On a phone a search field
-   focused on open raised the keyboard over the list, and a swipe through
-   the countries was taken by the sheet's drag and closed it. */
 describe("PhoneInput's country tray on a phone", () => {
   const realMatchMedia = window.matchMedia;
   beforeEach(() => {
@@ -341,8 +317,6 @@ describe("PhoneInput's country tray on a phone", () => {
     window.matchMedia = realMatchMedia;
   });
 
-  /* Two hundred countries need a search, but it waits for a tap: focused
-       on open, it raised the keyboard over the list. */
   it("opens with its search unfocused, so no keyboard comes up", async () => {
     render(<Harness countryLabelText="Country" />);
     fireEvent.click(trigger());

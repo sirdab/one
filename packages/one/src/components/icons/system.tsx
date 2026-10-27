@@ -1,9 +1,7 @@
+"use client";
+
 import { shellIcon } from "./house-icon";
 
-/* System glyphs: links, time, messaging, devices and tools. Same shape as
-   shell.tsx; general.tsx holds the rest. */
-
-/* Opens somewhere else. */
 export const ExternalLinkIcon = shellIcon(
   "ExternalLinkIcon",
   <>
@@ -24,7 +22,6 @@ export const ExternalLinkIcon = shellIcon(
   </>,
 );
 
-/* A link. */
 export const LinkIcon = shellIcon(
   "LinkIcon",
   <path
@@ -33,7 +30,6 @@ export const LinkIcon = shellIcon(
   />,
 );
 
-/* Sharing. */
 export const ShareIcon = shellIcon(
   "ShareIcon",
   <>
@@ -61,7 +57,6 @@ export const ShareIcon = shellIcon(
   </>,
 );
 
-/* The web, or a domain. */
 export const GlobeIcon = shellIcon(
   "GlobeIcon",
   <>
@@ -86,7 +81,6 @@ export const GlobeIcon = shellIcon(
   </>,
 );
 
-/* Languages. */
 export const LanguagesIcon = shellIcon(
   "LanguagesIcon",
   <>
@@ -128,7 +122,6 @@ export const LanguagesIcon = shellIcon(
   </>,
 );
 
-/* A webhook. */
 export const WebhookIcon = shellIcon(
   "WebhookIcon",
   <>
@@ -145,7 +138,6 @@ export const WebhookIcon = shellIcon(
   </>,
 );
 
-/* A connection: plugged in. */
 export const PlugIcon = shellIcon(
   "PlugIcon",
   <>
@@ -180,7 +172,6 @@ export const PlugIcon = shellIcon(
   </>,
 );
 
-/* Time, or waiting. */
 export const ClockIcon = shellIcon(
   "ClockIcon",
   <path
@@ -192,7 +183,6 @@ export const ClockIcon = shellIcon(
   />,
 );
 
-/* A date. */
 export const CalendarIcon = shellIcon(
   "CalendarIcon",
   <>
@@ -229,7 +219,6 @@ export const CalendarIcon = shellIcon(
   </>,
 );
 
-/* A date that has passed, or a cancelled one. */
 export const CalendarXIcon = shellIcon(
   "CalendarXIcon",
   <>
@@ -278,7 +267,6 @@ export const CalendarXIcon = shellIcon(
   </>,
 );
 
-/* A message, or a chat. */
 export const MessageIcon = shellIcon(
   "MessageIcon",
   <path
@@ -290,7 +278,6 @@ export const MessageIcon = shellIcon(
   />,
 );
 
-/* No messages, or messaging turned off. */
 export const MessageOffIcon = shellIcon(
   "MessageOffIcon",
   <>
@@ -311,7 +298,6 @@ export const MessageOffIcon = shellIcon(
   </>,
 );
 
-/* An announcement, or marketing. */
 export const MegaphoneIcon = shellIcon(
   "MegaphoneIcon",
   <path
@@ -323,7 +309,6 @@ export const MegaphoneIcon = shellIcon(
   />,
 );
 
-/* A desktop screen. */
 export const MonitorIcon = shellIcon(
   "MonitorIcon",
   <>
@@ -344,7 +329,6 @@ export const MonitorIcon = shellIcon(
   </>,
 );
 
-/* A screen turned off. */
 export const MonitorOffIcon = shellIcon(
   "MonitorOffIcon",
   <>
@@ -372,7 +356,6 @@ export const MonitorOffIcon = shellIcon(
   </>,
 );
 
-/* A phone. */
 export const PhoneIcon = shellIcon(
   "PhoneIcon",
   <path
@@ -383,7 +366,6 @@ export const PhoneIcon = shellIcon(
   />,
 );
 
-/* An envelope: the email door. */
 export const MailIcon = shellIcon(
   "MailIcon",
   <>
@@ -400,7 +382,6 @@ export const MailIcon = shellIcon(
   </>,
 );
 
-/* A tablet. */
 export const TabletIcon = shellIcon(
   "TabletIcon",
   <>
@@ -425,7 +406,6 @@ export const TabletIcon = shellIcon(
   </>,
 );
 
-/* Wi-Fi. */
 export const WifiIcon = shellIcon(
   "WifiIcon",
   <>
@@ -446,7 +426,6 @@ export const WifiIcon = shellIcon(
   </>,
 );
 
-/* Mobile signal. */
 export const SignalIcon = shellIcon(
   "SignalIcon",
   <>
@@ -465,7 +444,6 @@ export const SignalIcon = shellIcon(
   </>,
 );
 
-/* A full battery. */
 export const BatteryIcon = shellIcon(
   "BatteryIcon",
   <path
@@ -476,7 +454,6 @@ export const BatteryIcon = shellIcon(
   />,
 );
 
-/* A layout: blocks arranged on a page. */
 export const LayoutIcon = shellIcon(
   "LayoutIcon",
   <>
@@ -511,7 +488,6 @@ export const LayoutIcon = shellIcon(
   </>,
 );
 
-/* The sidebar: open or fold it. */
 export const SidebarIcon = shellIcon(
   "SidebarIcon",
   <>
@@ -526,7 +502,6 @@ export const SidebarIcon = shellIcon(
   </>,
 );
 
-/* Stacked copies: versions, or duplicates. */
 export const SquareStackIcon = shellIcon(
   "SquareStackIcon",
   <>
@@ -547,7 +522,6 @@ export const SquareStackIcon = shellIcon(
   </>,
 );
 
-/* Refresh, or sync. */
 export const RefreshIcon = shellIcon(
   "RefreshIcon",
   <>
@@ -582,7 +556,6 @@ export const RefreshIcon = shellIcon(
   </>,
 );
 
-/* A paid plan, or the top tier. */
 export const CrownIcon = shellIcon(
   "CrownIcon",
   <path
@@ -594,7 +567,6 @@ export const CrownIcon = shellIcon(
   />,
 );
 
-/* A launch: going live. */
 export const RocketIcon = shellIcon(
   "RocketIcon",
   <path
@@ -606,7 +578,6 @@ export const RocketIcon = shellIcon(
   />,
 );
 
-/* Signing out; flipped for RTL by the caller. */
 export const LogOutIcon = shellIcon(
   "LogOutIcon",
   <path
@@ -618,7 +589,6 @@ export const LogOutIcon = shellIcon(
   />,
 );
 
-/* Settings. */
 export const SettingsIcon = shellIcon(
   "SettingsIcon",
   <>
@@ -637,7 +607,6 @@ export const SettingsIcon = shellIcon(
   </>,
 );
 
-/* A gauge: speed or a score. */
 export const GaugeIcon = shellIcon(
   "GaugeIcon",
   <path
@@ -649,7 +618,6 @@ export const GaugeIcon = shellIcon(
   />,
 );
 
-/* Hidden. */
 export const HiddenIcon = shellIcon(
   "HiddenIcon",
   <>
@@ -678,7 +646,6 @@ export const HiddenIcon = shellIcon(
   </>,
 );
 
-/* A broadcast: live. */
 export const RadioIcon = shellIcon(
   "RadioIcon",
   <>
@@ -720,7 +687,6 @@ export const RadioIcon = shellIcon(
   </>,
 );
 
-/* Building blocks: apps and add-ons. */
 export const BlocksIcon = shellIcon(
   "BlocksIcon",
   <>
@@ -741,7 +707,6 @@ export const BlocksIcon = shellIcon(
   </>,
 );
 
-/* Colours and brand. */
 export const PaletteIcon = shellIcon(
   "PaletteIcon",
   <>
@@ -773,7 +738,6 @@ export const PaletteIcon = shellIcon(
   </>,
 );
 
-/* Bars: a chart, or measurement. */
 export const BarChartIcon = shellIcon(
   "BarChartIcon",
   <path
@@ -785,7 +749,6 @@ export const BarChartIcon = shellIcon(
   />,
 );
 
-/* Make it bigger: full size. */
 export const MaximizeIcon = shellIcon(
   "MaximizeIcon",
   <>
@@ -820,7 +783,6 @@ export const MaximizeIcon = shellIcon(
   </>,
 );
 
-/* A click: pick on the page. */
 export const ClickIcon = shellIcon(
   "ClickIcon",
   <path

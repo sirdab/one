@@ -3,12 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { Shimmer } from "../shimmer";
 
-/* Every "working on it" in the product is this one shimmer: the band of
-   light, and every third sweep the words fade out and back, inside the same
-   cycle so it never drifts from the band. A caller can turn the fade off. */
 describe("Shimmer", () => {
-  /* The sweep and the breath are foundation CSS (the shimmer utility), so
-       the component only names the utility and hands it the timing. */
   it("wears the shimmer utility with its timing as custom properties", () => {
     render(<Shimmer duration={3}>Working</Shimmer>);
     const el = screen.getByText("Working");

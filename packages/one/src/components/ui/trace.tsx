@@ -11,50 +11,6 @@ import {
 } from "./collapsible";
 import { Icon } from "./icon";
 
-/* The Sirdab trace: the steps an agent takes, one line each. Taken from
-   shadcn's Trace (the radix build) and trued: physical sides became logical
-   ones so a line reads right in Arabic, the chevron is the house glyph and
-   flips with the reading direction, the type is the house body and the
-   description the subtle tone, the content opens on the collapsible
-   keyframes, and no part sets `outline-none` (focus is the global ring).
-
-   Every agent step is the same shape: an icon that names the action, a
-   one-sentence title, optional secondary text, and a status.
-     none       done: "Looked at 14 orders"
-     running    under way, title in the present tense; the title shimmers
-     error      failed, and the title says so; destructive text
-     pending    not started yet (a plan step); dimmed
-
-   TraceLine is only ever the line: a span, not a tab stop. To make it do
-   something, wrap it in that thing's trigger (TraceCollapsibleTrigger to
-   fold detail under it, a link, a dialog's trigger). Trace lays out any
-   trigger or link that wraps a line, so put rows that sit together in one.
-   The line brightens on hover under TraceCollapsibleTrigger; another
-   wrapper that wants it adds `group/trace-trigger` (the token lint keeps
-   shadcn's arbitrary in-a-or-button variant out).
-
-   The status shows in colour and motion, so the title must say it too
-   ("Failed to publish", not "Publish" in red). TraceIcon is hidden from
-   assistive tech: the title is the accessible name.
-
-   Usage:
-       <Trace>
-           <TraceLine status="running">
-               <TraceIcon><Icon icon={LoaderIcon} /></TraceIcon>
-               <TraceTitle>Looking at your orders</TraceTitle>
-           </TraceLine>
-           <TraceCollapsible>
-               <TraceCollapsibleTrigger>
-                   <TraceLine>
-                       <TraceIcon><Icon icon={CheckIcon} /></TraceIcon>
-                       <TraceTitle>Looked at 14 orders</TraceTitle>
-                   </TraceLine>
-               </TraceCollapsibleTrigger>
-               <TraceCollapsibleContent>…</TraceCollapsibleContent>
-           </TraceCollapsible>
-       </Trace>
-*/
-
 type TraceStatus = "running" | "error" | "pending";
 
 function Trace({
@@ -93,7 +49,6 @@ function TraceLine({
   );
 }
 
-/* Before the title it names the action; after it, it is the indicator. */
 function TraceIcon({
   className,
   ...props
@@ -111,7 +66,6 @@ function TraceIcon({
   );
 }
 
-/* One sentence on one line: it truncates, and shimmers while running. */
 function TraceTitle({
   className,
   ...props
@@ -125,7 +79,6 @@ function TraceTitle({
   );
 }
 
-/* A count, a duration, a time: after the title, never truncated. */
 function TraceDescription({
   className,
   ...props
@@ -155,8 +108,6 @@ function TraceCollapsible({
   );
 }
 
-/* The button that folds the row; it adds the chevron after the line,
-   pointing along the reading direction and down once open. */
 function TraceCollapsibleTrigger({
   className,
   children,
@@ -182,9 +133,6 @@ function TraceCollapsibleTrigger({
   );
 }
 
-/* The detail under a folded row, behind a guide line that starts under the
-   row's icon. Text inside is muted; a block with its own ground (a table,
-   a code well) sets text-foreground to keep its contrast. */
 function TraceCollapsibleContent({
   className,
   children,

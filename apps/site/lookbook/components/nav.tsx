@@ -1,114 +1,133 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import type { ChangeEvent } from "react";
+import { Icon } from "@sirdab/one/components/icon";
+import { SearchIcon, ChevronDownIcon } from "@sirdab/one/icons/catalogue";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@sirdab/one/components/collapsible";
+import { Input } from "@sirdab/one/components/input";
+import {
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@sirdab/one/components/sidebar";
+import { CATALOG } from "../catalog";
+import { filterCatalog, lookbookHref } from "../routing";
+import type { LookbookLocale } from "../routing";
 
-import { cn } from "@sirdab/one/lib/utils";
-
-const SECTIONS: { title: string; items: { href: string; label: string }[] }[] =
-  [
-    {
-      title: "Foundations",
-      items: [
-        { href: "/lookbook/colors", label: "Colors" },
-        { href: "/lookbook/typography", label: "Typography" },
-        { href: "/lookbook/spacing", label: "Spacing & radius" },
-        { href: "/lookbook/breakpoints", label: "Breakpoints" },
-        { href: "/lookbook/elevation", label: "Elevation" },
-        { href: "/lookbook/motion", label: "Motion" },
-        { href: "/lookbook/numerals", label: "Numerals" },
-      ],
-    },
-    {
-      title: "Primitives",
-      items: [
-        { href: "/lookbook/buttons", label: "Buttons" },
-        { href: "/lookbook/badge", label: "Badge" },
-        { href: "/lookbook/card", label: "Card" },
-        { href: "/lookbook/forms", label: "Forms" },
-        { href: "/lookbook/inputs", label: "Inputs" },
-        { href: "/lookbook/phone-input", label: "Phone input" },
-        { href: "/lookbook/textarea", label: "Textarea" },
-        { href: "/lookbook/image-uploader", label: "Image uploader" },
-        { href: "/lookbook/image-editor", label: "Image editor" },
-        { href: "/lookbook/label", label: "Label" },
-        { href: "/lookbook/select", label: "Select" },
-        { href: "/lookbook/date-picker", label: "Date picker" },
-        { href: "/lookbook/popover", label: "Popover" },
-        { href: "/lookbook/dialog", label: "Dialog" },
-        { href: "/lookbook/sheet", label: "Sheet" },
-        { href: "/lookbook/sidebar", label: "Sidebar" },
-        { href: "/lookbook/skeleton", label: "Skeleton" },
-        { href: "/lookbook/spinner", label: "Spinner" },
-        { href: "/lookbook/wave-loader", label: "Wave loader" },
-        { href: "/lookbook/avatar", label: "Avatar" },
-        { href: "/lookbook/slider", label: "Slider" },
-        { href: "/lookbook/progress", label: "Progress" },
-        { href: "/lookbook/chart", label: "Chart" },
-        { href: "/lookbook/chat-bubble", label: "Chat bubble" },
-        { href: "/lookbook/assistant", label: "Assistant" },
-        { href: "/lookbook/empty-state", label: "Empty state" },
-        { href: "/lookbook/dropdown-menu", label: "Dropdown menu" },
-        { href: "/lookbook/command", label: "Command" },
-        { href: "/lookbook/combobox", label: "Combobox" },
-        { href: "/lookbook/palette", label: "Palette" },
-        { href: "/lookbook/prompt-bar", label: "Prompt bar" },
-        { href: "/lookbook/tooltip", label: "Tooltip" },
-        { href: "/lookbook/toast", label: "Toast" },
-        { href: "/lookbook/segmented", label: "Segmented" },
-        { href: "/lookbook/toggle", label: "Toggle" },
-        { href: "/lookbook/tabs", label: "Tabs" },
-        { href: "/lookbook/tables", label: "Tables" },
-        { href: "/lookbook/timeline", label: "Timeline" },
-        { href: "/lookbook/filter-chip", label: "Filter chip" },
-        { href: "/lookbook/selection", label: "Selection" },
-        { href: "/lookbook/icons", label: "Icons" },
-        { href: "/lookbook/mood-board", label: "Mood board" },
-      ],
-    },
-  ];
-
-// The RAIL nav-row recipe: 32px rows at the 10px radius, 4% fill for
-// hover AND current (current adds ink text, no other marker), and rows
-// SNAP: no transition class, the instant tier. Section titles sit at
-// the body role in the quiet tone.
-export function LookbookNav(): React.JSX.Element {
-  const pathname = usePathname();
-  // Locale rides as a search param (next-intl-free); carry it across
-  // section navigation or Arabic review resets to English every click.
-  const searchParams = useSearchParams();
-  const lang = searchParams.get("lang");
-  const suffix = lang && lang !== "en" ? `?lang=${lang}` : "";
-
+export function LookbookNav({
+  locale = "ar",
+  current,
+  onNavigate,
+}: {
+  locale?: LookbookLocale;
+  current?: string;
+  onNavigate?: () => void;
+}): React.JSX.Element {
+  const [query, setQuery] = useState<string>("");
+  const groups: typeof CATALOG = filterCatalog(CATALOG, query);
   return (
-    <nav className="flex flex-col gap-5">
-      {SECTIONS.map((section) => (
-        <div key={section.title} className="flex flex-col gap-1">
-          <p className="text-body text-muted-foreground ms-1.5 mb-0.5">
-            {section.title}
+    <div className="catalog-navigation">
+      <div className="catalog-search">
+        <div className="catalog-search-field">
+          <Input
+            type="search"
+            size="sm"
+            leading={<Icon icon={SearchIcon} />}
+            aria-label="Find a component or foundation"
+            placeholder="Find a component…"
+            value={query}
+            onChange={(event: ChangeEvent<HTMLInputElement>): void =>
+              setQuery(event.target.value)
+            }
+          />
+        </div>
+      </div>
+      <SidebarContent
+        className="catalog-scroll no-scrollbar"
+        lang="en"
+        dir="ltr"
+      >
+        <nav aria-label="Lookbook sections" className="catalog-groups">
+          {groups.map((group: (typeof CATALOG)[number]): React.JSX.Element => (
+            <CatalogNavGroup
+              key={`${group.title}:${current ?? "overview"}`}
+              group={group}
+              locale={locale}
+              current={current}
+              searching={query.trim().length > 0}
+              onNavigate={onNavigate}
+            />
+          ))}
+        </nav>
+        {groups.length === 0 ? (
+          <p role="status" className="text-body-quiet text-muted-foreground">
+            No matches. Try “button”, “form”, or “color”.
           </p>
-          <div className="flex flex-col gap-1">
-            {section.items.map((item) => {
-              const active = pathname === item.href;
+        ) : null}
+      </SidebarContent>
+    </div>
+  );
+}
+
+function CatalogNavGroup({
+  group,
+  locale,
+  current,
+  searching,
+  onNavigate,
+}: {
+  group: (typeof CATALOG)[number];
+  locale: LookbookLocale;
+  current?: string;
+  searching: boolean;
+  onNavigate?: () => void;
+}): React.JSX.Element {
+  const [open, setOpen] = useState<boolean>(
+    (!current && group.title === "Foundations") ||
+      group.items.some((item): boolean => item.href === `/lookbook/${current}`),
+  );
+  return (
+    <Collapsible open={searching || open} onOpenChange={setOpen} asChild>
+      <SidebarGroup className="catalog-group">
+        <SidebarGroupLabel asChild>
+          <CollapsibleTrigger
+            className="catalog-group-trigger"
+            disabled={searching}
+          >
+            {group.title}
+            <Icon icon={ChevronDownIcon} />
+          </CollapsibleTrigger>
+        </SidebarGroupLabel>
+        <CollapsibleContent>
+          <SidebarMenu className="catalog-group-items">
+            {group.items.map((item): React.JSX.Element => {
+              const slug: string = item.href.slice("/lookbook/".length);
               return (
-                <Link
-                  key={item.href}
-                  href={`${item.href}${suffix}`}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "h-control text-body flex items-center gap-2 rounded-lg px-2",
-                    active
-                      ? "bg-gray-alpha-100 text-foreground"
-                      : "text-muted-foreground hover:bg-gray-alpha-100 hover:text-foreground",
-                  )}
-                >
-                  {item.label}
-                </Link>
+                <SidebarMenuItem key={slug}>
+                  <SidebarMenuButton asChild isActive={current === slug}>
+                    <Link
+                      href={lookbookHref(slug, locale)}
+                      onClick={onNavigate}
+                      aria-current={current === slug ? "page" : undefined}
+                    >
+                      {item.label}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               );
             })}
-          </div>
-        </div>
-      ))}
-    </nav>
+          </SidebarMenu>
+        </CollapsibleContent>
+      </SidebarGroup>
+    </Collapsible>
   );
 }

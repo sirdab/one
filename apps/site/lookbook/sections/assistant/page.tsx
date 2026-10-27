@@ -1,7 +1,6 @@
 import { AssistantDemo } from "../../components/assistant-demo";
 import { PageHeader } from "../../components/section";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function AssistantPage({
   lang,
 }: {

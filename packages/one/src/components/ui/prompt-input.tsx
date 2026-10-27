@@ -8,60 +8,30 @@ import { Button } from "./button";
 import { Icon } from "./icon";
 import { Textarea } from "./textarea";
 
-/* The Sirdab prompt input: the assistant's composer. Taken from the
-   shadcn.io AI Elements prompt-input and trued down to what the assistant
-   ships: a controlled field, Enter to send, Shift+Enter for a new line,
-   and a send that becomes Stop while a turn runs. Attachments, speech,
-   model selects, hover cards and command tabs are gone (attachments are
-   v2; the rest were never ours), and with them `nanoid`, the `ai` types and
-   six primitives we do not carry.
-
-   The card is the studio composer's: rounded-2xl hairline box on the page
-   tone, lighting to ink on focus-within. The send is a round icon button,
-   the one primary per view (the chat convention wins over the house pill
-   here); its name rides aria-label and the hover hint, and Stop takes the
-   same shape so the swap moves nothing. A refused send keeps the text: the
-   composer never clears what it did not send.
-
-   Controlled on purpose: the surface keeps the draft while it switches
-   between the rail and the full page, so the value lives above this.
-
-   IME: Enter during composition (Arabic keyboards on some platforms,
-   CJK) confirms the candidate, it must never send.
-
-   Usage:
-       <PromptInput
-           value={draft} onValueChange={setDraft} onSubmit={send}
-           placeholder={t("placeholder")} submitLabel={t("send")} stopLabel={t("stop")}
-           streaming={running} onStop={stop}
-           maxLength={ASSISTANT_MESSAGE_MAX} overLimitLabel={t("errors.too_long")}
-           header={contextChip}
-       />
-*/
 interface PromptInputProps extends Omit<
   React.ComponentProps<"form">,
   "onSubmit" | "children"
 > {
   value: string;
   onValueChange(value: string): void;
-  /** Receives the trimmed text; the caller clears the value. */
+
   onSubmit(value: string): void;
   placeholder: string;
   submitLabel: string;
   stopLabel: string;
-  /** A turn is running: Enter does nothing and the send becomes Stop. */
+
   streaming?: boolean;
   onStop?(): void;
   maxLength?: number;
-  /** Caller-worded, shown under the field while the text is over the cap. */
+
   overLimitLabel?: string;
-  /** The send button's reason while the field is empty. */
+
   emptyReason?: string;
-  /** WHY sending is refused right now (busy elsewhere, offline). */
+
   disabledReason?: React.ReactNode;
-  /** Above the field: the page-context chip. */
+
   header?: React.ReactNode;
-  /** Start of the footer row. */
+
   tools?: React.ReactNode;
   autoFocus?: boolean;
 }

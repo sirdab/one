@@ -1,7 +1,7 @@
 # Motion notes
 
 Not rendered. The gallery page shows; this file explains. Duration and
-easing values stay canonical in `packages/foundation/TOKENS.md`.
+easing values stay canonical in `packages/one/TOKENS.md`.
 
 ## Doctrine
 

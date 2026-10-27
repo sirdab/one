@@ -1,6 +1,7 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useRef, useSyncExternalStore } from "react";
+import { flushSync } from "react-dom";
 import { useTheme } from "next-themes";
 
 import { MonitorIcon } from "@sirdab/one/icons/system";
@@ -11,26 +12,18 @@ import { Segmented, SegmentedItem } from "@sirdab/one/components/segmented";
 
 const emptySubscribe = (): (() => void) => () => {};
 
-/* The theme mode picker: a MODE, one always active, so it is the
-   Segmented control (animated icon variant: the thumb slides, the
-   checked label expands). Wired to `theme`, not `resolvedTheme`:
-   "system" is a real choice the user can hold. */
-export function ThemeToggle(): React.JSX.Element {
-  const { theme, setTheme } = useTheme();
-  // The server doesn't know the theme; hold the track's footprint until
-  // hydration so the thumb never flashes on the wrong option.
-  const mounted = useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false,
-  );
+type ThemeMode = "light" | "dark" | "system";
+const modes: readonly ThemeMode[] = ["light", "dark", "system"];
 
-  if (!mounted) {
-    return <div aria-hidden className="bg-muted h-10 w-32 rounded-xl" />;
-  }
-
+function ThemeModes({
+  value,
+  onValueChange,
+}: {
+  value: string | undefined;
+  onValueChange?: (value: string) => void;
+}): React.JSX.Element {
   return (
-    <Segmented value={theme} onValueChange={setTheme} aria-label="Theme">
+    <Segmented value={value} onValueChange={onValueChange} aria-label="Theme">
       <SegmentedItem
         value="light"
         icon={<Icon icon={ThemeSun} />}
@@ -48,4 +41,60 @@ export function ThemeToggle(): React.JSX.Element {
       />
     </Segmented>
   );
+}
+
+export function ThemeToggle(): React.JSX.Element {
+  const { theme, setTheme } = useTheme();
+  const active = useRef<ViewTransition | null>(null);
+  function change(next: string): void {
+    if (next === theme) return;
+    const root: HTMLElement = document.documentElement;
+    const dark: boolean =
+      next === "dark" ||
+      (next === "system" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    if (
+      !document.startViewTransition ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      dark === root.classList.contains("dark")
+    ) {
+      setTheme(next);
+      return;
+    }
+    active.current?.skipTransition();
+    root.setAttribute("data-theme-sweep", "");
+    const transition: ViewTransition = document.startViewTransition(
+      (): void => {
+        flushSync((): void => setTheme(next));
+      },
+    );
+    active.current = transition;
+    const cleanup = (): void => {
+      if (active.current === transition) {
+        root.removeAttribute("data-theme-sweep");
+        active.current = null;
+      }
+    };
+    void transition.ready.catch((): void => {});
+    void transition.finished.then(cleanup, cleanup);
+  }
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+
+  if (!mounted) {
+    return (
+      <div className="theme-initial" aria-hidden inert>
+        {modes.map((mode: ThemeMode): React.JSX.Element => (
+          <div key={mode} data-theme-initial={mode}>
+            <ThemeModes value={mode} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return <ThemeModes value={theme} onValueChange={change} />;
 }

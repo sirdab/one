@@ -16,13 +16,7 @@ import { Input } from "../input";
 import { Select, SelectTrigger, SelectValue } from "../select";
 import { Textarea } from "../textarea";
 
-/* A merchant fills a price (Input), a category (Select), a notes box
-   (Textarea) and a sections list (Combobox) in one form. They are one
-   family: one corner, one border, one focus look. The constants that say so
-   live in field-chrome.ts; these tests pin that every member READS them, so
-   none can drift on its own. */
 describe("the shared field chrome", () => {
-  /* 12px is the 40 and 44 field; the dense 32 and 36 inputs keep 10px. */
   it("is 12px at 40 and 44, 10px below", () => {
     const sizes: FieldSize[] = ["sm", "md", "default", "search", "touch"];
     const expected: Record<FieldSize, string> = {
@@ -43,8 +37,6 @@ describe("the shared field chrome", () => {
     expect(FIELD_VALUE).toBe("text-body-lg sm:text-body-quiet");
   });
 
-  /* The Input's wrapper at every size is what it was before the constant
-       existed: height and corner from the map, nothing else changed. */
   it("leaves the Input's recipe as it was at every size", () => {
     const hover =
       "hover:not-focus-within:not-has-[:is(input,textarea,select):read-only]:border-input-border-hover";

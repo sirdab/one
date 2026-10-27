@@ -1,11 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 
-// Stock tailwind-merge doesn't know the foundation's custom utilities, so it
-// can't see their conflicts: `cn("text-body", "text-destructive")` dropped the
-// role (misread as a color), and `cn("h-control-xl", "h-auto")` kept BOTH
-// heights, leaving CSS order to decide. Register each custom utility in the
-// group it actually belongs to.
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {

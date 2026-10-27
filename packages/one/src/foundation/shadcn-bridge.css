@@ -1,93 +1,17 @@
-/* ============================================================================
-   SHADCN BRIDGE
-   ----------------------------------------------------------------------------
-   Hand-maintained (not vendored). Imported into layer(base) BEFORE
-   foundation.css, so foundation wins token collisions inside the layer.
-   packages/ui/AGENTS.md is the canonical import order.
-
-   Two jobs, and the first one is not optional.
-
-   1. NAME COLLISIONS. shadcn and this system use several of the same token
-      names for DIFFERENT things. Dropping foundation.css into a shadcn app
-      without this file produces components that are wrong in ways that look
-      like taste rather than bugs:
-
-        shadcn --secondary        = a BACKGROUND (secondary button fill)
-        ours   --secondary        = a TEXT colour (solid mid-gray)
-        unbridged: every secondary button gets a text-gray background.
-
-        shadcn --muted-foreground = the de-emphasised TEXT colour
-        ours   (no such token)    = that role is --secondary
-        unbridged: all secondary text falls back to shadcn's slate.
-
-        shadcn --accent           = hover surface, NOT in foundation.css.
-                                    Our system deliberately has no
-                                    --accent role: hovers come from
-                                    --muted or the alpha ramp. shadcn
-                                    components need it, so it is DEFINED
-                                    below against our ramp.
-        shadcn --input            = input BORDER          (compatible)
-        shadcn --radius           = base radius, others derived by calc()
-
-   2. DENSITY. shadcn's defaults are a 40px control, 16px body text, 8px
-      radius. Ours are 32px, 14px, 10px. That difference is most of why a stock
-      shadcn build "doesn't look right": the colours are right and every box is
-      25% too big. The card is not corrected here: it is trued in @sirdab/one,
-      whose parts own a 24px inset from sm and 16px below (the 40px fields
-      inside want the air; 16px everywhere looks cramped beside them).
-   ============================================================================ */
-
-/* On the theme scopes, not :root alone: these alias flipping tokens, so they
-   must re-resolve inside a .dark scope and back inside a .light island (THEME
-   SCOPES in foundation.css). */
 :root,
 .light,
 .dark {
-  /* ---- surfaces: identical meaning, safe passthrough ---- */
   --card-foreground: var(--foreground);
   --popover-foreground: var(--foreground);
 
-  /* ---- the collisions ---- */
-
-  /* shadcn's --secondary is the secondary BUTTON FILL; ours is a TEXT
-     colour. The fill remap lives ONLY in the Tailwind utility mapping
-     (tailwind.css: --color-secondary → --muted), NEVER here as a var
-     reassignment: `--muted-foreground: var(--secondary)` resolves against
-     the FINAL cascaded value, so reassigning --secondary in this file
-     would turn de-emphasised text into an invisible 4% wash whenever this
-     file cascades after foundation.css. (Bug found and removed 2026-07-26.)
-     --secondary-foreground is not reassigned for the same reason. */
-
-  /* shadcn's de-emphasised text role. Ours is --secondary, safe to
-     reference now that this file never clobbers it. */
   --muted-foreground: var(--secondary);
 
-  /* shadcn's hover-surface token. Not in foundation.css (see header). Point
-     it at our ramp so shadcn dropdowns/selects/menus hover correctly instead
-     of falling back to slate. In our OWN components use --muted or a
-     transparent nav-style hover, never --accent. */
   --accent: var(--gray-100);
   --accent-foreground: var(--gray-900);
 
-  /* shadcn derives --radius-sm/md/lg from this with calc(). Our
-     default is 10px, not shadcn's 8px. */
   --radius: var(--radius-lg);
 }
 
-/* ============================================================================
-   DENSITY CORRECTIONS
-   ----------------------------------------------------------------------------
-   Scoped to shadcn's own class names so nothing here touches your components.
-   Delete any rule you disagree with; each is independent.
-   ============================================================================ */
-
-/* Controls: shadcn's 40px drops to 32px, our default control height.
-   (Only the default slot is corrected; size variants belong to the trued
-   Button, not this file.) */
-/* [data-slot] names only, never bare element selectors. An element
-   selector reaches past shadcn into composite primitives (it double-padded
-   the composite Input's bare inner field) and silently supplies shadcn
-   values to any button that omits a property. Found 2026-07-26. */
 [data-slot="button"] {
   block-size: var(--control-md);
   padding-inline: var(--space-12);
@@ -105,19 +29,6 @@
   border-color: var(--border-interactive);
 }
 
-/* Overlay density corrections live with their components now. Trued
-   panels must NEVER appear here: every past leak looked like taste and
-   was a bug (the Select panel's padding doubled its inset; the Popover's
-   solid background painted under the frost pseudo and made panels
-   opaque; select/command item sizing rode along redundantly until
-   2026-07-28). If a new shadcn overlay lands unported, give it a rule
-   here and DELETE that rule the day the component is trued. */
-
-/* Badges: shadcn defaults to a bordered pill. A status badge is a tone:
-   the tone's subtle fill (--*-subtle), its own text step and a dot (see
-   foundation.css, section 4, and the badge's header comment); a tag is a
-   hairline or a quiet fill. The density here (24px, 8px inline padding,
-   caption type) serves both. */
 [data-slot="badge"] {
   block-size: var(--control-xs);
   padding-inline: var(--space-8);
@@ -127,10 +38,6 @@
   border: none;
 }
 
-/* A menu item that opens a dialog: the menu's 200 ms exit at z-popover
-   paints over the dialog fading in. With no animation, presence unmounts
-   the closed menu on the first frame. The !important is there because the
-   bridge sits in the base layer, under the utilities that animate the exit. */
 body:has([data-slot="dialog-content"][data-state="open"])
   [data-slot="dropdown-menu-content"][data-state="closed"] {
   animation: none !important;

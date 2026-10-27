@@ -27,9 +27,6 @@ import { Tool, ToolDetail } from "@sirdab/one/components/tool";
 import { sampler } from "./samples";
 import { Section } from "./section";
 
-/* Client-side because the composer and the approval card hold state.
-   Section titles and captions are chrome (English); everything painted
-   INSIDE a component localizes through the sampler. */
 export function AssistantDemo({
   locale = "en",
 }: {

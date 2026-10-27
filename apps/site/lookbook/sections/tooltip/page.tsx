@@ -18,7 +18,6 @@ import {
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function TooltipPage({
   lang,
 }: {

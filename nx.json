@@ -1,10 +1,7 @@
 {
   "defaultBase": "main",
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": [
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/eslint.config.mjs",
@@ -13,26 +10,34 @@
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true,
-      "outputs": [
-        "{projectRoot}/dist",
-        "{projectRoot}/out"
+      "outputs": ["{projectRoot}/dist", "{projectRoot}/out"],
+      "inputs": [
+        "default",
+        "^default",
+        {
+          "env": "SITE_BASE_PATH"
+        },
+        {
+          "env": "SITE_URL"
+        }
       ]
     },
     "test": {
-      "cache": true
+      "cache": true,
+      "dependsOn": ["^build"]
     },
     "typecheck": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true
     },
     "lint": {
       "cache": true
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false
     }
   }
 }

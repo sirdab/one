@@ -4,10 +4,6 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ConversationHold } from "../conversation";
 import { Reasoning } from "../reasoning";
 
-/* The disclosure's contract is its timing: open while thinking streams, fold
-   itself once a beat after it ends (so the reply below it gets the room), and
-   never fold on someone who opened it by hand. A persisted turn starts
-   folded, because a reload is not the moment to replay a thought. */
 describe("Reasoning", () => {
   afterEach(() => {
     vi.useRealTimers();
@@ -36,9 +32,6 @@ describe("Reasoning", () => {
     expect(screen.queryByText("checking this week's orders")).toBeNull();
   });
 
-  /* With auto off the disclosure never moves on its own: folded from the
-       start, while it streams and after, and open only when someone opens
-       it, where it stays. */
   it("starts folded with auto off, live or saved, and only the trigger opens it", () => {
     vi.useFakeTimers();
     const { rerender } = render(
@@ -92,8 +85,6 @@ describe("Reasoning", () => {
     expect(screen.getByText("kept open")).toBeTruthy();
   });
 
-  /* Opening a thought at the bottom of a chat must not slide the view to
-       keep the bottom pinned: it opens downward, in place, at once. */
   it("holds the conversation's scroll when opened by hand", () => {
     const hold = vi.fn();
     render(

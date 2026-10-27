@@ -1,7 +1,6 @@
 import { Slider } from "@sirdab/one/components/slider";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: the rules live in ./notes.md. */
 export default async function SliderPage(): Promise<React.JSX.Element> {
   return (
     <>

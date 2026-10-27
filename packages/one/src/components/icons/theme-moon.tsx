@@ -1,8 +1,9 @@
+"use client";
+
 import * as React from "react";
 
 import type { IconProps } from "./house-icon";
 
-/* The theme toggle's moon; ThemeSun carries the rest of the story. */
 const ThemeMoon = React.forwardRef<SVGSVGElement, IconProps>(function ThemeMoon(
   { size = 24, ...props },
   ref,

@@ -18,21 +18,6 @@ import {
   SheetTitle,
 } from "./sheet";
 
-/* The tray a Select opens below md: the house Sheet at the bottom, titled with
-   the field's label, a listbox of 44px rows, the chosen one marked with a
-   check at the end. select.tsx decides when it opens (see its header); this
-   file is what opens. It lives beside the primitive because the primitive is
-   already long, and it imports nothing from select.tsx so the two cannot
-   loop: the state they share is declared here.
-
-   Rows are plain elements, not Radix items. Radix stays closed while the tray
-   is up, so its own items sit in the closed fragment doing what they always
-   did there (the SelectValue text, typeahead, the form's bubble input), and
-   the tray renders the same children a second time through a context that
-   turns SelectItem and its kin into rows. */
-
-/** Past this many options the tray offers a search: about twelve 44px rows
-    plus the title is what 80dvh holds on a phone. */
 export const SEARCH_THRESHOLD = 12;
 
 export interface SelectLabels {
@@ -51,9 +36,6 @@ const DEFAULT_LABELS: SelectLabels = {
 
 const SelectLabelsContext = React.createContext<SelectLabels>(DEFAULT_LABELS);
 
-/** The tray's four strings, set once at an app's root like the dialog's close
-    label: the primitive takes none of its own, so an Arabic app never says
-    "Search" in English. */
 export function SelectLabelsProvider({
   labels,
   children,
@@ -71,15 +53,14 @@ export function SelectLabelsProvider({
 export interface TrayState {
   open: boolean;
   title: string;
-  /** Bumped on every open, so the body remounts with an empty query. */
+
   session: number;
 }
 
 export interface SelectState {
   value: string;
   pick: (value: string) => void;
-  /** Null until the first tray open: a Select that never opens one never
-        mounts a Sheet. */
+
   tray: TrayState | null;
   closeTray: () => void;
   triggerRef: React.RefObject<HTMLElement | null>;
@@ -102,13 +83,8 @@ interface TrayRows {
   pick: (value: string) => void;
 }
 
-/** Present only inside the tray's list: it is what turns SelectItem and its
-    kin into rows. */
 export const TrayRowsContext = React.createContext<TrayRows | null>(null);
 
-/** Whether this tap opens the tray: a phone-width window, and no dialog,
-    sheet or popover already open around the trigger (a panel over a panel is
-    never the answer; the popover stays, 44px rows and all). */
 export function opensAsTray(trigger: HTMLElement | null): boolean {
   if (typeof window === "undefined") return false;
   if (typeof window.matchMedia !== "function") return false;
@@ -116,9 +92,6 @@ export function opensAsTray(trigger: HTMLElement | null): boolean {
   return trigger?.closest('[role="dialog"]') == null;
 }
 
-/** The field's name, for the tray's title: its aria-label, else what
-    aria-labelledby points at, else the <label> that targets it (minus the
-    trigger's own text when the trigger sits inside that label). */
 export function titleOf(trigger: HTMLElement | null): string {
   if (!trigger) return "";
   const own = trigger.getAttribute("aria-label")?.trim();
@@ -170,8 +143,7 @@ export function TrayItem({
       aria-disabled={unavailable || undefined}
       data-slot="select-item"
       data-state={selected ? "checked" : "unchecked"}
-      // A click, never pointerup: a scroll or drag that ends on a row
-      // must pick nothing.
+
       onClick={() => {
         if (!unavailable) rows?.pick(value);
       }}
@@ -193,8 +165,7 @@ export function TrayItem({
           </span>
         ) : null}
       </span>
-      {/* In flow and always reserved, so the check never shifts the
-                text. No fill marks the chosen row; the check does. */}
+
       <span
         aria-hidden
         data-slot="select-item-indicator"
@@ -254,10 +225,6 @@ export function TraySeparator({
   );
 }
 
-/* The search matches the way the list kit's does: both sides folded, so
-   «سارة» finds «ساره». Rows are hidden in the DOM rather than filtered out of
-   the children, because the children are the caller's and may wrap their
-   items in components that only the DOM can see through. */
 function applyQuery(list: HTMLElement, query: string): number {
   const needle = foldArabic(query.trim());
   let shown = 0;
@@ -306,11 +273,6 @@ function TrayBody({
     [state.value, state.pick],
   );
 
-  /* Whether to offer a search is decided from the rows that rendered, so
-       it counts options behind wrapper components too. Radix does not hand
-       out the closed fragment that holds its own copy, and the children are
-       the caller's. A layout effect's update lands before the first paint,
-       so the tray still opens at its final shape. */
   React.useLayoutEffect(() => {
     const count =
       listRef.current?.querySelectorAll('[data-slot="select-item"]').length ??
@@ -318,21 +280,6 @@ function TrayBody({
     setSearchable(count > SEARCH_THRESHOLD);
   }, []);
 
-  /* The tray keeps the height it opened at, so filtering down to two rows
-       does not shrink it under her thumb. What is pinned is the wrapper
-       inside the scroller, to the scroller's visible height at open. Not the
-       scroller itself: vaul shrinks the panel when the phone keyboard opens
-       for the search field (repositionInputs) and the Sheet clips overflow,
-       so a pinned scroller taller than the panel would hide its last rows
-       with no way to scroll to them; left free, the scroller shrinks with the
-       panel and the wrapper holds the space it scrolls over. Not the
-       wrapper's own height either: a long list opens capped by the viewport,
-       so the wrapper is taller than the scroller, and after filtering that
-       excess would be a scrollable blank stretch with the match scrolled out
-       of view. Scroller-height means scrollHeight equals clientHeight once
-       filtered. The end padding sits on the wrapper, not the scroller, so the
-       pin does not count it twice. Read after the search field is in place (searchable !== null),
-       since the field takes part of the panel. */
   React.useLayoutEffect(() => {
     const pinned = pinnedRef.current;
     const scroller = scrollerRef.current;
@@ -345,9 +292,7 @@ function TrayBody({
     if (!list) return;
     const shown = applyQuery(list, query);
     setNoMatch(query.trim() !== "" && shown === 0);
-    // A match must start in view, not wherever the full list was scrolled.
-    // Only a new query does it: a parent re-render hands over fresh
-    // children too, and must not throw the chosen row out of view.
+
     if (scrollerRef.current && lastQueryRef.current !== query)
       scrollerRef.current.scrollTop = 0;
     lastQueryRef.current = query;
@@ -403,8 +348,7 @@ function TrayBody({
             aria-controls={state.listboxId}
             clearLabel={labels.clear}
             autoComplete="off"
-            // The password managers' inline menus have no
-            // business in a filter box; each reads its own opt-out.
+
             data-bwignore="true"
             data-1p-ignore="true"
             data-lpignore="true"
@@ -438,8 +382,7 @@ function TrayBody({
           ) : null}
         </div>
       </div>
-      {/* The scrim, a drag and Escape close it, none of which a screen
-                reader can find; this is its way out. */}
+
       <SheetClose className="sr-only">{labels.close}</SheetClose>
     </>
   );
@@ -466,10 +409,7 @@ export function SelectTray({
       <SheetContent
         className={className}
         aria-describedby={undefined}
-        // Radix would focus the first tabbable, which past 12 options
-        // is the search field and opens the keyboard. Land on the
-        // chosen row instead (or the list), where a thumb or the
-        // arrow keys start.
+
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           const container = event.currentTarget;
@@ -480,9 +420,7 @@ export function SelectTray({
             ) ?? container.querySelector<HTMLElement>('[role="listbox"]');
           target?.focus();
         }}
-        // The Sheet has no Trigger of its own, so Radix has nowhere to
-        // send focus back to. A pointer close leaves it ringless (as
-        // the popover does); a keyboard close returns it to the field.
+
         onCloseAutoFocus={(event) => {
           restoreTriggerFocus(event);
           if (event.defaultPrevented) return;

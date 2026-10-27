@@ -1,4 +1,3 @@
-// Literal URLs let consumer bundlers emit flags under their own asset base path.
 const PHONE_FLAGS: Readonly<Record<string, string>> = {
   ad: new URL("../assets/flags/ad.svg", import.meta.url).href,
   ae: new URL("../assets/flags/ae.svg", import.meta.url).href,

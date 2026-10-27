@@ -6,16 +6,6 @@ import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui";
 import { cn } from "../../lib/utils";
 import { toggleVariants, type ToggleVariantProps } from "./toggle";
 
-/* A row of toggles that answer one question together. type="single" is a
-   pick-one (ratios, sizes): Radix gives it radio semantics and arrow-key
-   movement between the items. type="multiple" is a set of independent
-   switches. Trued after the shadcn add: the items are separate chips 8px
-   apart, wrapping, not shadcn's joined bar (a joined, sliding pick-one is
-   Tabs variant="segmented"), so the spacing prop is gone.
-
-   A single group lets Radix clear the value when the pressed item is pressed
-   again. `required` keeps a pick-one picked: the second press is ignored,
-   which is what a pick-one with a default means. */
 const ToggleGroupContext = React.createContext<ToggleVariantProps>({});
 
 type ToggleGroupProps = React.ComponentProps<typeof ToggleGroupPrimitive.Root> &

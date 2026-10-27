@@ -1,7 +1,6 @@
 import { PageHeader, Section } from "../../../lookbook/components/section";
 import { ToastDemo } from "../../../lookbook/components/toast-demo";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default function ToastPage({
   lang = "en",
 }: {

@@ -1,9 +1,6 @@
 import { PageHeader, Section } from "../../../lookbook/components/section";
 import { ImageEditorCircleDemo, ImageEditorDemo } from "./demo";
 
-/* Gallery page: the photo is painted on a canvas, so Apply renders for real
-   and the result replaces the thumbnail; click it to edit again from the
-   original. */
 export default async function ImageEditorPage(): Promise<React.JSX.Element> {
   return (
     <>

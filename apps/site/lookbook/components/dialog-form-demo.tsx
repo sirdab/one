@@ -19,10 +19,6 @@ import { sampler } from "./samples";
 
 const STORED = "Sara Alqahtani";
 
-/* The form dialog as the studio builds it: Cancel is always there, and the
-   primary is not on the sheet until the draft would save. Type a different
-   name and Save arrives above Cancel on a phone, beside it from sm; type it
-   back and it goes. The sheet is the same height either way. */
 export function DialogFormDemo({
   locale = "en",
 }: {

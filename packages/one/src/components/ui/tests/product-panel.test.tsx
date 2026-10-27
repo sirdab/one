@@ -50,7 +50,7 @@ describe("ProductPanel", () => {
     expect(panel.getAttribute("role")).toBe("img");
     expect(panel.getAttribute("aria-label")).toBe("Oud");
     expect(panel.className).toContain("aspect-square");
-    // jsdom may hand a hex back as rgb(); either spelling is the colour.
+
     expect(panel.style.backgroundColor).toMatch(
       /^(#101010|rgb\(16, 16, 16\))$/,
     );
@@ -59,8 +59,7 @@ describe("ProductPanel", () => {
     expect(svg).not.toBeNull();
     expect(svg?.getAttribute("viewBox")).toBe("0 0 100 120");
     expect(svg?.getAttribute("data-shape")).toBe("bottle");
-    /* Decorative: the panel carries the accessible name. jsdom SVG
-           className is an SVGAnimatedString, so attributes are read. */
+
     expect(svg?.getAttribute("aria-hidden")).toBe("true");
     expect(svg?.getAttribute("focusable")).toBe("false");
     expect(svg?.style.color).toMatch(/^(#ffffff|rgb\(255, 255, 255\))$/);

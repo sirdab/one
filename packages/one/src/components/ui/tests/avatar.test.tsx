@@ -4,9 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 
-/* Radix shows the fallback until the image has loaded, and with delayMs it
-   holds the fallback back for that long. jsdom never loads an image, so the
-   delay is the whole story here. */
 beforeEach(() => {
   vi.useFakeTimers();
 });

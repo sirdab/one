@@ -9,9 +9,6 @@ import {
   type StatusTone,
 } from "../badge";
 
-/* The badge is a status MARKER, never an action. A status (a tone) is a wash,
-   a dot and a word; a tag (a variant) is a hairline or a quiet fill with
-   neither, so the two can never be mistaken for each other on one row. */
 const WASH: Record<StatusTone, string[]> = {
   neutral: ["bg-muted", "text-foreground"],
   attention: ["bg-attention-subtle", "text-attention"],
@@ -202,8 +199,6 @@ describe("LegacyBadge (the console's old variant names)", () => {
 });
 
 describe("the type guard", () => {
-  /* The guard is the compiler, not a regex: tsc fails on any line below
-       that stops being an error. Nothing here is rendered. */
   it("refuses a status variant on Badge and a tone with a variant", () => {
     // @ts-expect-error a status look is a tone, not a variant
     const status = <Badge variant="success" />;

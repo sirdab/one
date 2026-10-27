@@ -3,10 +3,6 @@ import { describe, expect, it } from "vitest";
 
 import { Kbd, KbdGroup } from "../kbd";
 
-/* Trued after the shadcn add: the keycap tokens (a 15% ink hairline on the
-   gray-50 surface) replace stock's bg-muted, the caption role replaces
-   text-xs, and inside a tooltip the chip inverts, since our tooltip is ink.
-   The next `shadcn add kbd` would silently put the stock values back. */
 describe("Kbd", () => {
   it("is a real kbd element on the keycap tokens", () => {
     const { container } = render(<Kbd>⌘B</Kbd>);

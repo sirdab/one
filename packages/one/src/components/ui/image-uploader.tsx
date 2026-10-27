@@ -18,35 +18,7 @@ import { Icon } from "./icon";
 import { Input } from "./input";
 import { Spinner } from "./spinner";
 
-/* The Sirdab image uploader: drop or choose photos, see them upload, order
-   them, caption them. Built on react-dropzone, like Dropzone, but it drives
-   the hook itself: the WHOLE uploader is the drop target, grid included, so
-   a merchant who already has one photo can drop more anywhere on it, while
-   clicking stays with the controls that say so (the empty well's button and
-   the add tile). Dropzone's root is one big button, which cannot hold a grid
-   of other buttons.
-
-   - Controlled. `value` is the ordered list of images that made it; the
-     first one is the cover. `onChange` gets the whole next list, so the
-     caller owns what gets saved.
-   - Uploading is injected (`upload(file)`), because every surface stores its
-     media its own way. While a file uploads it shows as a tile with a local
-     preview (an object URL, revoked when the tile goes), a spinner, and on
-     failure the reason plus Retry. Files upload one after another in the
-     order they were picked, which is the order they will sell in.
-   - Reorder by dragging a tile, or with the earlier/later buttons on each
-     (the keyboard path). The arrows flip in RTL. A tile's controls show on
-     hover and focus, and always on touch, where there is no hover.
-   - Captions: pass `altLabel` and each tile gets a small caption field in
-     the caller's language (`altDir`). Or pass `onOpen` to open the photo in
-     the caller's own view instead (the product form's full-size preview,
-     which captions in two languages).
-   - Validation comes from props (`accept`, `maxBytes`, `maxFiles`), and every
-     word, rejections included, from `labels`: a primitive takes no copy of
-     its own. */
-
 export type UploaderImage = {
-  /** Stable identity for keys and reorder: the stored id, else the url. */
   key: string;
   url: string;
   alt?: string;
@@ -55,14 +27,13 @@ export type UploaderImage = {
 export type UploadOutcome = { url: string; id?: string } | { error: string };
 
 export type ImageUploaderLabels = {
-  /** Empty state: the main line and the formats/size line under it. */
   dropTitle: string;
   dropHint: string;
-  /** The empty well's explicit button. */
+
   choose: string;
-  /** Shown over the whole uploader while files are dragged over it. */
+
   dropActive: string;
-  /** The add tile's short label. */
+
   add: string;
   cover: string;
   remove: string;
@@ -70,14 +41,14 @@ export type ImageUploaderLabels = {
   uploading: string;
   moveEarlier: string;
   moveLater: string;
-  /** Rejections, one sentence per reason. */
+
   rejectedType: string;
   rejectedSize: string;
-  /** Only reachable when `maxFiles` is set. */
+
   rejectedCount?: string;
-  /** A tile's accessible name when `onOpen` makes it a button. */
+
   open?: (position: number) => string;
-  /** Turns on the per-tile caption field. */
+
   altLabel?: string;
   altPlaceholder?: string;
 };
@@ -86,21 +57,17 @@ export type ImageUploaderProps = {
   value: UploaderImage[];
   onChange: (next: UploaderImage[]) => void;
   upload: (file: File) => Promise<UploadOutcome>;
-  /** react-dropzone's accept map, e.g. { "image/jpeg": [] }. */
+
   accept: Record<string, string[]>;
   maxBytes?: number;
-  /** The most images the whole set may hold, uploaded ones included. */
+
   maxFiles?: number;
   labels: ImageUploaderLabels;
   onOpen?: (index: number) => void;
   altDir?: "ltr" | "rtl";
-  /** The file input's id, so a <Label htmlFor> outside can name it. */
+
   id?: string;
-  /** Clicking to add (the well, its button, the add tile) calls this
-   *  instead of opening the file dialog, handing over the function that
-   *  opens it: a host can offer photos it already has first, with
-   *  "upload a new one" as one of the choices. Dropping files still
-   *  uploads them straight away. */
+
   onBrowse?: (openFiles: () => void) => void;
   className?: string;
 };
@@ -133,9 +100,6 @@ export function ImageUploader({
   const [rejection, setRejection] = React.useState<string | null>(null);
   const [dragging, setDragging] = React.useState<number | null>(null);
 
-  /* Uploads resolve after renders the caller may have caused (a reorder, a
-       removal), so they append to the LATEST list, never to the one they
-       started from. */
   const valueRef = React.useRef(value);
   valueRef.current = value;
   const pendingRef = React.useRef(pending);
@@ -171,7 +135,7 @@ export function ImageUploader({
           item.id === next.id ? { ...item, status: "uploading" } : item,
         );
         const outcome = await upload(next.file);
-        // The host can close while an injected upload is still running.
+
         if (!mounted.current) return;
         if ("error" in outcome) {
           const failed = (item: Pending): Pending =>
@@ -278,9 +242,6 @@ export function ImageUploader({
     >
       <input {...getInputProps({ id })} data-slot="image-uploader-input" />
       {empty ? (
-        /* The well is clickable as a convenience; the button inside it
-                   is the keyboard and screen-reader path, so the well itself
-                   is not a second focus stop. */
         <div
           onClick={browse}
           className="border-border bg-surface-whisper group-data-drag-active/uploader:wash-100 hover:wash-50 flex min-h-48 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border p-6 text-center transition-colors duration-150 ease-out group-data-drag-active/uploader:border-foreground motion-reduce:transition-none"
@@ -309,9 +270,6 @@ export function ImageUploader({
           </Button>
         </div>
       ) : (
-        /* Columns follow the uploader's own width, not the viewport:
-                   it lives in cards of every size. Small tiles, like a photo
-                   strip: three on a phone, up to six in a wide card. */
         <div className="@container">
           <ul className="grid grid-cols-3 gap-2 @sm:grid-cols-4 @lg:grid-cols-5 @2xl:grid-cols-6">
             {value.map((image, index) => (
@@ -437,9 +395,6 @@ export function ImageUploader({
         </div>
       )}
       {!empty && isDragActive ? (
-        /* The drop state for a filled uploader: the whole thing takes
-                   the drop, so the whole thing says so. Pointer-transparent,
-                   or it would steal the drag events it is announcing. */
         <div className="bg-surface-whisper pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-lg border border-foreground opacity-95">
           <Icon icon={UploadIcon} className="size-5 text-foreground" />
           <span className="text-label">{labels.dropActive}</span>
@@ -454,9 +409,6 @@ export function ImageUploader({
   );
 }
 
-/* A tile's overlay control. Hidden until the tile is hovered or holds focus,
-   and always shown on a coarse pointer, where there is no hover to find it
-   with. icon-sm on a solid plate: a real hit target that reads on any photo. */
 function Control({
   label,
   onClick,
@@ -505,8 +457,6 @@ function Tile({
 }): React.JSX.Element {
   return (
     <span className="group/tile bg-muted relative block aspect-square overflow-hidden rounded-lg">
-      {/* A plain img, not next/image: this primitive runs in hosts that
-                are not Next, and the url is often a local blob preview. */}
       <img
         src={url}
         alt=""
@@ -520,9 +470,7 @@ function Tile({
           className="absolute inset-0"
         />
       ) : null}
-      {/* Ink, not paper: a white chip vanished on a white photo or a
-                white backdrop. The dark pill reads on anything a product
-                photo is likely to be. */}
+
       {cover ? (
         <span className="text-caption pointer-events-none absolute start-1.5 bottom-1.5 rounded-md bg-foreground px-1.5 py-0.5 text-background">
           {cover}
@@ -533,8 +481,6 @@ function Tile({
   );
 }
 
-/* The first rejection decides the sentence: a mixed drop of a PDF and a huge
-   photo gets one clear line, not a list. */
 function rejectionMessage(
   rejected: FileRejection[],
   labels: ImageUploaderLabels,

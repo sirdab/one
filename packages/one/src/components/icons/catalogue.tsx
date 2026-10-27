@@ -1,10 +1,7 @@
+"use client";
+
 import { shellIcon } from "./house-icon";
 
-/* The catalogue's glyphs (products and sections) and the general ones that
-   came with them: statuses, archiving, search, arrows, chevrons. Same shape
-   as shell.tsx. */
-
-/* Every product, whatever its status: the "all" tab. */
 export const AllStatusesIcon = shellIcon(
   "AllStatusesIcon",
   <>
@@ -25,9 +22,6 @@ export const AllStatusesIcon = shellIcon(
   </>,
 );
 
-/* Live, selling. The ring and the tick are separate paths, and the tick
-   never takes a fill, so a caller can fill the disc (the status picker's
-   solid green) and leave the tick cut out in the stroke colour. */
 export const LiveIcon = shellIcon(
   "LiveIcon",
   <>
@@ -49,7 +43,6 @@ export const LiveIcon = shellIcon(
   </>,
 );
 
-/* Not there yet: a dashed ring. */
 export const DraftIcon = shellIcon(
   "DraftIcon",
   <path
@@ -62,8 +55,6 @@ export const DraftIcon = shellIcon(
   />,
 );
 
-/* Taken off the shelf, the archived status's disc: ring and bar apart,
-   for the same reason as LiveIcon. */
 export const ArchivedIcon = shellIcon(
   "ArchivedIcon",
   <>
@@ -85,7 +76,6 @@ export const ArchivedIcon = shellIcon(
   </>,
 );
 
-/* Archiving: the box a product is filed into. */
 export const ArchiveIcon = shellIcon(
   "ArchiveIcon",
   <>
@@ -113,7 +103,6 @@ export const ArchiveIcon = shellIcon(
   </>,
 );
 
-/* Bringing a product back out of the archive. */
 export const UnarchiveIcon = shellIcon(
   "UnarchiveIcon",
   <>
@@ -166,7 +155,6 @@ export const SearchIcon = shellIcon(
   </>,
 );
 
-/* A search that found nothing. */
 export const NoResultsIcon = shellIcon(
   "NoResultsIcon",
   <>
@@ -191,7 +179,6 @@ export const NoResultsIcon = shellIcon(
   </>,
 );
 
-/* A product that is not there: the box, searched. */
 export const ProductNotFoundIcon = shellIcon(
   "ProductNotFoundIcon",
   <path
@@ -203,7 +190,6 @@ export const ProductNotFoundIcon = shellIcon(
   />,
 );
 
-/* More actions, behind a menu. */
 export const MoreIcon = shellIcon(
   "MoreIcon",
   <>
@@ -231,7 +217,6 @@ export const MoreIcon = shellIcon(
   </>,
 );
 
-/* How the customer sees it. */
 export const PreviewIcon = shellIcon(
   "PreviewIcon",
   <>
@@ -252,7 +237,6 @@ export const PreviewIcon = shellIcon(
   </>,
 );
 
-/* A product without a photo of its own. */
 export const PackageIcon = shellIcon(
   "PackageIcon",
   <>
@@ -273,7 +257,6 @@ export const PackageIcon = shellIcon(
   </>,
 );
 
-/* Where a photo would be, when there is none. */
 export const NoPhotoIcon = shellIcon(
   "NoPhotoIcon",
   <path
@@ -285,7 +268,6 @@ export const NoPhotoIcon = shellIcon(
   />,
 );
 
-/* Adding a photo. */
 export const AddPhotoIcon = shellIcon(
   "AddPhotoIcon",
   <>
@@ -323,7 +305,6 @@ export const AddPhotoIcon = shellIcon(
   </>,
 );
 
-/* Uploading a file. */
 export const UploadIcon = shellIcon(
   "UploadIcon",
   <>
@@ -344,7 +325,6 @@ export const UploadIcon = shellIcon(
   </>,
 );
 
-/* A section: the shelves products are grouped on. */
 export const SectionsIcon = shellIcon(
   "SectionsIcon",
   <>
@@ -379,7 +359,6 @@ export const SectionsIcon = shellIcon(
   </>,
 );
 
-/* Done, or picked. */
 export const CheckIcon = shellIcon(
   "CheckIcon",
   <path
@@ -391,7 +370,6 @@ export const CheckIcon = shellIcon(
   />,
 );
 
-/* A menu's caret. */
 export const ChevronDownIcon = shellIcon(
   "ChevronDownIcon",
   <path
@@ -403,7 +381,6 @@ export const ChevronDownIcon = shellIcon(
   />,
 );
 
-/* Next, in reading order once flipped for RTL. */
 export const ChevronRightIcon = shellIcon(
   "ChevronRightIcon",
   <path
@@ -415,7 +392,6 @@ export const ChevronRightIcon = shellIcon(
   />,
 );
 
-/* Previous: ChevronRightIcon mirrored. */
 export const ChevronLeftIcon = shellIcon(
   "ChevronLeftIcon",
   <path
@@ -427,7 +403,6 @@ export const ChevronLeftIcon = shellIcon(
   />,
 );
 
-/* Editing a field in place. */
 export const PencilIcon = shellIcon(
   "PencilIcon",
   <>
@@ -448,7 +423,6 @@ export const PencilIcon = shellIcon(
   </>,
 );
 
-/* Something needs her attention. */
 export const WarningIcon = shellIcon(
   "WarningIcon",
   <path
@@ -459,7 +433,6 @@ export const WarningIcon = shellIcon(
   />,
 );
 
-/* Back, or earlier; flipped for RTL by the caller. */
 export const ArrowLeftIcon = shellIcon(
   "ArrowLeftIcon",
   <>
@@ -480,7 +453,6 @@ export const ArrowLeftIcon = shellIcon(
   </>,
 );
 
-/* ArrowLeftIcon mirrored: forward, or later. */
 export const ArrowRightIcon = shellIcon(
   "ArrowRightIcon",
   <>
@@ -501,7 +473,6 @@ export const ArrowRightIcon = shellIcon(
   </>,
 );
 
-/* A drag handle: two columns of three dots. */
 export const DotGridIcon = shellIcon(
   "DotGridIcon",
   <>
@@ -538,7 +509,6 @@ export const DotGridIcon = shellIcon(
   </>,
 );
 
-/* Adding one more of something, in a list. */
 export const PlusCircleIcon = shellIcon(
   "PlusCircleIcon",
   <path
@@ -550,11 +520,8 @@ export const PlusCircleIcon = shellIcon(
   />,
 );
 
-/* The status glyphs under their general names, for a check or a dashed
-   ring that is not a product's status. */
-/** @alias */
 export const CheckCircleIcon = LiveIcon;
-/** @alias */
+
 export const DashedCircleIcon = DraftIcon;
-/** @alias */
+
 export const GridIcon = SectionsIcon;

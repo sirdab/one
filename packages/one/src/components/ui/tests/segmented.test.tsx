@@ -12,9 +12,6 @@ import {
   SegmentedItem,
 } from "../segmented";
 
-/* jsdom lays nothing out, so every rect is zero and no slide has anywhere to
-   go. Items get a 100px column each, 4px apart, by their place in the track;
-   the thumb inside an item is measured by its host, as the hook does. */
 function stubItemRects(): void {
   vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(
     function (this: HTMLElement): DOMRect {
@@ -28,9 +25,6 @@ function stubItemRects(): void {
   );
 }
 
-/* The offset a slide starts from is written and cleared inside one commit
-   (that is the FLIP), so the only way to see it is the style attribute's
-   history. Call the returned reader after the event that moves the thumb. */
 function watchStyle(root: Element): () => string {
   const observer = new MutationObserver(() => undefined);
   const seen: string[] = [];
@@ -67,8 +61,6 @@ function renderSegmented() {
 }
 
 describe("Segmented text-only", () => {
-  /* No icon ⇒ labels always visible ⇒ constant track width: the
-       no-layout-shift mode. */
   it("shows every label with the thumb still moving", () => {
     render(
       <Segmented defaultValue="a" aria-label="mode">
@@ -86,8 +78,6 @@ describe("Segmented text-only", () => {
     ).not.toBeNull();
   });
 
-  /* The checked ps-shift belongs to the icon pair and must ANIMATE.
-       It once popped 2px on every selection. */
   it("animates the checked padding only on icon items", () => {
     render(
       <Segmented defaultValue="a" aria-label="mode">
@@ -103,8 +93,6 @@ describe("Segmented text-only", () => {
 });
 
 describe("Segmented static", () => {
-  /* animated={false}: same anatomy, no motion. Thumb and label still
-       exist only on the checked item and still move on selection. */
   it("keeps the state contract without motion classes", () => {
     render(
       <Segmented defaultValue="a" animated={false} aria-label="mode">
@@ -122,9 +110,9 @@ describe("Segmented static", () => {
     ).not.toBeNull();
     const iconWrap = items[0].querySelector("svg")?.parentElement;
     expect(iconWrap?.className ?? "").not.toContain("transition-colors");
-    // static shows EVERY label, unchecked ones muted
+
     expect(items[1].textContent).toContain("Beta");
-    // no checked padding shift in static: it translated content 2px
+
     expect(items[0].className).not.toContain("data-[state=checked]:ps-1.5");
     fireEvent.click(items[1]);
     expect(
@@ -139,7 +127,7 @@ describe("Segmented", () => {
     renderSegmented();
     const track = document.querySelector('[data-slot="segmented"]');
     expect(track?.getAttribute("role")).toBe("radiogroup");
-    // 12px track − 4px pad = 8px items
+
     expect(track?.className).toContain("rounded-xl");
     expect(track?.className).toContain("p-1");
     expect(track?.className).toContain("w-fit");
@@ -149,8 +137,6 @@ describe("Segmented", () => {
     expect(item?.className).not.toContain("rounded-lg");
   });
 
-  /* 40 high on a mouse, 44 on a thumb; the items sit one pad inside at
-       32 and 36. */
   it("is 40 high, 44 on touch, with 32 and 36 items", () => {
     renderSegmented();
     const track = document.querySelector('[data-slot="segmented"]');
@@ -161,8 +147,6 @@ describe("Segmented", () => {
     expect(item?.className).toContain("pointer-coarse:h-9");
   });
 
-  /* A glyph item is a 32px square; on a touch screen it is 44 wide so the
-       44px tap boxes of neighbours stop overlapping. */
   it("makes glyph-only items 32 square and 44 wide on touch", () => {
     render(
       <Segmented defaultValue="a" aria-label="section">
@@ -189,8 +173,6 @@ describe("Segmented", () => {
     }
   });
 
-  /* The unchosen label answers a mouse by going to ink, so the option
-       reads as pressable before it is chosen. */
   it("brings an unchosen label to ink on hover", () => {
     render(
       <Segmented defaultValue="a" aria-label="mode">
@@ -210,7 +192,6 @@ describe("Segmented", () => {
     expect(iconWrap?.className).toContain("group-hover:text-foreground");
   });
 
-  /* One recipe for Segmented and Tabs segmented: both read these. */
   it("wears the shared track, item and thumb recipe", () => {
     render(
       <Segmented defaultValue="a" aria-label="mode">
@@ -236,8 +217,6 @@ describe("Segmented", () => {
     expect(SEGMENTED_TRACK).not.toMatch(/\bbg-gray-\d+\b/);
   });
 
-  /* A long label is never cut: items keep their width, and the track
-       scrolls in place as the last resort (a phrase belongs in a Select). */
   it("never truncates a label: the track scrolls instead", () => {
     render(
       <Segmented defaultValue="a" aria-label="mode">
@@ -257,11 +236,6 @@ describe("Segmented", () => {
     expect(label?.className).not.toContain("truncate");
   });
 
-  /* The floating thumb and the VISIBLE label exist only in the checked
-       item. That is what makes the slide and the expand possible. But a
-       radio's accessible name comes from its content, so every item
-       keeps an sr-only label in the tree; only the animated visible copy
-       comes and goes (and is aria-hidden against double-naming). */
   it("mounts the thumb on the checked item and names every item", () => {
     renderSegmented();
     const items = document.querySelectorAll('[data-slot="segmented-item"]');
@@ -270,9 +244,9 @@ describe("Segmented", () => {
     ).not.toBeNull();
     expect(items[1].querySelector('[data-slot="segmented-thumb"]')).toBeNull();
     expect(items[0].textContent).toContain("Alpha");
-    // Unchecked items stay NAMED via the sr-only label…
+
     expect(items[1].querySelector(".sr-only")?.textContent).toBe("Beta");
-    // …and show no visible label: its reveal is closed.
+
     expect(
       items[1].querySelector(".reveal-inline")?.hasAttribute("data-open"),
     ).toBe(false);
@@ -281,8 +255,6 @@ describe("Segmented", () => {
     ).toBe(true);
   });
 
-  /* The label opens and closes with CSS, always mounted, on the chip
-       family's 200ms: the old one stays inside the reveal for its exit. */
   it("opens the checked label and closes the old one by data-open", () => {
     renderSegmented();
     const items = document.querySelectorAll('[data-slot="segmented-item"]');
@@ -295,8 +267,6 @@ describe("Segmented", () => {
     expect(reveal(0)?.textContent).toContain("Alpha");
   });
 
-  /* The thumb slides by a FLIP inside the item that is now checked: it is
-       born at the previous item's rect and eased home. */
   it("slides the thumb from the previous item and says so while it runs", () => {
     stubItemRects();
     renderSegmented();
@@ -309,7 +279,7 @@ describe("Segmented", () => {
     expect(thumb?.hasAttribute("data-sliding")).toBe(true);
     expect(thumb?.className).toContain("transition-all");
     expect(thumb?.className).toContain("duration-200");
-    // home again once the offset is cleared: the class decides, not style
+
     expect(thumb?.getAttribute("style") ?? "").not.toContain("left");
     fireEvent.transitionEnd(thumb as Element);
     expect(thumb?.hasAttribute("data-sliding")).toBe(false);
@@ -325,7 +295,7 @@ describe("Segmented", () => {
     fireEvent.click(items[1]);
     const history = read();
     expect(history).toContain("transition: none");
-    // item 0 sits 104px to the left of item 1: the thumb is born there
+
     expect(history).toContain("left: -104px");
     expect(history).toContain("right: 104px");
   });
@@ -382,10 +352,6 @@ describe("Segmented", () => {
     expect(items[0].querySelector('[data-slot="segmented-thumb"]')).toBeNull();
   });
 
-  /* Regression: `value ?? internal` used to mirror clicks into local
-       state, so a CONTROLLED group moved its thumb even when the parent
-       ignored the change (and could never be cleared back). Controlled
-       means the parent's value is the only truth. */
   it("keeps a controlled value fixed when the parent ignores changes", () => {
     render(
       <Segmented value="a" aria-label="مقاسات">
@@ -412,8 +378,6 @@ describe("Segmented", () => {
     expect(cls).toContain("[&_svg]:duration-200");
   });
 
-  /* On a toolbar the item sits beside the primary action, and the
-       default top-side chip landed on it; the hint opens below. */
   it("opens an item's hint below it", () => {
     render(
       <Segmented defaultValue="list" aria-label="view">
@@ -429,12 +393,6 @@ describe("Segmented", () => {
     expect(chip?.getAttribute("data-side")).toBe("bottom");
   });
 
-  /* Regression: the obvious way to hint an item is to wrap it in
-       TooltipTrigger asChild, which merges Radix Tooltip's OWN
-       data-state (open/closed) onto the radio and overwrites
-       data-state="checked". Every checked style here selects on that
-       attribute, so the option would stop looking selected. The hint
-       renders on a wrapper instead. */
   it("keeps the radio's data-state when an item carries a hint", () => {
     render(
       <Segmented defaultValue="image" aria-label="الوضع">
@@ -446,13 +404,10 @@ describe("Segmented", () => {
     expect(items).toHaveLength(2);
     expect(items[0].getAttribute("data-state")).toBe("checked");
     expect(items[1].getAttribute("data-state")).toBe("unchecked");
-    // and the item keeps its own slot name, not the trigger's
+
     expect(items[0].getAttribute("data-slot")).toBe("segmented-item");
   });
 
-  /* The studio pane switch is a phone's most-pressed control and drew a
-       32px item with no hit area around it: on a touch screen every item
-       takes the house 44px floor, the same utility Button carries. */
   it("gives every item the 44px touch floor", () => {
     render(
       <Segmented defaultValue="chat" aria-label="الشاشة">
@@ -473,10 +428,6 @@ describe("Segmented", () => {
   });
 });
 
-/* A toggle that has nothing to act on yet (the studio's device preview before
-   a store has a first picture) holds its slot without being offered. A
-   disabled reason is no answer on a phone, which has no hover to read it on,
-   so the group mirrors Button's `concealed`. */
 describe("Segmented concealed", () => {
   function renderGroup(concealed: boolean | undefined): HTMLElement {
     render(
@@ -514,8 +465,6 @@ describe("Segmented concealed", () => {
   });
 });
 
-/* A language with texts still missing wears a dot; the words ride with it so
-   a screen reader hears what the dot says. */
 describe("SegmentedItem mark", () => {
   function renderMarked(): void {
     render(

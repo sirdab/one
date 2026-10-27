@@ -6,12 +6,6 @@ import {
   trackFocusModality,
 } from "../../../lib/restore-trigger-focus";
 
-/* The RING itself cannot be tested here: jsdom has no :focus-visible
-   heuristic, which is why this behaviour was verified in Chromium against the
-   shell's avatar menu. What is testable, and what actually decides the
-   outcome, is the modality call: keyboard dismissals must be left to Radix
-   (ring and focus restore intact), pointer dismissals must be taken over. */
-
 function closeEvent(): Event & { defaultPrevented: boolean } {
   return new Event("closeAutoFocus", { cancelable: true }) as Event & {
     defaultPrevented: boolean;

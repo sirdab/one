@@ -2,7 +2,6 @@ import { Calendar } from "@sirdab/one/components/calendar";
 import { DatePickerDemo } from "../../../lookbook/components/date-picker-demo";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and usage live in the component header. */
 export default async function DatePickerPage({
   lang,
 }: {

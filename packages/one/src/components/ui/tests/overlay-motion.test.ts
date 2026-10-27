@@ -7,8 +7,6 @@ import {
 } from "../overlay";
 
 describe("overlay motion recipes", () => {
-  /* One length and one curve both ways: an exit on a different rung
-       held, then vanished. No slide: the scale alone says where it went. */
   it("panels fade and scale from 0.95 at 150ms both ways, no slide", () => {
     expect(overlayPanelMotion).toContain("duration-150");
     expect(overlayPanelMotion).toContain("ease-overlay");
@@ -18,8 +16,6 @@ describe("overlay motion recipes", () => {
     expect(overlayPanelMotion).not.toContain("slide-in");
   });
 
-  /* Scrim and panel share one duration both ways, or the panel is
-       still on screen over a page the scrim already gave back. */
   it("scrim and dialog land and leave together", () => {
     for (const recipe of [overlayScrimMotion, overlayDialogMotion]) {
       expect(recipe).toContain("duration-200");

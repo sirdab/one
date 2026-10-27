@@ -22,9 +22,6 @@ import {
 
 type InputSize = React.ComponentProps<typeof Input>["size"];
 
-/* Hover/focus columns are pinned via className so the matrix reads at a
-   glance, a lookbook-only exemption; product code must never pass state
-   colours through className. */
 const SIZES: {
   size: InputSize;
   label: string;
@@ -73,7 +70,7 @@ export default async function InputsPage({
         <div className="overflow-x-auto p-1">
           <div
             className="grid min-w-2xl items-center gap-x-4 gap-y-3"
-            // Structural layout, not a design value.
+
             style={{ gridTemplateColumns: "6rem repeat(4, 1fr)" }}
           >
             <div />

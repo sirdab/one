@@ -15,8 +15,6 @@ describe("Textarea", () => {
     expect(screen.getByPlaceholderText("t").className).toContain("resize-none");
   });
 
-  /* The ink border and ring are box-shadows that forced-colors mode
-       strips; a transparent outline is what it still paints. */
   it("keeps a forced-colors focus indicator", () => {
     render(<Textarea placeholder="t" />);
     const cls = screen.getByPlaceholderText("t").className;
@@ -24,8 +22,6 @@ describe("Textarea", () => {
     expect(cls).not.toContain("outline-none");
   });
 
-  /* Decision: textarea goes rest → focus with NO hover rung;
-       only single-line inputs hover. */
   it("has no hover border rung", () => {
     render(<Textarea placeholder="t" />);
     expect(screen.getByPlaceholderText("t").className).not.toMatch(
@@ -33,9 +29,6 @@ describe("Textarea", () => {
     );
   });
 
-  /* Regression: element-level disabled:opacity-50 dimmed the border too,
-       disagreeing with Input's undimmed hairline in the same disabled form.
-       Contents dim via colour alpha instead; chrome stays. */
   it("disabled dims contents, never the border", () => {
     render(<Textarea placeholder="t" disabled />);
     const cls = screen.getByPlaceholderText("t").className;
@@ -66,18 +59,11 @@ describe("Label", () => {
     expect(label.getAttribute("for")).toBe("f");
   });
 
-  /* Regression: leading-none (a shadcn leftover) fought the text-body
-       role's 14/20 leading. */
   it("does not carry leading-none", () => {
     render(<Label>x</Label>);
     expect(screen.getByText("x").className).not.toContain("leading-none");
   });
 
-  /* A control row (a checkbox, radio or switch that is a direct child) is
-       start-aligned: the control sits on the FIRST line of a label that
-       wraps, never centred on the whole paragraph. A first-line offset per
-       control (and per script: Arabic's taller leading, and the 20px touch
-       box) centres it on that line. */
   it("sits a control on the first line of a wrapping label", () => {
     render(
       <Label htmlFor="c">
@@ -90,8 +76,7 @@ describe("Label", () => {
       "has-[>:is([role=checkbox],[role=radio],[role=switch])]:items-start",
     );
     expect(cls).not.toContain("items-center");
-    // 16px box on a 20px Latin line: 2px; Arabic's 24px line: 4px;
-    // the 20px touch box on 20: 0, on 24: 2px. The 20px switch: 0 / 2px.
+
     expect(cls).toContain("[&>[role=checkbox]]:mt-0.5");
     expect(cls).toContain("rtl:[&>[role=checkbox]]:mt-1");
     expect(cls).toContain("pointer-coarse:[&>[role=checkbox]]:mt-0");
@@ -101,10 +86,6 @@ describe("Label", () => {
     expect(cls).toContain("rtl:[&>[role=switch]]:mt-0.5");
   });
 
-  /* The tap floor: a control row is at least 44px tall on a touch screen,
-       and its first line sits centred in that box (py-3 around a 20px line),
-       so a single-line row stays centred. No form patches
-       pointer-coarse:min-h-11 onto a label by hand. */
   it("gives a control row the 44px floor on touch, and only a control row", () => {
     render(
       <>
@@ -120,14 +101,11 @@ describe("Label", () => {
     const control = "has-[>:is([role=checkbox],[role=radio],[role=switch])]";
     expect(row).toContain(`pointer-coarse:${control}:min-h-11`);
     expect(row).toContain(`pointer-coarse:${control}:py-3`);
-    // The floor is conditional on a control child: a stacked label (text
-    // over its field) never gets it unconditionally.
+
     expect(plain).not.toMatch(/(^|\s)pointer-coarse:min-h-11/);
     expect(plain).not.toMatch(/(^|\s)pointer-coarse:py-3/);
   });
 
-  /* Convention: required is unmarked; optional is the marked case, via a
-       quiet caption hint. */
   it("renders the optional hint as quiet caption", () => {
     render(<Label hint="(optional)">Bio</Label>);
     const hint = screen.getByText("(optional)");
@@ -161,7 +139,7 @@ describe("Icon", () => {
     expect(plain.getAttribute("role")).toBeNull();
     expect(labelled.getAttribute("aria-hidden")).toBeNull();
     expect(labelled.getAttribute("aria-label")).toBe("Search");
-    // aria-label on <svg> is announced only with an explicit img role.
+
     expect(labelled.getAttribute("role")).toBe("img");
   });
 });

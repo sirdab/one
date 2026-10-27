@@ -4,10 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PromptBar } from "../prompt-bar";
 
-/* jsdom has no layout and no Web Animations. Every box sits at a page
-   offset that moves on every read (the page moving around the bar: a rail
-   folding, the page fading in), and the parts sit `inner` px into the bar,
-   which only the bar's own layout changes. */
 let shift = 0;
 let inner = 0;
 const animate = vi.fn();
@@ -78,9 +74,6 @@ describe("the prompt bar's move", () => {
   });
 });
 
-/* Opening the card re-places the parts, it never remounts them: a remount
-   dropped the field's focus (and its caret and undo) mid-sentence and put
-   the aurora ring out. */
 describe("the prompt bar's card", () => {
   it("keeps the same field, still focused, when it opens and closes", () => {
     const { rerender, getByLabelText } = render(bar(null));
@@ -135,8 +128,6 @@ describe("the prompt bar's card", () => {
   });
 });
 
-/* The field is a textarea: a request can run to a paragraph. Enter still
-   sends, the way a one-line bar did; Shift+Enter breaks the line. */
 describe("the prompt bar's field", () => {
   function sendable(): { onSubmit: ReturnType<typeof vi.fn> } {
     const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault());
@@ -189,8 +180,6 @@ describe("the prompt bar's field", () => {
   });
 });
 
-/* The examples rotate over the empty field in place of a fixed
-   placeholder; the forward arrow takes the one on show. */
 describe("the prompt bar's examples", () => {
   function Host({
     onType,
@@ -225,7 +214,7 @@ describe("the prompt bar's examples", () => {
     const { getByLabelText } = render(<Host onType={onType} />);
     fireEvent.keyDown(getByLabelText("prompt"), { key: "ArrowRight" });
     expect(onType).toHaveBeenCalledWith("Add a discount...");
-    // The example now sits in the field, and the overlay is gone.
+
     expect(
       Array.from(document.querySelectorAll("span")).some(
         (node) => node.textContent === "Add a discount...",

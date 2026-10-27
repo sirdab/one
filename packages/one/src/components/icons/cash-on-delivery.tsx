@@ -1,19 +1,9 @@
+"use client";
+
 import * as React from "react";
 
 import type { IconProps } from "./house-icon";
 
-/* Cash on delivery's glyph: a card carrying the currency sign. Custom art
- * like TranslateSparkle, and for the same reason: the schemes beside it are
- * real brand marks, and lucide's banknote read as a stand-in next to them.
- *
- * SHAPED LIKE A LUCIDE ICON ON PURPOSE: IconProps, forwarded ref, a 24 box,
- * so it drops into <Icon icon={CashOnDelivery} />.
- *
- * CURRENTCOLOR, NOT BLACK: the source art hardcoded a black fill; the seat
- * paints the glyph.
- *
- * It does NOT mirror in RTL: the currency sign is not letterform-directional.
- */
 const CashOnDelivery = React.forwardRef<SVGSVGElement, IconProps>(
   function CashOnDelivery({ size = 24, ...props }, ref) {
     return (

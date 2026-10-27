@@ -8,35 +8,11 @@ import { ArrowDownIcon } from "../icons/general";
 import { Button } from "./button";
 import { Icon } from "./icon";
 
-/* The Sirdab conversation: the scrolling log a chat lives in. Taken from the
-   shadcn.io AI Elements conversation (use-stick-to-bottom underneath) and
-   trued: no empty state (a transcript with no turns is the studio's
-   EmptyState, not this), the scroll button is a house overlay Button on the
-   popover frost with a caller-worded label and hint, and its placement uses
-   standard fractions instead of arbitrary values.
-
-   Sticking is the whole point: while the reader is at the bottom, new
-   tokens pull the view down with them; the moment they scroll up to reread,
-   it lets go and the button appears. Never replace it with a scrollTop
-   effect: that yanks a reader back down mid-sentence on every delta.
-
-   Usage:
-       <Conversation className="min-h-0 flex-1">
-           <ConversationContent>{turns}</ConversationContent>
-           <ConversationScrollButton label={t("jumpToLatest")} />
-       </Conversation>
-*/
 type ConversationProps = Omit<
   React.ComponentProps<typeof StickToBottom>,
   "children"
 > & { children?: React.ReactNode };
 
-/* A disclosure the reader opens by hand (a thought, a step's detail) must
-   open downward where it is. At the bottom of the log, sticking would
-   instead slide the whole view to keep the bottom pinned, so the thing
-   they clicked seems to fold up. Calling the hold lets go of the bottom
-   for that toggle; scrolling back down picks it up again. Outside a
-   conversation it does nothing. */
 const ConversationHold = React.createContext<() => void>(() => undefined);
 
 function useConversationHold(): () => void {
@@ -87,11 +63,7 @@ function ConversationContent({
   return (
     <StickToBottom.Content
       data-slot="conversation-content"
-      /* overflow-y-auto from the first byte: the hairline gutter is
-               stable on both edges and only exists on an element that
-               scrolls, and the library sets the overflow from script, so
-               without the class a server render draws the column 4px wider
-               on each side until hydration. */
+
       scrollClassName={cn(
         "scrollbar-hairline overflow-y-auto",
         scrollClassName,
@@ -124,12 +96,7 @@ function ConversationScrollButton({
       size="icon"
       aria-label={label}
       hint={label}
-      /* It floats over the reply, so it takes the popover frost
-               (COLORS.md: a floating layer is the frosted popover) and the
-               popover hairline lifts it. The overlay variant, because its
-               hover and press lay a wash OVER the frosted paper instead of
-               swapping the paper for a translucent fill: under the pointer
-               the reply behind never shows through. */
+
       className={cn(
         "z-raised bg-popover-surface shadow-popover-sm backdrop-blur-popover absolute bottom-4 left-1/2 -translate-x-1/2",
         className,

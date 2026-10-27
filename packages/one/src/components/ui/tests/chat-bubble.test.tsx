@@ -3,10 +3,6 @@ import { describe, expect, it } from "vitest";
 
 import { ChatBubble } from "../chat-bubble";
 
-/* The color contract is the whole component: merchant turns take the quiet
-   --muted fill (the blessed COLORS.md exception, never the ink primary),
-   assistant turns follow the backing surface. A drift here silently
-   un-blesses the exception or paints a wash on a wash. */
 describe("ChatBubble", () => {
   it("paints merchant turns muted, never primary", () => {
     const { container } = render(
@@ -18,14 +14,6 @@ describe("ChatBubble", () => {
     expect(bubble.getAttribute("data-role")).toBe("merchant");
   });
 
-  /* jsdom lays nothing out, so the side is read off the classes. In a
-       column flex, self-end is the right in English and the LEFT in Arabic,
-       which is where the merchant's line landed in the Arabic studio. The
-       Arabic page has to flip it, and it has to ask the page, not the
-       bubble: `rtl:` also matches the bubble's own dir="auto", which would
-       move an Arabic sentence typed in the English studio. */
-  /* A long unbroken run (a link, a pasted id) must wrap inside the rail
-       rather than push the bubble past it, at whatever width the rail is. */
   it("shrinks to its column and breaks a long unbroken run", () => {
     render(<ChatBubble role="merchant">{"a".repeat(400)}</ChatBubble>);
     const bubble = document.querySelector('[data-slot="chat-bubble"]');

@@ -3,8 +3,6 @@ import { describe, expect, it } from "vitest";
 
 import { Spinner } from "../spinner";
 
-/* Spinners are INK, spin, and honour reduced motion: the doctrine pins.
-   jsdom SVG className is an SVGAnimatedString; assert via the attribute. */
 describe("Spinner", () => {
   it("spins in ink and stills under reduced motion", () => {
     const { container } = render(<Spinner />);

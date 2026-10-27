@@ -25,12 +25,6 @@ import { cn } from "@sirdab/one/lib/utils";
 
 type Item = { value: string; label: string };
 
-/* Multi-select = the filter-select composition: Popover + Command, items
-   toggle WITHOUT closing, the trigger joins the applied labels and wears
-   the applied chrome (focus treatment held as a state) with a leading X
-   clearing everything. The applied classes are pinned here because a
-   Button has no data-placeholder to key off, a lookbook composition,
-   not a pattern for product className overrides. */
 export function MultiSelectDemo({
   items,
   placeholder,
@@ -46,9 +40,9 @@ export function MultiSelectDemo({
   searchPlaceholder: string;
   empty: string;
   clearLabel: string;
-  /** "{a} & {b}": two applied values. */
+
   pairTemplate: string;
-  /** "{a} & {n} more…": three or more; n renders in locale digits. */
+
   moreTemplate: string;
   locale: string;
 }): React.JSX.Element {

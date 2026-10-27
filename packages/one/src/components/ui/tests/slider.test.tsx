@@ -4,7 +4,6 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Slider } from "../slider";
 
-/* Radix measures the track with ResizeObserver. */
 vi.stubGlobal(
   "ResizeObserver",
   class {

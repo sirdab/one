@@ -34,9 +34,6 @@ function renderMenu() {
 }
 
 describe("DropdownMenu", () => {
-  /* The panel is the frosted popover chrome at the MENU radius (12px,
-       one step softer than the picker's 10) entering at the 200ms menu
-       tier. */
   it("wears the frosted panel at the menu radius and tier", () => {
     renderMenu();
     const panel = document.querySelector('[data-slot="dropdown-menu-content"]');
@@ -47,20 +44,14 @@ describe("DropdownMenu", () => {
     expect(cls).toContain("rounded-xl");
     expect(cls).toContain("before:rounded-xl");
     expect(cls).not.toContain("rounded-lg");
-    // The shared panel motion, scaled about its own centre: no Radix
-    // origin pulling it toward the trigger.
+
     expect(cls).toContain("duration-150");
     expect(cls).toContain("zoom-in-95");
     expect((panel as HTMLElement).style.transformOrigin).toBe("");
-    // z-popover (500): floating panels must layer ABOVE a modal (400).
-    // A select inside a dialog once opened BEHIND it on z-dropdown.
+
     expect(cls).toContain("z-popover");
   });
 
-  /* The row recipe is shared by every floating list (Select, Command,
-       this menu), so the 44px touch floor lives in overlayItemChrome and
-       reaches all of them. The STU-06 critic measured a 36px row on a
-       phone. */
   it("takes the 44px touch floor on every row", () => {
     renderMenu();
     const rows = document.querySelectorAll(
@@ -73,9 +64,6 @@ describe("DropdownMenu", () => {
     expect(overlayItemChrome).toContain("pointer-coarse:min-h-11");
   });
 
-  /* An opened menu is the focus of the screen: its rows rest in ink
-       (never secondary grey), the highlight adds the ghost fill, and
-       colours SNAP (no transition class; the instant tier). */
   it("rests in ink, highlights with the ghost fill, and snaps", () => {
     renderMenu();
     const item = screen.getByRole("menuitem", { name: "تعديل" });
@@ -87,8 +75,6 @@ describe("DropdownMenu", () => {
     expect(item.className).not.toContain("transition");
   });
 
-  /* The current choice holds a STATIC alpha-100 fill and ink text:
-       no check glyph; the fill is the mark. */
   it("marks the current radio choice with a static fill, no check", () => {
     renderMenu();
     const checked = screen.getByRole("menuitemradio", { name: "أ" });
@@ -111,9 +97,6 @@ describe("DropdownMenu", () => {
   });
 });
 
-/* Submenus go ONE level deep [Sirdab 2026-07-30, reversing the earlier
-   "deliberately absent" call]. The chevron is a direction-of-reading glyph,
-   so it has to mirror in RTL or it points out of the menu in Arabic. */
 describe("DropdownMenu submenu", () => {
   function renderSub() {
     render(
@@ -151,9 +134,6 @@ describe("DropdownMenu submenu", () => {
   });
 });
 
-/* SAI-1123. A menu is a list, and a list of every section a store owns
-   outgrows the screen. Radix publishes the room it has; the menu never read
-   it, so the overflow simply ran off the bottom edge with nothing to scroll. */
 describe("DropdownMenu overflow", () => {
   function renderLongMenu(): void {
     render(
@@ -184,14 +164,12 @@ describe("DropdownMenu overflow", () => {
     const viewport = panel?.querySelector(
       '[data-slot="dropdown-menu-viewport"]',
     );
-    // The panel carries the frost and never scrolls: a ::before over a
-    // scrolling box scrolls away with the rows.
+
     expect(panel?.className).toContain("overflow-hidden");
     expect(panel?.className).not.toContain("overflow-y-auto");
     expect(viewport?.className).toContain("overflow-y-auto");
     expect(viewport?.className).toContain("p-1");
-    // The phone half: without these iOS hands the drag to the body vaul
-    // pinned, and the menu under the finger never moves.
+
     expect(viewport?.className).toContain("touch-pan-y");
     expect(viewport?.className).toContain("overscroll-contain");
   });

@@ -5,16 +5,6 @@ import { Collapsible as CollapsiblePrimitive } from "radix-ui";
 
 import { cn } from "../../lib/utils";
 
-/*
- * shadcn's collapsible, unstyled, wrapping the Radix primitive the same way
- * `packages/ui`'s popover wraps its own.
- *
- * It belongs in `@sirdab/one` beside every other primitive, and that is where it
- * should end up. It sits here because the package is another lane's to touch
- * this round and the address section cannot ship its disclosure without it.
- * Nothing about it is app-specific: moving the file and repointing the two
- * imports is the whole migration.
- */
 function Collapsible({
   ...props
 }: React.ComponentProps<typeof CollapsiblePrimitive.Root>): React.JSX.Element {
@@ -34,10 +24,6 @@ function CollapsibleTrigger({
   );
 }
 
-/* Grows and fades open in 180ms and shut in 150, both on --ease-drawer
-   (after ElevenLabs; the keyframes are disclose-open/close in the
-   foundation): quick off the mark with a long soft landing. Every
-   disclosure gets it here rather than restating it at the call site. */
 function CollapsibleContent({
   className,
   ...props

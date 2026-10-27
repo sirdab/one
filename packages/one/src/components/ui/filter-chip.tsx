@@ -17,39 +17,12 @@ import {
 import { Icon } from "./icon";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
-/* The Sirdab filter chip, a toggle at the smallest rung: a
-   24px (control-xs) caption chip, bordered on the background at rest with
-   the secondary wash ladder, INVERTING to full ink when pressed (label
-   goes background-on-foreground, hover lightens through the high alpha
-   rungs 800→700). The leading plus rotates 45° into an X as it presses:
-   one glyph, two meanings, 200ms. Chips run the 200ms colour tier, not
-   the controls' 75.
-
-   A div[role=button] WRAPPING a real remove button is invalid nesting
-   (the pattern this replaces); since pressing the chip and pressing the
-   X are the same action for a toggle, ours is a single real <button
-   aria-pressed> (Radix Toggle) with the icon purely visual.
-
-   The applied-value slot (the animated reveal behind a divider) belongs
-   to the popover-opening filter chips, FilterTrigger's job; this is
-   only the self-contained toggle.
-
-   Not to be confused with Button's `chip` VARIANT: that one is quiet
-   picker-trigger chrome (muted label, ghost fills, the 100ms tier) for
-   Select triggers; this is the stateful filter TOGGLE (inverts to ink,
-   200ms). Same word, two jobs.
-
-   Usage:
-       <FilterChip pressed={video} onPressedChange={setVideo}>فيديو</FilterChip>
-*/
 function FilterChip({
   className,
   children,
   hint,
   ...props
 }: React.ComponentProps<typeof TogglePrimitive.Root> & {
-  /** What this filter narrows the view to, rendered inline under the
-        chip. The label is a noun; the hint is what applying it does. */
   hint?: React.ReactNode;
 }) {
   const chip = (
@@ -72,8 +45,7 @@ function FilterChip({
   );
 
   if (hint == null) return chip;
-  // Inline, attached to the chip, never a floating tooltip: the hint
-  // belongs to this one filter, so it renders with it.
+
   return (
     <span className="inline-flex max-w-full flex-col items-start gap-1">
       {chip}
@@ -82,20 +54,6 @@ function FilterChip({
   );
 }
 
-/* FilterChipSelect, the chip that OPENS: same 24px chip, but a popover
-   trigger over a Command list.
-   Unselected it reads EXACTLY like the toggle chip: plus + label, no
-   chevron [decision: a small chip could carry one; ours drop it
-   so the family looks uniform]. Picking a value INVERTS the chip to ink
-   and the value animates in behind an h-full divider while the plus
-   becomes an X that clears without opening. The X is DECORATIVE to
-   assistive tech (a nested role would be flattened out of the tree by
-   the outer button role anyway, the invalid nesting FilterChip's
-   header describes); real clear paths: pointer on the X, Delete/Backspace on the
-   focused chip, or reselecting the current item. Single-value; the
-   multi filter is FilterTrigger's job. The trigger is a
-   div[role=button] (not <button>) so the X can own its pointer events;
-   Enter/Space forward to click. */
 type FilterChipSelectItem = { value: string; label: string };
 
 function FilterChipSelect({
@@ -110,18 +68,16 @@ function FilterChipSelect({
   hint,
   className,
 }: {
-  /** The chip's own name ("التصنيف"), always visible. */
   label: string;
   items: FilterChipSelectItem[];
   value?: string | null;
   defaultValue?: string | null;
   onValueChange?: (value: string | null) => void;
-  /** Provide to render the search row; omit for a plain list. */
+
   searchPlaceholder?: string;
   empty: string;
   clearLabel?: string;
-  /** What picking here does to the view, rendered inline under the
-        chip. The chip names the filter; the hint says what it narrows. */
+
   hint?: React.ReactNode;
   className?: string;
 }) {
@@ -129,9 +85,7 @@ function FilterChipSelect({
   const [internal, setInternal] = React.useState<string | null>(defaultValue);
   const value = valueProp !== undefined ? valueProp : internal;
   const selected = items.find((item) => item.value === value) ?? null;
-  /* The label stays after a clear so the collapse carries the old value out
-       rather than an empty box; React's "adjust state on prop change" form,
-       not an effect, so it never paints a frame behind. */
+
   const [shownLabel, setShownLabel] = React.useState<string | null>(
     selected?.label ?? null,
   );
@@ -167,17 +121,11 @@ function FilterChipSelect({
             "group h-control-xs text-caption flex w-fit max-w-full cursor-pointer items-center justify-center rounded-lg border px-1 whitespace-nowrap transition-colors duration-200 select-none",
             selected
               ? "hover:bg-gray-alpha-800 active:bg-gray-alpha-700 border-foreground bg-foreground text-background"
-              : /* rest tone inherits (foreground), same as
-                                 FilterChip */
-                "border-btn-border hover:bg-btn-surface-hover active:bg-btn-surface-active bg-background",
+              : "border-btn-border hover:bg-btn-surface-hover active:bg-btn-surface-active bg-background",
             className,
           )}
         >
           {selected ? (
-            /* Pointer-only clear affordance (aria-hidden, no
-                           role): keyboards clear via Delete/Backspace or
-                           reselect (see onKeyDown above). clearLabel
-                           names the sr-only hint below. */
             <span
               aria-hidden
               data-slot="filter-chip-clear"
@@ -205,20 +153,13 @@ function FilterChipSelect({
             </span>
           )}
           <span className="shrink-0 ps-0.5 pe-1">{label}</span>
-          {/* One reveal, always mounted: none to selected runs the
-                        width open, a clear runs it shut with the old label
-                        still inside. A change from one value to another snaps
-                        to the new width; the open and close are what read as
-                        motion. */}
+
           <div
             data-open={selected ? "" : undefined}
             aria-hidden={selected ? undefined : true}
             className="reveal-inline h-full duration-200"
           >
             <div className="flex h-full items-stretch">
-              {/* gray-700: a raw ramp step on purpose. On the
-                                inverted (ink) chip it reads as a quiet
-                                mid-dark divider. */}
               <span className="ms-1 flex h-full max-w-48 items-center border-s border-gray-700 ps-2 pe-1">
                 <span className="truncate">{shownLabel}</span>
                 <span className="sr-only">{clearLabel}</span>
@@ -262,8 +203,7 @@ function FilterChipSelect({
   );
 
   if (hint == null) return chip;
-  // Inline, attached to the chip, never a floating tooltip: the hint
-  // belongs to this one filter, so it renders with it.
+
   return (
     <span className="inline-flex max-w-full flex-col items-start gap-1">
       {chip}

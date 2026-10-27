@@ -8,9 +8,6 @@ import {
   type ComboboxOption,
 } from "@sirdab/one/components/combobox";
 
-/* A live specimen: picks and creates stay in this page's state. The created
-   option is labelled with the search itself (no copy of its own), so the
-   specimen stays within the sample dictionaries. */
 export function ComboboxDemo({
   options,
   placeholder,

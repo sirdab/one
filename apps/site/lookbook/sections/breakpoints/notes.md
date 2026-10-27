@@ -1,8 +1,8 @@
 # Breakpoints notes
 
 Not rendered. The gallery page shows; this file explains. The values
-stay canonical in `packages/foundation/src/foundation.css` (`--screen-*`)
-and `packages/foundation/src/tailwind.css` (`--breakpoint-*`).
+stay canonical in `packages/one/src/foundation/foundation.css` (`--screen-*`)
+and `packages/one/src/foundation/tailwind.css` (`--breakpoint-*`).
 
 ## Doctrine
 

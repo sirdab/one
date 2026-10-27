@@ -10,9 +10,6 @@ import {
 import { Label } from "@sirdab/one/components/label";
 import { sampler } from "./samples";
 
-/* The picker is controlled, so the gallery needs a client host to hold the
-   value. Two of them side by side is the real shape of a promo window:
-   one field is only ever read against the other. */
 export function DatePickerDemo({
   lang,
   withTime,

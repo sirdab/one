@@ -10,9 +10,6 @@ const TAILWIND = readFileSync(
   "utf8",
 );
 
-/* Reveal closes by giving back one gap of the row it sits in; the footer's
-   row gap has to be exactly that, or a hidden primary leaves the cancel
-   button short of the edge. */
 describe("DialogFooter", () => {
   it("has the row gap Reveal gives back, so Cancel sits flush when the primary is hidden", () => {
     const slot =
@@ -41,8 +38,6 @@ describe("DialogSubmit", () => {
     expect(save.className).not.toContain("invisible");
   });
 
-  /* Not rendered until it can run: out of the accessibility tree and the tab
-       order, yet laid out so the sheet is the same height with or without it. */
   it("is concealed, inert and held in place while it cannot run", () => {
     render(
       <DialogFooter>
@@ -56,8 +51,6 @@ describe("DialogSubmit", () => {
     expect(held.className).toContain("invisible");
   });
 
-  /* Below sm the footer is a stack, so the slot stays open and the hidden
-       primary holds its row; from sm the slot closes and Cancel sits flush. */
   it("holds its row below sm and closes from sm", () => {
     render(
       <DialogFooter>

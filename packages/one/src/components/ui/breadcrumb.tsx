@@ -4,12 +4,6 @@ import { Slot } from "radix-ui";
 import { cn } from "../../lib/utils";
 import { ChevronRightIcon, MoreIcon } from "../icons/catalogue";
 
-/* The Sirdab breadcrumb, trued after the shadcn add: the label type role
-   replaces stock's small type utility, the page crumb drops stock's role="link" +
-   aria-disabled (a current page is not a disabled link; aria-current says
-   it), and the separator flips with the reading direction. A link can lead
-   with its section's icon, so it lays out as a row; wrap the text in a
-   truncate span when it can run long. */
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
 }

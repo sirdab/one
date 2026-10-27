@@ -16,7 +16,6 @@ import {
   SpecimenLabel,
 } from "../../../lookbook/components/section";
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function FilterChipPage({
   lang,
 }: {
@@ -52,9 +51,7 @@ export default async function FilterChipPage({
             <SpecimenLabel>pressed · rest</SpecimenLabel>
             <FilterChip defaultPressed>{s("Apparel")}</FilterChip>
           </div>
-          {/* Pinned via className on a controlled chip so the state
-                        cannot flip: a lookbook-only exemption; product code
-                        must never pass state colours through className. */}
+
           <div className="flex flex-col items-start gap-1.5">
             <SpecimenLabel>pressed · hover (pinned)</SpecimenLabel>
             <FilterChip pressed className="bg-gray-alpha-800">

@@ -5,9 +5,6 @@ import { useState } from "react";
 import { PhoneInput } from "@sirdab/one/components/phone-input";
 import { isValidE164, parsePhone } from "@sirdab/one/lib/phone";
 
-/* Live specimen: the value the caller actually receives is printed under
-   the field, because E.164-out is the whole contract and a static
-   screenshot cannot show it. */
 export function PhoneInputDemo({
   locale,
   countryLabelText,

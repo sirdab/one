@@ -53,7 +53,6 @@ const PRODUCTS = [
   },
 ] as const;
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function TablesPage({
   lang,
 }: {

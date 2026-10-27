@@ -47,8 +47,6 @@ const FIXED = [
   { icon: FilterIcon, name: "filter" },
 ] as const;
 
-/* Every house icon, read off the modules so a new one shows here the moment
-   it is exported, by the name a page imports it under. */
 const HOUSE_SET: { name: string; icon: IconComponent }[] = Object.entries({
   ...shellIcons,
   ...catalogueIcons,
@@ -71,8 +69,6 @@ const TONES = [
   { label: "20 · quiet", className: "size-5 icon-quiet" },
 ] as const;
 
-/* The assistant's mark resolves its --aurora-mark-* roles per theme scope,
-   so the night stops are only reviewable on a .dark ground. */
 const MARK_SCOPES = [
   { label: "light", className: "light" },
   { label: "dark", className: "dark" },
@@ -80,7 +76,6 @@ const MARK_SCOPES = [
 
 const MARK_SIZES = ["size-4", "size-5", "size-10"] as const;
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default function IconsPage(): React.JSX.Element {
   return (
     <>

@@ -33,9 +33,6 @@ function lint(files: Record<string, string>): LintResult {
   }
 }
 
-/* A test asserting a generated handle shape is not a class list, but the
-   linter used to read `product-[a-z0-9]` in it as a Tailwind arbitrary value,
-   which forced the regex to be rewritten as `(?:[a-z0-9])`. */
 const HANDLE_ASSERT =
   "expect(handle).toMatch(/^product-[a-z0-9]{6}$/);\n" +
   "expect(slug).toMatch(/^[a-z]+-[a-z0-9]{4}$/);\n";
@@ -62,10 +59,10 @@ describe("lint-tokens", () => {
       "b.tsx": 'const c = cn("mt-[3px]", open && "z-[41]");\n',
       "c.tsx": "const c = `text-[15px] ${x}`;\n",
       "d.tsx": "const c = clsx('w-[calc(100%-2rem)]');\n",
-      // a slash after `}` is a path join or a counter, not a regex
+
       "e.tsx": '<img src={`${base}/${id}`} className="w-[120px]" />\n',
       "f.tsx": '<span>{done}/{total} <b className="p-[13px]">x</b></span>\n',
-      // a slash after `(` can open a path, and `a/b` never closes a regex
+
       "g.tsx":
         '<div style={{ backgroundImage: "url(/hero.png)" }} className="p-[13px]"><a href="/b">x</a></div>\n',
       "h.tsx": '<span>(/mo) <b className="p-[13px]">a/b</b></span>\n',

@@ -87,10 +87,6 @@ describe("Palette", () => {
     expect(screen.queryByText("No results")).not.toBeNull();
   });
 
-  /* The studio's search is answered by an api, not by the rows' own
-       text: a customer found by phone number carries no trace of the query
-       in her title. With filtering off every mounted row stays, and the
-       host decides what mounts. */
   it("keeps every row when filtering is off", () => {
     const { input } = renderPalette({ filter: false });
     fireEvent.change(input, { target: { value: "zzz" } });
@@ -100,8 +96,6 @@ describe("Palette", () => {
     expect(screen.queryByText("No results")).toBeNull();
   });
 
-  /* The host owns the query when it has to act on it (a debounced fetch,
-       an "ask" row built from the sentence). */
   it("reads a controlled search and reports every change", () => {
     const onSearchChange = vi.fn();
     const { input } = renderPalette({
@@ -114,7 +108,7 @@ describe("Palette", () => {
 
     fireEvent.change(input, { target: { value: "alpha" } });
     expect(onSearchChange).toHaveBeenCalledWith("alpha");
-    // Controlled: the host did not re-render, so the value holds.
+
     expect((input as HTMLInputElement).value).toBe("gamma");
   });
 
@@ -128,8 +122,6 @@ describe("Palette", () => {
     expect(onSelectA).toHaveBeenCalledTimes(1);
   });
 
-  /* The ends are where you stop: a held key parks on the last row
-       rather than cycling back to the top. */
   it("stops at the first and last rows instead of wrapping", () => {
     const { input } = renderPalette();
     const rows = screen.getAllByRole("option");
@@ -145,9 +137,6 @@ describe("Palette", () => {
     expect(last?.getAttribute("aria-selected")).toBe("true");
   });
 
-  /* A row the host answers late (the studio's suggestion) can mount
-       above rows already on screen; it must still be where the keys and
-       the default highlight find it first. */
   it("walks a row that mounts late above the others in screen order", () => {
     const onLate = vi.fn();
     function Host({ late }: { late: boolean }): React.JSX.Element {
@@ -209,9 +198,6 @@ describe("Palette", () => {
     }
   });
 
-  /* A screen reader lands on "Actions, group" rather than an unnamed
-       cluster of options: the heading names the group, the way cmdk's own
-       groups do. */
   it("names each group after its heading", () => {
     renderPalette();
     expect(screen.getByRole("group", { name: "Actions" })).toBeTruthy();
@@ -224,9 +210,6 @@ describe("Palette", () => {
     expect(onSelectA).toHaveBeenCalledWith("action-a");
   });
 
-  /* One role down from the flat text-body-lg, following Input's own
-       pattern: 16px on touch widths so iOS does not zoom, stepping down
-       from sm. */
   it("keeps the search row at 16px below sm", () => {
     const { input } = renderPalette();
     expect(input.className).toContain("text-body-lg");
@@ -267,10 +250,6 @@ describe("Palette", () => {
       scrollIntoView.mockRestore();
     });
 
-    /* When an arrow key scrolls the list, a different row slides under
-           a cursor that never moved and the browser fires a mouse event
-           for it at the same coordinates. That must not take the highlight
-           back. */
     it("ignores a row arriving under a cursor that did not move", () => {
       const { input } = renderPalette();
       const [first, second, third] = screen.getAllByRole("option");
@@ -324,10 +303,6 @@ describe("Palette", () => {
       return screen.getAllByRole("option");
     }
 
-    /* The reference row: 52px of 14px-radius row around a 40px tile,
-           lit only when active. No hover wash: the pointer already moves
-           the active row, so a wash of its own left a second lit row under
-           a resting cursor once the arrow keys moved on. */
     it("wears the palette row's own radius, padding and state ladder", () => {
       const [row] = renderRows();
       const classes = row?.className ?? "";
@@ -353,8 +328,6 @@ describe("Palette", () => {
       );
     });
 
-    /* The icon tile lights with its row: the well one alpha rung up and
-           the glyph from the secondary tone to ink. */
     it("steps the icon tile up with the active row", () => {
       const [row] = renderRows();
       const tile = row?.querySelector('[data-slot="palette-item-icon"]');
@@ -385,8 +358,6 @@ describe("Palette", () => {
       ).toBeNull();
     });
 
-    /* The row that loses something reads red before Enter, on the
-           destructive wash rather than the gray one. */
     it("paints a destructive row red on its own wash", () => {
       render(
         <Palette openLabel="Open">
@@ -425,8 +396,6 @@ describe("Palette", () => {
       expect(img?.className).toContain("object-cover");
     });
 
-    /* A photo-less record keeps the same face on every visit and every
-           device: the pairing is a function of its id, nothing stored. */
     it("gives a photo-less record a stable aurora face off its id", () => {
       const [, , order] = renderRows();
       const tile = order?.querySelector('[data-slot="palette-item-avatar"]');
@@ -439,8 +408,6 @@ describe("Palette", () => {
       for (const face of faces) expect(face).toMatch(/^aurora-avatar-[1-6]$/);
     });
 
-    /* A host's own face (the studio's store orbs) replaces the aurora
-           and fills the tile, and the record's glyph stays on top of it. */
     it("wears a host's face under the glyph instead of the aurora", () => {
       render(
         <Palette openLabel="Open">
@@ -470,9 +437,6 @@ describe("Palette", () => {
   });
 });
 
-/* The studio's palette decides Enter itself (a verdict over three sources),
-   so the host can say which row is active, hear when she moves it, and take
-   Enter over, and each row can name its own action. */
 describe("Palette driven by its host", () => {
   function Host({
     activeValue,
@@ -542,7 +506,7 @@ describe("Palette driven by its host", () => {
     expect(hint()).toBe("Create");
     rerender(<Host activeValue="ask" />);
     expect(hint()).toBe("Ask");
-    // A row that says nothing of its own falls back to the palette's word.
+
     rerender(<Host activeValue="page" />);
     expect(hint()).toBe("Open");
   });
@@ -566,7 +530,7 @@ describe("Palette driven by its host", () => {
     const input = screen.getByRole("combobox");
     fireEvent.keyDown(input, { key: "ArrowDown" });
     expect(onActiveValueChange).toHaveBeenLastCalledWith("verb");
-    // Controlled: the host did not move it, so the highlight holds.
+
     expect(active()).toBe("Orders");
 
     fireEvent.mouseMove(
@@ -652,14 +616,11 @@ describe("Palette driven by its host", () => {
     );
     const cancel = screen.getByRole("button", { name: "Cancel" });
     expect(wrapper?.contains(cancel)).toBe(true);
-    // After the field, at the end edge.
+
     expect(wrapper?.lastElementChild).toBe(cancel);
   });
 });
 
-/* The launcher is a fixed box, so the list takes what the search row leaves
-   rather than sizing itself to its rows (which made the panel jump on every
-   keystroke); on a phone its last row clears the bottom edge. */
 describe("PaletteList", () => {
   it("fills the box instead of sizing to its rows, and clears a phone's bottom edge", () => {
     render(

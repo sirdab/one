@@ -1,12 +1,8 @@
 import { cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
 
-// Without vitest globals, testing-library's auto-cleanup never registers:
-// renders would accumulate across tests in a file.
 afterEach(cleanup);
 
-// jsdom lacks IntersectionObserver / matchMedia; stubbed because
-// viewport-observing code appears across Radix and the demos.
 class MockIntersectionObserver {
   observe() {}
   unobserve() {}
@@ -21,8 +17,6 @@ if (typeof globalThis.IntersectionObserver === "undefined") {
     MockIntersectionObserver as unknown as typeof IntersectionObserver;
 }
 
-// jsdom also lacks ResizeObserver, which radix form controls (checkbox /
-// switch hidden bubble inputs) measure themselves with.
 class MockResizeObserver {
   observe() {}
   unobserve() {}
@@ -34,8 +28,6 @@ if (typeof globalThis.ResizeObserver === "undefined") {
     MockResizeObserver as unknown as typeof ResizeObserver;
 }
 
-// jsdom lacks scrollIntoView and the pointer-capture APIs, which radix
-// Select uses when opening its listbox.
 if (typeof Element !== "undefined") {
   Element.prototype.scrollIntoView ??= () => {};
   Element.prototype.hasPointerCapture ??= () => false;
@@ -43,8 +35,6 @@ if (typeof Element !== "undefined") {
   Element.prototype.releasePointerCapture ??= () => {};
 }
 
-// jsdom lacks elementFromPoint, which input-otp probes for password-manager
-// badge placement.
 if (
   typeof document !== "undefined" &&
   typeof document.elementFromPoint !== "function"

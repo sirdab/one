@@ -19,9 +19,6 @@ describe("Button asChild", () => {
     expect(screen.queryByRole("button")).toBeNull();
   });
 
-  /* Regression: `disabled` spread onto an <a> is invalid HTML and the link
-       stayed navigable. asChild swaps it for aria-disabled, whose styles and
-       pointer-events-none come from the glue's variant redefinition. */
   it("swaps disabled for aria-disabled on non-button children", () => {
     render(
       <Button asChild disabled>
@@ -41,9 +38,6 @@ describe("Button asChild", () => {
     expect(button.hasAttribute("aria-disabled")).toBe(false);
   });
 
-  /* Regression: the redefined `disabled:` variant also matches
-       aria-disabled, so pointer-events for REAL disabled buttons must use
-       the explicit [&:disabled] form or the two rules fight. */
   it("scopes pointer-events-auto to real :disabled only", () => {
     render(<Button>Save</Button>);
     const button = screen.getByRole("button");
@@ -62,8 +56,6 @@ describe("Button loading", () => {
     expect(button.querySelector("svg.animate-spin")).not.toBeNull();
   });
 
-  /* Regression: the foreground fallback painted a full-ink spinner over
-       chip's 53% muted-foreground label. */
   it("chip's spinner matches its label tone", () => {
     render(
       <Button variant="chip" loading>
@@ -78,8 +70,6 @@ describe("Button loading", () => {
     );
   });
 
-  /* Regression: Slot requires exactly one child. The spinner made it two
-       and every prerender of an asChild button crashed the build. */
   it("asChild + loading renders without the spinner instead of crashing", () => {
     render(
       <Button asChild loading>
@@ -93,9 +83,6 @@ describe("Button loading", () => {
 });
 
 describe("Button variants", () => {
-  /* Decision: destructive is a red OUTLINE, never a fill, never primary.
-       Border and text share the one button red (btn-destructive, #DD4949);
-       text-destructive is the error-text red, a different job. */
   it("destructive renders the red outline, not a fill", () => {
     render(<Button variant="destructive">Delete account</Button>);
     const cls = screen.getByRole("button").className;
@@ -105,7 +92,6 @@ describe("Button variants", () => {
     expect(cls).not.toMatch(/\bbg-destructive\b/);
   });
 
-  /* Regression: link inherited the default 32px box. */
   it("link is text, not a box, at any size", () => {
     render(
       <Button variant="link" size="xl">
@@ -118,28 +104,21 @@ describe("Button variants", () => {
     expect(cls).not.toContain("h-control-xl");
   });
 
-  /* Decision: chip is the quiet variant (icon-quiet ladder, secondary label). */
   it("chip carries the quiet icon ladder", () => {
     render(<Button variant="chip">Apparel</Button>);
     const cls = screen.getByRole("button").className;
     expect(cls).toContain("text-muted-foreground");
     expect(cls).toContain("[&_svg]:icon-quiet");
-    // hover steps the icon to the LABEL's tone, never full ink.
-    // opacity-100 inverted the icon/label hierarchy once.
+
     expect(cls).toContain("hover:[&_svg]:icon-quiet-hover");
     expect(cls).not.toContain("hover:[&_svg]:opacity-100");
-    // and disabled stays transparent: bg-background punched a solid
-    // rectangle out of tinted surfaces.
+
     expect(cls).toContain("disabled:bg-transparent");
     expect(cls).not.toContain("disabled:bg-background");
   });
 });
 
 describe("Button icon squares", () => {
-  /* Regression: the bridge pads every [data-slot=button] 12px inline as a
-       base-layer default; without an explicit padding utility the icon
-       squares grew to fit it (icon rendered 40x32, secondary 42x32). px-0 +
-       aspect-square is the contract that keeps them square. */
   it("every icon size pins px-0 and aspect-square", () => {
     for (const size of [
       "icon",
@@ -158,9 +137,6 @@ describe("Button icon squares", () => {
     }
   });
 
-  /* Regression: chip's icon sets an explicit colour (icon-quiet), so the
-       loading text-transparent never reached it. The icon rendered under
-       the spinner. Direct-child icons must hide while loading. */
   it("hides direct-child icons while loading", () => {
     render(<Button loading>Go</Button>);
     expect(screen.getByRole("button").className).toContain(
@@ -181,9 +157,6 @@ describe("Button interaction", () => {
     expect(clicks).toBe(0);
   });
 
-  /* Regression: loading only dimmed the label. The button stayed fully
-       clickable, so a double-click double-submitted. Loading now blocks
-       activation (keeping focus, unlike `disabled`) and announces busy. */
   it("loading buttons announce busy and swallow clicks", () => {
     let clicks = 0;
     render(
@@ -197,21 +170,14 @@ describe("Button interaction", () => {
     expect(clicks).toBe(0);
   });
 
-  /* A control that refuses without saying why is a dead end, so
-   disabledReason carries the WHY on a tooltip. The hard part is that it
-   has to stay REACHABLE: the `disabled` attribute would drop the button
-   out of the tab order and stop hover, which is exactly where the
-   explanation lives. */
   describe("Button disabledReason", () => {
     it("stays focusable and hoverable instead of hard-disabled", () => {
       render(<Button disabledReason="اختر منتجًا أولاً">حذف</Button>);
       const button = screen.getByRole("button", { name: "حذف" });
-      // never the real attribute: that kills focus and hover
+
       expect(button.hasAttribute("disabled")).toBe(false);
       expect(button.getAttribute("aria-disabled")).toBe("true");
-      // and the base rule that strips pointer events from
-      // aria-disabled elements has to be put back, or no hover, no
-      // tooltip, no reason
+
       expect(button.className).toContain("aria-disabled:pointer-events-auto");
     });
 
@@ -227,9 +193,6 @@ describe("Button interaction", () => {
       expect(onClick).not.toHaveBeenCalled();
     });
 
-    /* Radix never opens a tooltip for a touch, so on a phone the
-           reason was unreachable. A tap opens it; a mouse press does not
-           (Radix closes on press, and the hover already showed it). */
     it("opens the reason on a tap, never on a mouse click", async () => {
       render(<Button disabledReason="اختر منتجًا أولاً">حذف</Button>);
       const button = screen.getByRole("button", { name: "حذف" });
@@ -251,10 +214,6 @@ describe("Button interaction", () => {
   });
 });
 
-/* The same trap the whole hint family shares: wrapping the control in
-   TooltipTrigger asChild merges Radix's own data-state onto it, and every
-   open/pressed pairing on a Button selects on that. The hint has to ride
-   a wrapper instead. */
 describe("Button hint", () => {
   it("keeps the button's own data-state when it carries a hint", () => {
     render(
@@ -281,8 +240,6 @@ describe("Button hint", () => {
     expect(onClick).toHaveBeenCalledOnce();
   });
 
-  /* A button that will not fire has one thing worth saying, and it is
-       not what the button would have done. */
   it("says nothing on hover when it is off with no reason", async () => {
     render(
       <Button disabled hint="Mark all as read">
@@ -300,18 +257,11 @@ describe("Button hint", () => {
     );
     const button = screen.getByRole("button", { name: "حذف" });
     fireEvent.focus(button);
-    // findByText throws when it misses, so reaching the next line is
-    // the assertion that the reason is what opened.
+
     await screen.findByText("اختر منتجًا أولاً");
     expect(screen.queryByText("يحذف المنتج")).toBeNull();
   });
 
-  /* Placement is a PROP because Radix will not solve it: it flips a
-       tooltip only when the tooltip would leave the VIEWPORT, and an icon
-       button in a top bar usually has just enough room above it. So the
-       hint opens back into the bar it sits in, no collision, no flip.
-       Asserted on both, because the side has to follow whichever of the
-       two is actually showing. */
   it("opens the hint on the side it is given", async () => {
     render(
       <Button hint="اللغة" hintSide="bottom" aria-label="اللغة">
@@ -338,8 +288,6 @@ describe("Button hint", () => {
     );
   });
 
-  /* Regression: the tooltip wrapper is inline-flex, so it sizes to its
-       content and a w-full button inside stops filling its row. */
   it("hands a w-full button its width back through the wrapper", () => {
     render(
       <Button className="w-full" hint="ينشر المتجر">
@@ -353,9 +301,6 @@ describe("Button hint", () => {
   });
 });
 
-/* shape is for IDENTITY triggers only (the account avatar). Pinned because
-   the variant is invisible in every other size and would survive being
-   dropped from the cva call unnoticed. */
 describe("Button shape", () => {
   it("rounds fully only when asked", () => {
     render(<Button shape="circle">MT</Button>);
@@ -379,9 +324,6 @@ describe("Button shape", () => {
   });
 });
 
-/* A labelled button that is a lone glyph on a phone: square, the label kept
-   for screen readers, and the leading glyph's optical pull toward the label
-   dropped, which is what sat the glyph off centre. */
 describe("Button phone=icon", () => {
   it("squares the box and hides the label below sm, keeping its name", () => {
     render(
@@ -399,10 +341,6 @@ describe("Button phone=icon", () => {
   });
 });
 
-/* A server component styles a LINK with buttonVariants (asChild around a
-   server component's Link does not survive the RSC boundary). That only
-   works while the recipe lives in a module without "use client": a
-   client reference cannot be called from the server. */
 describe("buttonVariants is server-callable", () => {
   it("gives compact buttons the Uqail touch hit area", () => {
     render(<Button size="xs">Save</Button>);

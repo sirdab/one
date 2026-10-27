@@ -4,10 +4,6 @@ import { describe, expect, it, vi } from "vitest";
 
 import { PromptInput, type PromptInputProps } from "../prompt-input";
 
-/* Controlled on purpose (the studio keeps the draft across the rail and
-   the full page), so the harness owns the value. Pinned: Enter sends and
-   Shift+Enter breaks, a refused send keeps the text, and a running turn
-   turns the send into Stop. */
 function Harness(
   props: Partial<PromptInputProps> & { initial?: string },
 ): React.JSX.Element {

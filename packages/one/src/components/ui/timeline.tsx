@@ -14,33 +14,6 @@ import {
   ItemTitle,
 } from "./item";
 
-/* The Sirdab timeline: a log of things that happened, grouped by day. One
-   primitive for the settings activity log, an order's history and a
-   customer's thread, composed from Item and Separator (shadcn has no
-   timeline, so nothing here is drawn by hand).
-
-       <Timeline>
-           <TimelineDay heading="Today">
-               <TimelineItem icon={OrdersIcon} title="Order 1042 placed"
-                   description="SAR 249.00" time="09:40" />
-               <TimelineItem icon={RotateCcwIcon} tone="critical"
-                   title="Refund not confirmed" time="09:12" />
-           </TimelineDay>
-       </Timeline>
-
-   A day is a quiet heading over ONE card of rows, divided by hairlines (none
-   after the last). The primitive formats nothing: the heading and the clock
-   time arrive as text the consumer already formatted, never relative. A day
-   split across two pages is rendered twice with the same heading; nothing
-   here merges or dedupes.
-
-   `tone` colours the glyph only, through the tone's -glyph step (a wash or a
-   text colour would shout in a long list). The time sits at the row's end in
-   an LTR isolate, so "09:40" never reorders inside Arabic text.
-
-   `children` is the detail well (a message body) under the sentence. With
-   `asChild` the row becomes the child element (a link), so `children` is
-   that element and the well comes through `detail` instead. */
 const GLYPH_CLASS: Record<StatusTone, string> = {
   neutral: "text-neutral-glyph",
   attention: "text-attention-glyph",

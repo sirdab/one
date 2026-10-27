@@ -2,12 +2,6 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-/* The shimmer is a utility, not a motion library: ui's Shimmer only names it.
-   What has to hold lives in the CSS and no jsdom render can see it: the
-   sweep and the breath are real keyframes, the breath is only for a Shimmer
-   that asked for it, and reduced motion leaves plain muted text rather than
-   a transparent word with nothing painted behind it. */
-
 const css: string = readFileSync(
   join(__dirname, "..", "tailwind.css"),
   "utf8",
@@ -52,9 +46,6 @@ describe("the shimmer utility", () => {
 });
 
 describe("the reveal-inline utility", () => {
-  /* The label and value reveals travel with the sliding thumb, which runs on
-       the house curve; without its own timing function the reveal ran on CSS
-       ease and the thumb's trailing edge squashed mid-slide. */
   it("runs on the house ease-out", () => {
     const reveal = block(css, "@utility reveal-inline");
     expect(reveal).toContain("transition-timing-function: var(--ease-out)");

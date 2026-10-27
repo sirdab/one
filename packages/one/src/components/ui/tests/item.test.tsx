@@ -18,9 +18,6 @@ function classesOf(testId: string): string[] {
 }
 
 describe("Item", () => {
-  /* A settings row: padded like a card part (24px from sm, 16px on a
-       phone), the text at the start, the action at the end and ON the row at
-       390, never dropping under the text. */
   it("is a padded row that keeps its action on the line", () => {
     render(<Item data-testid="item" />);
     const cls = classesOf("item");

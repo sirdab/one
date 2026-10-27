@@ -1,10 +1,6 @@
 import { SearchIcon } from "@sirdab/one/icons/catalogue";
 import { ReceiptIcon, UserIcon } from "@sirdab/one/icons/general";
-import {
-  AiIcon,
-  DiscountsIcon,
-  ProductsIcon,
-} from "@sirdab/one/icons/shell";
+import { AiIcon, DiscountsIcon, ProductsIcon } from "@sirdab/one/icons/shell";
 import { Button } from "@sirdab/one/components/button";
 import {
   Dialog,
@@ -34,16 +30,12 @@ import {
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* A flat "product photo" as an SVG data URI, so the recent row shows a real
-   <img> in its tile without the package shipping a photograph. The fills
-   are the demo photo's own colours, not tokens: a photo is content. */
 const PHOTO = `data:image/svg+xml,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">` +
     `<rect width="100" height="100" fill="#E9DFD3"/>` +
     `<path d="M30 30 L50 22 L70 30 L78 48 L68 52 L68 82 L32 82 L32 52 L22 48 Z" fill="#B08D6E"/></svg>`,
 )}`;
 
-/* Gallery page: prose and usage live in ./notes.md. */
 export default async function PalettePage({
   lang,
 }: {
@@ -51,10 +43,7 @@ export default async function PalettePage({
 }): Promise<React.JSX.Element> {
   const locale = lang;
   const s = sampler(locale);
-  /* The palette as it opens: nothing typed, three verbs and the records
-       the merchant opened last. The recents are the colourful rows: a
-       product wears its own photo, an order and a customer an aurora face
-       off their id. */
+
   const idle = (
     <>
       <PaletteEmpty>{s("No results.")}</PaletteEmpty>
@@ -101,7 +90,7 @@ export default async function PalettePage({
       </PaletteGroup>
     </>
   );
-  /* The palette answering a query: the store's own records, grouped. */
+
   const results = (
     <>
       <PaletteEmpty>{s("No results.")}</PaletteEmpty>
@@ -151,9 +140,6 @@ export default async function PalettePage({
       >
         <Dialog>
           <DialogTrigger asChild>
-            {/* The topbar's own trigger anatomy: a field-shaped
-                            button with a plain magnifier, the word "Search"
-                            (no ellipsis), and the chord as two keycaps. */}
             <Button
               variant="secondary"
               aria-label={s("Search")}
@@ -185,8 +171,7 @@ export default async function PalettePage({
                 autoFocus
                 aria-label={s("Search")}
                 placeholder={s("Search orders, products, customers")}
-                /* A phone has no Esc: Cancel is the way out
-                                   of the full-screen launcher. */
+
                 trailing={
                   <DialogClose asChild>
                     <Button

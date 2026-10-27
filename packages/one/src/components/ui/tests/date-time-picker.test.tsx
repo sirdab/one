@@ -12,10 +12,6 @@ const LABELS = {
   clear: "Clear",
 };
 
-/* Every value is an explicit instant, never a Date built from the runner's
-   local parts: the picker reads and writes the store's zone (Riyadh, UTC+3),
-   so a value written in whatever zone the machine sits in would mean a
-   different wall clock on every machine. 15:30Z is 18:30 in Riyadh. */
 const EVENING = new Date("2026-08-13T15:30:00Z");
 const MORNING = new Date("2026-08-01T06:00:00Z");
 
@@ -26,9 +22,6 @@ function mount(
   return render(<Direction.Provider dir={dir}>{node}</Direction.Provider>);
 }
 
-/** The grid is portalled out of the trigger, so reach for it by date.
-    react-day-picker stamps data-day on the gridcell too, so the selector
-    has to name the button or the click lands on the td and does nothing. */
 function day(iso: string): HTMLElement {
   const cell = document.querySelector(`button[data-day="${iso}"]`);
   if (!cell) throw new Error(`no day button for ${iso}`);
@@ -78,8 +71,6 @@ describe("the trigger", () => {
   });
 
   it("rolls the date with the store's clock past midnight", () => {
-    // 21:05Z on the 13th is five past midnight on the 14th in Riyadh,
-    // written 00:05: hourCycle "h23" is the hour select's 00 to 23.
     mount(
       <DateTimePicker
         value={new Date("2026-08-13T21:05:00Z")}
@@ -93,8 +84,6 @@ describe("the trigger", () => {
   });
 
   it("selects the store's day on the grid, not the runner's", () => {
-    // The same instant is the 13th in UTC and in New York, so a grid fed
-    // the raw value would highlight the wrong cell on those machines.
     mount(
       <DateTimePicker
         value={new Date("2026-08-13T21:05:00Z")}
@@ -126,8 +115,6 @@ describe("the trigger", () => {
 
 describe("picking a day", () => {
   it("hands back the instant of that day on the store's clock, not UTC's", () => {
-    // Pinning to Z is what made a Riyadh discount open three hours late
-    // (SAI-778): 09:00 on the 13th for the merchant is 06:00Z, never 09:00Z.
     const onChange = vi.fn();
     mount(
       <DateTimePicker
@@ -161,10 +148,8 @@ describe("picking a day", () => {
     expect(picked.toISOString()).toBe("2026-08-14T15:30:00.000Z");
   });
 
-  /* A scheduled publish passes now as `min`: nothing in the past can be
-       picked, and a pick that would land there moves up to the next step. */
   describe("with a min", () => {
-    const MIN = new Date("2026-08-13T15:32:00Z"); // 18:32 in Riyadh
+    const MIN = new Date("2026-08-13T15:32:00Z");
 
     it("disables the days before min's day", () => {
       mount(
@@ -202,8 +187,6 @@ describe("picking a day", () => {
   });
 
   describe("into an empty field", () => {
-    /* The grid opens on the current month, so the clock has to sit
-           somewhere the test can point at. Only Date is faked. */
     beforeEach(() => {
       vi.useFakeTimers({ toFake: ["Date"] });
       vi.setSystemTime(new Date("2026-08-13T06:00:00Z"));
@@ -231,7 +214,6 @@ describe("picking a day", () => {
     });
 
     it("marks today on the store's calendar, not the machine's", () => {
-      // 22:30Z on the 13th is already the 14th, 01:30, in Riyadh.
       vi.setSystemTime(new Date("2026-08-13T22:30:00Z"));
       mount(
         <DateTimePicker
@@ -248,9 +230,6 @@ describe("picking a day", () => {
     });
 
     it("follows a zone whose offset changes, to the instant the wall clock names", () => {
-      // 03:30 on 8 March 2026 in New York is the first half hour after
-      // the clocks jump, so it is EDT (UTC-4), not the EST that the
-      // same calendar day began in.
       vi.setSystemTime(new Date("2026-03-01T12:00:00Z"));
       const onChange = vi.fn();
       mount(
@@ -367,9 +346,6 @@ describe("Arabic and RTL", () => {
   });
 
   it("starts the Saudi week on Sunday and names the days in Arabic", () => {
-    // date-fns's generic `ar` starts on Saturday (Maghreb). Getting this
-    // wrong shifts every column by one and the merchant picks the wrong
-    // day without noticing.
     mount(
       <DateTimePicker
         value={EVENING}
@@ -406,11 +382,6 @@ describe("Arabic and RTL", () => {
     expect(day("2026-08-13").textContent).toBe("13");
   });
 
-  /* Chromium resolves a bare ar-SA to the Umm al-Qura calendar ("30 صفر
-       1448 هـ") while the grid under it is Gregorian, and the server, which
-       renders the trigger first, resolves Gregorian: two calendars in one
-       control and a hydration mismatch. An explicit ca in the tag is honoured
-       the same by every engine, so the exact string is what to pin. */
   it.each(["ar", "ar-SA"])(
     "reads the Gregorian date on the store's clock for %s",
     (locale) => {
@@ -430,9 +401,6 @@ describe("Arabic and RTL", () => {
     },
   );
 
-  /* jsdom formats with Node's Intl, which resolves bare ar and ar-SA to
-       Gregorian on its own, so the rendered strings above pass with or
-       without the pin. The tag the trigger hands to Intl is what holds it. */
   it.each(["ar", "ar-SA", "en"])(
     "hands Intl a tag that names the Gregorian calendar for %s",
     (locale) => {
@@ -515,7 +483,7 @@ describe("Arabic and RTL", () => {
       "rtl",
     );
     fireEvent.click(screen.getAllByRole("button")[0] as HTMLElement);
-    // In jsdom an SVG className is an SVGAnimatedString, so read the attr.
+
     const chevron = document.querySelector('nav svg[data-slot="icon"]');
     expect(chevron?.getAttribute("class")).toContain("rtl:-scale-x-100");
   });
@@ -554,9 +522,6 @@ describe("clearing", () => {
 });
 
 describe("a selected day under the pointer", () => {
-  /* jsdom resolves no Tailwind, so the class is what can be pinned. The
-       day button is a ghost, whose hover fill is near white, and a selected
-       day wears white text: without its own hover the number disappears. */
   const hover = (state: string): string =>
     `data-[${state}=true]:hover:bg-primary-hover`;
   const month = new Date(2026, 7, 1);

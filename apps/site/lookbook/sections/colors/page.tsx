@@ -1,20 +1,13 @@
+import { ColorPreview } from "../../components/color-preview";
 import { Fragment } from "react";
 
-import {
-  CheckCircleIcon,
-  WarningIcon,
-} from "@sirdab/one/icons/catalogue";
+import { CheckCircleIcon, WarningIcon } from "@sirdab/one/icons/catalogue";
 import { AlertCircleIcon } from "@sirdab/one/icons/general";
 import { Badge } from "@sirdab/one/components/badge";
 import { Icon } from "@sirdab/one/components/icon";
 import { cn } from "@sirdab/one/lib/utils";
 import { sampler } from "../../../lookbook/components/samples";
 import { PageHeader, Section } from "../../../lookbook/components/section";
-
-// Gallery page: prose lives in ./notes.md. The raw ramp is rendered here
-// for DOCUMENTATION via constructed names; components never reference it
-// (the token lint enforces that). The alpha ramp is public: nav fills and
-// the component ladders use it directly.
 
 const RAMP_STEPS = [
   50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750,
@@ -26,10 +19,7 @@ const SEMANTIC_GROUPS: {
   caption: string;
   tokens: {
     name: string;
-    /* Rows that are not a plain --var: muted-foreground paints --secondary
-           (the shadcn collision), the icon-quiet ladder paints solid ink at an
-           --icon-quiet-opacity*, and ring-input-focus demos the live utility
-           on the swatch. utility rows are class names, so no -- prefix. */
+
     swatch?: string;
     opacity?: string;
     className?: string;
@@ -317,26 +307,34 @@ function Ramp({
   steps: readonly number[];
 }): React.JSX.Element {
   return (
-    <div className="flex flex-col gap-1">
-      <div className="border-border flex overflow-hidden rounded-lg border">
-        {steps.map((step) => (
-          <div
-            key={step}
-            className="h-12 flex-1"
-            title={`--${prefix}-${step}`}
-            style={{ background: `var(--${prefix}-${step})` }}
-          />
-        ))}
-      </div>
-      <div className="flex">
-        {steps.map((step) => (
-          <p
-            key={step}
-            className="tabular text-caption-quiet text-subtle flex-1 text-center"
-          >
-            {step}
-          </p>
-        ))}
+    <div
+      className="ramp-scroll"
+      dir="ltr"
+      lang="en"
+      tabIndex={0}
+      aria-label={`${prefix} color ramp`}
+    >
+      <div className="ramp-strip flex flex-col gap-1">
+        <div className="border-border flex overflow-hidden rounded-lg border">
+          {steps.map((step) => (
+            <div
+              key={step}
+              className="h-12 flex-1"
+              title={`--${prefix}-${step}`}
+              style={{ background: `var(--${prefix}-${step})` }}
+            />
+          ))}
+        </div>
+        <div className="flex">
+          {steps.map((step) => (
+            <p
+              key={step}
+              className="tabular text-caption-quiet text-subtle flex-1 text-center"
+            >
+              {step}
+            </p>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -356,99 +354,101 @@ export default async function ColorsPage({
         tagline="One neutral ramp, with the semantic layer on top."
       />
 
-      <Section
-        title="Neutral ramp"
-        caption="21 steps; the ink rail reads it mirrored"
-      >
-        <Ramp prefix="gray" steps={RAMP_STEPS} />
-      </Section>
+      <ColorPreview>
+        <Section
+          title="Neutral ramp"
+          caption="21 steps; the ink rail reads it mirrored"
+        >
+          <Ramp prefix="gray" steps={RAMP_STEPS} />
+        </Section>
 
-      <Section title="Ink & background" caption="beyond the ramp" bare>
-        <div className="flex gap-4">
-          <div className="border-border text-body flex h-16 flex-1 items-center justify-center rounded-lg border bg-background">
-            background
-          </div>
-          <div className="text-body flex h-16 flex-1 items-center justify-center rounded-lg bg-foreground text-background">
-            ink / foreground
-          </div>
-        </div>
-      </Section>
-
-      <Section title="Alpha ramp" caption="fills only, text is solid">
-        <Ramp prefix="gray-alpha" steps={RAMP_STEPS} />
-      </Section>
-
-      {SEMANTIC_GROUPS.map((group) => (
-        <Fragment key={group.title}>
-          <Section title={group.title} caption={group.caption}>
-            <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
-              {group.tokens.map((token) => (
-                <div
-                  key={token.name}
-                  className="border-border flex items-center gap-3 border-b py-2 last:border-b-0 sm:nth-last-2:border-b-0"
-                >
-                  <div
-                    className={cn(
-                      "border-border flex h-10 w-16 shrink-0 items-center justify-center rounded-lg border",
-                      token.className,
-                    )}
-                    style={{
-                      background: `var(--${token.swatch ?? token.name})`,
-                      color: token.on ? `var(--${token.on})` : undefined,
-                      opacity: token.opacity,
-                    }}
-                  >
-                    {token.on ? <span className="text-label">Aa</span> : null}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="latin text-caption">
-                      {token.utility ? token.name : `--${token.name}`}
-                    </p>
-                    <p className="text-caption-quiet text-subtle">
-                      {token.note}
-                    </p>
-                  </div>
-                </div>
-              ))}
+        <Section title="Ink & background" caption="beyond the ramp" bare>
+          <div className="flex gap-4">
+            <div className="border-border text-body flex h-16 flex-1 items-center justify-center rounded-lg border bg-background">
+              background
             </div>
-          </Section>
-          {group.title === "Status (report only)" ? (
-            <Section
-              title="Status banners"
-              caption="the -subtle washes in context"
-            >
-              <div className="flex flex-col gap-3">
-                <div className="bg-destructive-subtle text-body text-destructive flex items-center gap-2 rounded-lg p-3">
-                  <Icon icon={AlertCircleIcon} className="size-4 shrink-0" />
-                  {s("Payment failed")}
-                </div>
-                <div className="bg-warning-subtle text-body flex items-center gap-2 rounded-lg p-3 text-foreground">
-                  <Icon icon={WarningIcon} className="size-4 shrink-0" />
-                  {s("Price must be zero or more.")}
-                </div>
-                <div className="bg-success-subtle text-body flex items-center gap-2 rounded-lg p-3 text-foreground">
-                  <Icon icon={CheckCircleIcon} className="size-4 shrink-0" />
-                  {s("Product published")}
-                </div>
+            <div className="text-body flex h-16 flex-1 items-center justify-center rounded-lg bg-foreground text-background">
+              ink / foreground
+            </div>
+          </div>
+        </Section>
+
+        <Section title="Alpha ramp" caption="fills only, text is solid">
+          <Ramp prefix="gray-alpha" steps={RAMP_STEPS} />
+        </Section>
+
+        {SEMANTIC_GROUPS.map((group) => (
+          <Fragment key={group.title}>
+            <Section title={group.title} caption={group.caption}>
+              <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
+                {group.tokens.map((token) => (
+                  <div
+                    key={token.name}
+                    className="border-border flex items-center gap-3 border-b py-2 last:border-b-0 sm:nth-last-2:border-b-0"
+                  >
+                    <div
+                      className={cn(
+                        "border-border flex h-10 w-16 shrink-0 items-center justify-center rounded-lg border",
+                        token.className,
+                      )}
+                      style={{
+                        background: `var(--${token.swatch ?? token.name})`,
+                        color: token.on ? `var(--${token.on})` : undefined,
+                        opacity: token.opacity,
+                      }}
+                    >
+                      {token.on ? <span className="text-label">Aa</span> : null}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="latin text-caption">
+                        {token.utility ? token.name : `--${token.name}`}
+                      </p>
+                      <p className="text-caption-quiet text-subtle">
+                        {token.note}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </Section>
-          ) : null}
-          {group.title === "Status (report only)" ? (
-            <Section
-              title="Status chips"
-              caption="Badge tone, the colour says whose move it is"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge tone="neutral">{s("Fulfilled")}</Badge>
-                <Badge tone="attention">{s("Draft")}</Badge>
-                <Badge tone="warning">{s("Payouts on hold")}</Badge>
-                <Badge tone="critical">{s("Failed")}</Badge>
-                <Badge tone="success">{s("Live")}</Badge>
-              </div>
-            </Section>
-          ) : null}
-        </Fragment>
-      ))}
+            {group.title === "Status (report only)" ? (
+              <Section
+                title="Status banners"
+                caption="the -subtle washes in context"
+              >
+                <div className="flex flex-col gap-3">
+                  <div className="bg-destructive-subtle text-body text-destructive flex items-center gap-2 rounded-lg p-3">
+                    <Icon icon={AlertCircleIcon} className="size-4 shrink-0" />
+                    {s("Payment failed")}
+                  </div>
+                  <div className="bg-warning-subtle text-body flex items-center gap-2 rounded-lg p-3 text-foreground">
+                    <Icon icon={WarningIcon} className="size-4 shrink-0" />
+                    {s("Price must be zero or more.")}
+                  </div>
+                  <div className="bg-success-subtle text-body flex items-center gap-2 rounded-lg p-3 text-foreground">
+                    <Icon icon={CheckCircleIcon} className="size-4 shrink-0" />
+                    {s("Product published")}
+                  </div>
+                </div>
+              </Section>
+            ) : null}
+            {group.title === "Status (report only)" ? (
+              <Section
+                title="Status chips"
+                caption="Badge tone, the colour says whose move it is"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge tone="neutral">{s("Fulfilled")}</Badge>
+                  <Badge tone="attention">{s("Draft")}</Badge>
+                  <Badge tone="warning">{s("Payouts on hold")}</Badge>
+                  <Badge tone="critical">{s("Failed")}</Badge>
+                  <Badge tone="success">{s("Live")}</Badge>
+                </div>
+              </Section>
+            ) : null}
+          </Fragment>
+        ))}
+      </ColorPreview>
     </>
   );
 }

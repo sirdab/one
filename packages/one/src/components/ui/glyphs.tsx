@@ -4,9 +4,6 @@ import * as React from "react";
 
 import type { IconComponent, IconProps } from "../icons/house-icon";
 
-/* A stroke-only glyph from path data, drawn to the house icon shape (size,
-   currentColor stroke, 24px box), for a component's one-off drawings (the
-   photo editor's rotate and flips). The house set is in ../icons. */
 export function strokeGlyph(
   displayName: string,
   paths: readonly string[],

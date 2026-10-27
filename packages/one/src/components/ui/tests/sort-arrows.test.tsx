@@ -52,9 +52,6 @@ describe("SortArrows", () => {
     expect(order()).toEqual(["M", "L", "S"]);
   });
 
-  /* The stacked pair is for a fine pointer and hides on touch. The phone
-       pair is side by side at the icon size, and its gap is what keeps the
-       two 44px touch targets (centred on 32px buttons) from overlapping. */
   it("stacks the default pair for a mouse and spaces the phone pair", () => {
     render(
       <>
@@ -91,10 +88,6 @@ describe("SortArrows", () => {
     expect(button("Down S").disabled).toBe(false);
   });
 
-  /* The ghost variant's own disabled rule re-applies icon-quiet to the
-       glyph with a selector no class on the svg can outrank, so a disabled
-       arrow painted exactly like a live one. The disabled glyph tone has to
-       come from the button, on the same selector. */
   it("paints a disabled arrow in the disabled glyph tone and a live one not", () => {
     render(<List initial={["S", "M"]} />);
     const tone = "disabled:[&_svg]:icon-quiet-disabled";

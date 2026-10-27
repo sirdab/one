@@ -1,7 +1,7 @@
 # Colors notes
 
 Not rendered. The gallery page shows; this file explains. Values and the
-decision order stay canonical in `packages/foundation/COLORS.md`.
+decision order stay canonical in `packages/one/COLORS.md`.
 
 ## Doctrine
 
@@ -10,7 +10,7 @@ ramp for text and washes, and the semantic layer on top. Status colours
 exist but only report: destructive, warning, and success paint error
 text, badges, and banners, never a button fill (TOKENS.md rule 1).
 Components may only touch the semantic layer. The decision order for
-picking the right one lives in packages/foundation/COLORS.md:
+picking the right one lives in packages/one/COLORS.md:
 surfaces come from the solid steps, interaction fills from the alpha
 ramp, and a wash is never a surface.
 

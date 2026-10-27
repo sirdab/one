@@ -10,24 +10,16 @@ const config = {
   orders: { label: "Orders", color: "var(--color-gray-400)" },
 } satisfies ChartConfig;
 
-/* Assembled, not written out: lint:tokens scans test files too and a
-   literal stock type utility trips it even inside a negative assertion. */
 const STOCK_TYPE_UTILITY = `text-${"xs"}`;
 
 type TooltipPayload = NonNullable<
   React.ComponentProps<typeof ChartTooltipContent>["payload"]
 >[number];
 
-/* recharts requires graphicalItemId on every payload entry: it names the
-   series that produced the point, and nothing here asserts on it. */
 function point(entry: Omit<TooltipPayload, "graphicalItemId">): TooltipPayload {
   return { graphicalItemId: "series-0", ...entry };
 }
 
-/* The shared ResizeObserver stub never fires, so recharts' responsive
-   container measures 0x0 and skips its children entirely: no chart, no
-   tooltip, nothing to assert. Report a fixed box once so the tree renders.
-   Local to this file; the global stub stays inert for everyone else. */
 beforeAll(() => {
   class SizedResizeObserver {
     constructor(private readonly callback: ResizeObserverCallback) {}
@@ -78,10 +70,6 @@ function withContainer(node: React.ReactNode): React.JSX.Element {
 }
 
 describe("ChartContainer", () => {
-  /* The whole point of the wrapper: recharts hardcodes #ccc grid lines and
-       #fff dot strokes, and these selectors are the only thing standing
-       between that and a themed chart. A stock `shadcn add chart` would
-       revert the type role too. */
   it("maps recharts' hardcoded literals onto tokens at the caption role", () => {
     const { container } = render(
       <ChartContainer config={config}>
@@ -97,8 +85,6 @@ describe("ChartContainer", () => {
     expect(cls).toContain("fill-muted-foreground");
   });
 
-  /* Series colours reach recharts as --color-<key> scoped to one chart id,
-       so two charts on a page can share config keys and differ in palette. */
   it("publishes each configured series as a scoped custom property", () => {
     const { container } = render(
       <ChartContainer config={config} id="traffic">
@@ -126,9 +112,6 @@ describe("ChartContainer", () => {
 });
 
 describe("ChartTooltipContent", () => {
-  /* The readout wears the shared floating-panel chrome, not a stock
-       bordered box: it is the same surface as Popover, Select and the
-       dropdown menu, so a chart tooltip never looks foreign. */
   it("wears the shared overlay panel chrome", () => {
     const { container } = render(
       withContainer(
@@ -146,8 +129,7 @@ describe("ChartTooltipContent", () => {
         />,
       ),
     );
-    // In jsdom an SVG element's className is an SVGAnimatedString, so
-    // chrome assertions read the attribute.
+
     const panel = container.querySelector("div.shadow-popover-sm");
     expect(panel).not.toBeNull();
     const cls = panel?.getAttribute("class") ?? "";
@@ -176,10 +158,6 @@ describe("ChartTooltipContent", () => {
     expect(screen.getByText((1234).toLocaleString())).not.toBeNull();
   });
 
-  /* toLocaleString() groups digits in the BROWSER's locale, so an Arabic
-       page whose axis reads Arabic-Indic got Latin digits on hover. The
-       value formatter swaps the digits and keeps the swatch and the series
-       label, where `formatter` would have replaced the whole row. */
   it("prints the value through the caller's formatter, keeping the label", () => {
     render(
       withContainer(
@@ -221,9 +199,6 @@ describe("ChartTooltipContent", () => {
     expect(empty.querySelector("div.shadow-popover-sm")).toBeNull();
   });
 
-  /* The swatch colour is per-series runtime data, so it can only ride
-       inline. The dashed indicator is the one case that must stay unfilled:
-       a filled "dashed" swatch is indistinguishable from a dot. */
   it("colours the swatch inline and leaves the dashed indicator unfilled", () => {
     const { container } = render(
       withContainer(

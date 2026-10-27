@@ -1,7 +1,7 @@
 # Spacing & radius notes
 
 Not rendered. The gallery page shows; this file explains. The scale
-values stay canonical in `packages/foundation/TOKENS.md`.
+values stay canonical in `packages/one/TOKENS.md`.
 
 ## Doctrine
 

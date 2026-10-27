@@ -7,31 +7,6 @@ import type { IconComponent } from "../icons/house-icon";
 import { Button } from "./button";
 import { Icon } from "./icon";
 
-/* The Sirdab artifact: the card a tool step opens onto, the thing the
-   assistant actually produced (a table of orders, the top products chart,
-   a list of what it found). Taken from the shadcn.io AI Elements artifact
-   and trued to the dashboard-card recipe: bg-card + hairline, no shadow,
-   and the header is separated by a hairline, not the stock muted wash
-   (a wash is never a surface). Actions are ghost icon Buttons labelled by
-   aria-label AND hint, the house rule for icon-only controls.
-
-   Content is layout-only: the caller puts a table, a chart or a list in
-   ArtifactContent and owns its padding if it needs to bleed to the edges.
-
-   Usage:
-       <Artifact>
-           <ArtifactHeader>
-               <div>
-                   <ArtifactTitle>{t("artifact.topProducts")}</ArtifactTitle>
-                   <ArtifactDescription>{t("artifact.last30Days")}</ArtifactDescription>
-               </div>
-               <ArtifactActions>
-                   <ArtifactAction icon={Copy} label={t("copy")} onClick={copy} />
-               </ArtifactActions>
-           </ArtifactHeader>
-           <ArtifactContent>{chart}</ArtifactContent>
-       </Artifact>
-*/
 function Artifact({
   className,
   ...props

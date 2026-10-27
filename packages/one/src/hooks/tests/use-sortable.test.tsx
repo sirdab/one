@@ -57,9 +57,6 @@ describe("useSortable", () => {
     expect(order()).toEqual(["S", "M"]);
   });
 
-  /* The handle follows the pointer itself and drops on the row under it,
-       for a mouse as much as a finger: the browser's own drag and drop
-       never started for some merchants, and never starts from a finger. */
   function carry(
     handle: HTMLElement,
     target: HTMLElement,

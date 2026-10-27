@@ -1,7 +1,7 @@
 # Typography notes
 
 Not rendered. The gallery page shows; this file explains. The role
-values stay canonical in `packages/foundation/TOKENS.md`.
+values stay canonical in `packages/one/TOKENS.md`.
 
 ## Doctrine
 
@@ -62,12 +62,12 @@ Three things bound how far the dial can go. A rung up costs a few
 percent of line width and compounds with the 5% size scale, so Arabic
 runs wider than Latin overall and truncation bites earlier in fixed
 boxes (the rail, table columns). Plex ships static weights and
-fonts.ts loads only 400/500/700, so a rung outside that list is a
+@sirdab/one/fonts.css loads 400/500/600/700, so a rung outside that list is a
 synthesized smear, never dial one. And number columns are not
 free: Plex's Arabic-Indic digits are proportional and their advance
 shifts per weight (Noto held a 0.000 spread at every weight), so a
-weight change reflows prices; the digit-gate status and escape hatch
-live in fonts.ts.
+weight change reflows localized values. The metrics probe measures this
+in the live specimen.
 
 Anything added to the Arabic dial must also be restated in the
 Latin-island block below it, or a `.latin` span inside Arabic renders
@@ -92,7 +92,7 @@ Trust nothing: this measures the rendered page. The Arabic row must
 compute larger than the Latin row (the lang selector working). The
 digit spread is expected NON-zero for now: IBM Plex Sans Arabic's
 Arabic-Indic digits are proportional, a known open gate accepted with
-the face swap (escape hatch in fonts.ts); the probe keeps showing the
+the face swap; the probe keeps showing the
 live number so a future digit fix is visible here.
 
 ### Diacritics
@@ -105,5 +105,5 @@ shrinks. If real copy stays harakat-free, that number could come down.
 ### Latin islands
 
 SKUs and brand names inside Arabic prose opt back into the Latin metrics
-via .latin. Prices do not; they stay Arabic-Indic with the rest of the
-UI.
+via .latin. Prices use Western digits by default; request localized numerals
+explicitly when the surrounding context needs them.

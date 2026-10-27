@@ -10,10 +10,6 @@ import {
 } from "@sirdab/one/components/chart";
 import { sampler } from "./samples";
 
-/* Recharts measures the DOM, so every specimen is client-side. Series
-   colours come from the config, which is the only place a chart declares
-   colour: charts read as de-emphasised information, so the ink pair
-   (primary, then a gray step) beats a rainbow. */
 const DAYS = [
   { day: "Sun", visitors: 186, orders: 12 },
   { day: "Mon", visitors: 305, orders: 21 },

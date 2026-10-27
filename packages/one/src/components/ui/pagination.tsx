@@ -9,25 +9,6 @@ import {
 import { Button } from "./button";
 import { Icon } from "./icon";
 
-/* The Sirdab pagination, from shadcn's, trued: pages are Buttons (ghost, the
-   current one outline), so they press, hover and focus like every other
-   control. A page can be a link (asChild) or a plain button for a list that
-   pages in the browser. Previous and next are glyphs that mirror in Arabic.
-   Primitives take no strings: every label comes from the caller.
-
-   Usage:
-       <Pagination aria-label={t("pages")}>
-           <PaginationContent>
-               <PaginationItem>
-                   <PaginationPrevious aria-label={t("previous")} disabled={page === 1} onClick={…} />
-               </PaginationItem>
-               <PaginationItem>
-                   <PaginationLink isActive onClick={…}>1</PaginationLink>
-               </PaginationItem>
-               …
-           </PaginationContent>
-       </Pagination>
-*/
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav

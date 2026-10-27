@@ -1,11 +1,14 @@
-import { formatIdentifier, formatPrice, formatValue } from "@sirdab/one/foundation";
+import {
+  formatIdentifier,
+  formatPrice,
+  formatValue,
+} from "@sirdab/one/foundation";
 
 import { toNumeralLocale } from "../../../lookbook/components/numeral-locale";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
 type PageProps = { lang: string };
 
-/* Gallery page: prose lives in ./notes.md. */
 export default async function NumeralsPage({
   lang,
 }: PageProps): Promise<React.JSX.Element> {

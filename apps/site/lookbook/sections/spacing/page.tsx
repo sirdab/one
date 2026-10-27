@@ -1,8 +1,6 @@
 import { cn } from "@sirdab/one/lib/utils";
 import { PageHeader, Section } from "../../../lookbook/components/section";
 
-/* Gallery page: prose lives in ./notes.md. */
-
 const STEPS = [
   { px: 2, cls: "w-0.5" },
   { px: 4, cls: "w-1" },

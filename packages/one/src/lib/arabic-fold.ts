@@ -1,5 +1,3 @@
-/* Search compares spelling variants without changing the displayed label. */
-// One character per entry; an empty target deletes it.
 const FOLDS: ReadonlyArray<readonly [string, string]> = [
   ...Array.from("أإآٱ").map((alef): readonly [string, string] => [alef, "ا"]),
   ["ى", "ي"],
@@ -40,13 +38,6 @@ function mapSpelling(text: string): string {
   return folded;
 }
 
-/**
- * Case and spelling both folded, for comparing two strings in memory. İ
- * (U+0130) goes to a bare i first: JavaScript lowercases it to i plus a
- * combining dot, which a token split then cuts in two, while Postgres
- * `lower()` gives the bare i, so «İndirimler» typed in a Turkish browser must
- * fold the way the column does.
- */
 export function foldArabic(text: string): string {
   return mapSpelling(
     text

@@ -4,10 +4,6 @@ import { describe, expect, it } from "vitest";
 import CardPage from "../sections/card/page";
 import FormsPage from "../sections/forms/page";
 
-/* The sections are async server components, so the page function is awaited
-   and its element rendered. This is a smoke test for what the critic opens at
-   390 and 1440: every part of the anatomy mounts, in either direction, with
-   no part missing its sample string. */
 describe("Card section", () => {
   it.each(["en", "ar"])("renders the whole anatomy in %s", async (lang) => {
     render(await CardPage({ lang }));
@@ -54,8 +50,6 @@ describe("Forms section", () => {
     }
   });
 
-  /* The Save demo is the proof of the page recipe: absent until the field
-       would save, back to absent once it is saved. */
   it("brings Save into the bar only once the field would save", async () => {
     render(await FormsPage({ lang: "en" }));
     const email = document.getElementById("lb-demo-email");

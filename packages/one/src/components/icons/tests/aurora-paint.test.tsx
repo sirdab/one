@@ -7,26 +7,13 @@ import { contrastRatio } from "@sirdab/one/foundation";
 
 import { AssistantAuroraIcon } from "../shell";
 
-/* THE ASSISTANT'S MARK AS PAINTED (its flat ramp, the paint it wears until
-   a texture lands). The colors it shows are its stops' roles, resolved per theme scope by AURORA in foundation.css, blended the
-   way an SVG gradient blends (sRGB). Whether the blend lands on a status hue
-   or sinks into a dark ground depends on WHICH role sits on WHICH stop, which
-   only this component knows, so the check lives here: nx runs a project's
-   tests when its own files change, and a stop edited in shell.tsx selects
-   ui, not foundation. The token half (roles declared in both scopes, hue
-   distance, a lighter dark scope) is foundation's aurora.test.ts.
-
-   Only warning and destructive are tested against. A pale status wash (a
-   draft or attention yellow) may sit on the gold's hue: it is a wash behind
-   text, never a saturated mark. */
-
 const css: string = readFileSync(
   resolve(__dirname, "../../../foundation/foundation.css"),
   "utf8",
 ).replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " "));
 
 type Oklch = { l: number; c: number; h: number };
-/* Gamma-encoded sRGB, 0 to 1: the space an SVG gradient interpolates in. */
+
 type Rgb = [number, number, number];
 type Scope = "light" | "dark";
 type Stop = { offset: number; role: string };
@@ -88,14 +75,12 @@ const hueGap = (a: number, b: number): number => {
   return Math.min(d, 360 - d);
 };
 
-/* Every aurora colour token (violet, blue, gold, pink ...) by name. */
 const tokens = new Map<string, Oklch>();
 for (const m of css.matchAll(/(--aurora-[\w-]+)\s*:\s*(oklch\([^)]*\))\s*;/g)) {
   const color = parseOklch(m[2] ?? "");
   if (color) tokens.set(m[1] ?? "", color);
 }
 
-/* The warning and destructive ramps, one entry per ramp and hue. */
 const statusHues: { name: string; h: number }[] = [];
 for (const m of css.matchAll(
   /--((?:warning|destructive))-\d+\s*:\s*(oklch\([^)]*\))\s*;/g,
@@ -107,8 +92,6 @@ for (const m of css.matchAll(
   }
 }
 
-/* The mark's roles per theme scope: `:root, .light` is the light scope and a
-   bare `.dark` block the dark one, as theme-scopes.test.ts reads them. */
 const roles = (scope: Scope): Map<string, string> => {
   const out = new Map<string, string>();
   for (const block of css.matchAll(/([^{};]+)\{([^{}]*)\}/g)) {
@@ -136,8 +119,6 @@ const roleColor = (scope: Scope, role: string): Oklch => {
   return color;
 };
 
-/* The stops the icon's flat ramp really renders. A missing offset is 0, as
-   in SVG. */
 const ramp: Stop[] = (() => {
   const { container } = render(<AssistantAuroraIcon />);
   const stops =
@@ -176,8 +157,6 @@ const along = (stops: Stop[], scope: Scope, t: number): Rgb => {
 const range = (from: number, to: number, steps: number): number[] =>
   Array.from({ length: steps + 1 }, (_, i) => from + ((to - from) * i) / steps);
 
-/* The ramp runs (3,3) to (21,21) and the pointer projects onto that axis
-   from t 0 to 0.75, so that is all it ever shows. */
 const SHOWN: number[] = range(0, 0.75, 15);
 
 const SCOPES: Scope[] = ["light", "dark"];
@@ -201,7 +180,6 @@ const nearStatus = (stops: Stop[], samples: number[]): string[] => {
 
 describe("the icon's stops are found", () => {
   it("reads the ramp, the tokens and the status ramps", () => {
-    // A parser that silently matched nothing would pass every test below.
     expect(ramp.length).toBeGreaterThanOrEqual(3);
     expect(tokens.size).toBeGreaterThanOrEqual(8);
     expect(statusHues.map((s) => s.name)).toContain("warning");
@@ -219,16 +197,10 @@ describe("the mark's ramp, as painted", () => {
   });
 
   it("keeps its blend 20 degrees clear of warning and destructive", () => {
-    /* Colors between two stops are not tokens: a blend of gold and pink
-           lands on coral, the destructive hue. So the colors the shape
-           really shows are held, not only the stops. */
     expect(nearStatus(ramp, SHOWN)).toEqual([]);
   });
 
   it("clears 3:1 on the grounds it sits on, in the scope that ground uses", () => {
-    /* WCAG 1.4.11. Grounds: the page and the rail in light; in dark the
-           shell frame and the landing's night, both #0f0f0f, and the
-           landing's --night sheet, #16122a. */
     const grounds: Record<Scope, string[]> = {
       light: ["#ffffff", "#fafafa"],
       dark: ["#0f0f0f", "#16122a"],

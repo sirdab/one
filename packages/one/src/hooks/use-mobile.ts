@@ -1,7 +1,5 @@
 import * as React from "react";
 
-/* Matches the md breakpoint: below it the sidebar floats as the nav
-   drawer (the same sidebar, returned to plain background per TOKENS.md). */
 const MOBILE_BREAKPOINT = 768;
 
 export function useIsMobile() {

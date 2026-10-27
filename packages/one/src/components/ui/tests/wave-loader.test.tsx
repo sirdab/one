@@ -3,8 +3,6 @@ import { describe, expect, it } from "vitest";
 
 import { WaveLoader } from "../wave-loader";
 
-/* The doctrine pins: ink, five bars a beat apart on the foundation's wave,
-   still under reduced motion, decorative unless it stands alone. */
 describe("WaveLoader", () => {
   it("draws five ink bars, tallest in the middle, each a beat after the last", () => {
     const { container } = render(<WaveLoader />);
