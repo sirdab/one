@@ -1,0 +1,44 @@
+:root,
+.light,
+.dark {
+  --card-foreground: var(--foreground);
+  --popover-foreground: var(--foreground);
+
+  --muted-foreground: var(--secondary);
+
+  --accent: var(--gray-100);
+  --accent-foreground: var(--gray-900);
+
+  --radius: var(--radius-lg);
+}
+
+[data-slot="button"] {
+  block-size: var(--control-md);
+  padding-inline: var(--space-12);
+  font-size: var(--text-label-size);
+  line-height: var(--text-label-leading);
+  font-weight: var(--text-label-weight);
+  border-radius: var(--radius-md);
+}
+
+[data-slot="input"] {
+  block-size: var(--control-md);
+  padding-inline: var(--space-10);
+  font-size: var(--text-body-size);
+  border-radius: var(--radius-md);
+  border-color: var(--border-interactive);
+}
+
+[data-slot="badge"] {
+  block-size: var(--control-xs);
+  padding-inline: var(--space-8);
+  border-radius: var(--radius-full);
+  font-size: var(--text-caption-size);
+  font-weight: var(--text-caption-weight);
+  border: none;
+}
+
+body:has([data-slot="dialog-content"][data-state="open"])
+  [data-slot="dropdown-menu-content"][data-state="closed"] {
+  animation: none !important;
+}

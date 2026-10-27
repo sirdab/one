@@ -1,0 +1,47 @@
+{
+  "name": "verification",
+  "root": "tools/verification",
+  "implicitDependencies": ["one"],
+  "targets": {
+    "consumers": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/verify-consumers.mjs",
+        "cwd": "."
+      },
+      "dependsOn": ["one:build"],
+      "cache": false
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node --test scripts/tests/*.test.mjs",
+        "cwd": "."
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/**/*",
+        "{workspaceRoot}/fixtures/**/*",
+        "{workspaceRoot}/.github/workflows/release-alpha.yml"
+      ]
+    },
+    "lookbook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/verify-lookbook.mjs",
+        "cwd": "."
+      },
+      "dependsOn": ["site:build"],
+      "cache": false
+    },
+    "seo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/verify-site-seo.mjs",
+        "cwd": "."
+      },
+      "dependsOn": ["site:build"],
+      "cache": false
+    }
+  }
+}

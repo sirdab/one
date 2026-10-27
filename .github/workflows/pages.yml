@@ -1,0 +1,56 @@
+name: Pages
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NX_DAEMON: "false"
+      NEXT_TELEMETRY_DISABLED: "1"
+      SITE_BASE_PATH: ${{ vars.SITE_BASE_PATH }}
+      SITE_URL: ${{ vars.SITE_URL || 'https://one.sirdab.co' }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/configure-pages@v5
+      - name: Require the public site URL
+        run: test -n "$SITE_URL" || { echo "Set the SITE_URL repository variable before deploying."; exit 1; }
+      - run: pnpm nx run verification:seo
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: apps/site/out
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deploy
