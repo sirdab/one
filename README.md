@@ -6,7 +6,7 @@ The design system by Sirdab. Every part works as one.
 
 One brings the components, typography, colors and interaction patterns used in our products into a shared React package. It includes light and dark themes, Arabic and RTL support, house icons and a live lookbook.
 
-This repository is the new home of the system. The initial alpha is being prepared for npm as `@sirdab/one`. Uqail and Sirdab's existing apps have not yet migrated to this package.
+This repository is the new home of the system. The package is `@sirdab/one`. It ships as a tarball on each [GitHub Release](https://github.com/sirdab/one/releases), and products depend on that URL (see [releases](docs/guides/releases.md)). Uqail and Sirdab's existing apps have not yet migrated to this package.
 
 ## Develop
 

@@ -226,6 +226,23 @@ export function auditFiles(files, sourceFiles = new Map()) {
       checked.push(...matches);
     }
   }
+  if (manifest.bin !== undefined) {
+    assert(record(manifest.bin), "bin must be a name -> path map");
+    for (const [command, target] of Object.entries(manifest.bin)) {
+      assert(
+        typeof target === "string" &&
+          target.startsWith("./") &&
+          !target.includes("..", 2),
+        `Invalid bin target: ${command}`,
+      );
+      const local = target.slice(2);
+      assert(files.has(local), `bin points to a missing file: ${command}`);
+      assert(
+        (files.get(local) ?? "").startsWith("#!/usr/bin/env node\n"),
+        `bin needs a node shebang: ${command}`,
+      );
+    }
+  }
   for (const group of [
     "dependencies",
     "peerDependencies",

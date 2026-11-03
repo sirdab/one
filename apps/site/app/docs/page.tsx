@@ -80,16 +80,22 @@ export default function DocsPage(): React.JSX.Element {
         <section id="installation">
           <h2 className="text-heading-sm">Installation</h2>
           <p>
-            <strong>This is an alpha preview.</strong> Version 0.1.0-alpha.0 has
-            not been published to npm. There is no live registry install yet.
-          </p>
-          <p>
-            To try it now, build and pack the package from{" "}
-            <a href="https://github.com/sirdab/one">the repository</a>. Use Node
-            24 and pnpm 11 for the workspace.
+            <strong>This is an alpha preview.</strong> Each release ships as a
+            package tarball on{" "}
+            <a href="https://github.com/sirdab/one/releases">GitHub Releases</a>
+            , not on npm. Add it to a React 19 app by its URL.
           </p>
           <CodeBlock
-            label="Build a local alpha"
+            label="package.json"
+            code={`"@sirdab/one": "https://github.com/sirdab/one/releases/download/v0.1.0-alpha.0/sirdab-one-0.1.0-alpha.0.tgz"`}
+          />
+          <p>
+            To try unreleased changes, build and pack the package from{" "}
+            <a href="https://github.com/sirdab/one">the repository</a> with Node
+            24 and pnpm 11, then install the generated tarball by its path.
+          </p>
+          <CodeBlock
+            label="Build a local tarball"
             code={`git clone https://github.com/sirdab/one.git
 cd one
 pnpm install
@@ -97,23 +103,6 @@ pnpm nx run one:build
 mkdir -p artifacts
 pnpm --dir packages/one pack --pack-destination ../../artifacts`}
           />
-          <p>
-            Then install the generated tarball in a React 19 app. Replace the
-            path below with the path to your local repository.
-          </p>
-          <CodeBlock
-            label="Install the tarball in your app"
-            code="npm install /path/to/one/artifacts/sirdab-one-0.1.0-alpha.0.tgz"
-          />
-          <details className="docs-details">
-            <summary>
-              Future npm quickstart, after the alpha is published
-            </summary>
-            <CodeBlock
-              label="Not available until publication"
-              code="npm install @sirdab/one@0.1.0-alpha.0"
-            />
-          </details>
         </section>
         <section id="first-component">
           <h2 className="text-heading-sm">Your first component</h2>

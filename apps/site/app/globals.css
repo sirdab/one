@@ -739,7 +739,9 @@ html[data-theme-preference="system"] [data-theme-initial="system"] {
 }
 .flow-parts {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* The Button specimen (second column) gets the wider share: its label grows
+     from "إنشاء المساحة" to "أنشئها مرة ثانية", while the Badge stays short. */
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   gap: var(--space-12);
 }
 .flow-parts > .flow-panel-heading,
