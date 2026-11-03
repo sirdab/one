@@ -88,7 +88,7 @@ After building, `pnpm nx run one:test:package` checks the published module graph
 client directives, server-safe variants, drawer identity, CSS and packaged
 assets. `pnpm nx run one:test` preserves the copied behavior suite. The parent
 release workflow owns clean tarball installs, Next/Vite builds, browser checks
-and CI. This alpha has not been published to npm.
+and CI. Releases ship as GitHub Release tarballs, not on npm.
 
 MIT for Sirdab One. Third-party font, flag, animation and Vaul licenses remain
 under their own terms in `licenses`, `dist/licenses` and `dist/assets/flags`.
