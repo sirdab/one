@@ -1,5 +1,5 @@
 export { cn } from "./lib/utils";
-export { OneProvider } from "./provider";
+export { DirectionProvider, OneProvider } from "./provider";
 export type { OneProviderProps } from "./provider";
 export { Action, Actions } from "./components/ui/actions";
 export type { ActionProps } from "./components/ui/actions";
