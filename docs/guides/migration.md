@@ -2,21 +2,27 @@
 
 Product migrations are still pending. This extraction does not change `sirdab/apps`, Uqail, or their production deployments. Test each migration against a published alpha or the verified tarball before removing the old packages.
 
-| Existing import or setup                                                             | One replacement                                              |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
-| `@sirdab/ui` or `@uqail/ui`                                                          | `@sirdab/one`                                                |
-| `@sirdab/ui/components/ui/button` or equivalent Uqail component path                 | `@sirdab/one/components/button`                              |
-| `@sirdab/ui/button` or `@uqail/ui/button`                                            | `@sirdab/one/components/button`                              |
-| `@sirdab/ui/theme-provider` or Uqail equivalent                                      | `@sirdab/one/theme-provider`, or the combined `OneProvider`  |
-| `@sirdab/foundation`, `@uqail/foundation`, or `@sirdab/ui/foundation` helper exports | `@sirdab/one/foundation`                                     |
-| UI icon module such as `icons/shell`                                                 | `@sirdab/one/icons/shell`                                    |
-| UI hook such as `hooks/use-mobile`                                                   | `@sirdab/one/hooks/use-mobile`                               |
-| UI helper such as `lib/utils`                                                        | `@sirdab/one/lib/utils`                                      |
-| Foundation CSS, Tailwind bridge and component scanning                               | Import `@sirdab/one/styles.css` once                         |
-| Inter and IBM Plex Arabic loading owned by the old UI package                        | Optional `@sirdab/one/fonts.css`                             |
-| Host copies of `/flags` and the Riyal font                                           | Package-owned assets, resolved by the bundler                |
-| `buttonVariants` called in a Server Component                                        | Root export or `@sirdab/one/components/button-variants`      |
-| `@uqail/ui/lookbook`                                                                 | Public One docs/lookbook site; no product runtime dependency |
+| Existing import or setup                                                                 | One replacement                                                                                        |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `@sirdab/ui` or `@uqail/ui`                                                              | `@sirdab/one`                                                                                          |
+| `@sirdab/ui/components/ui/button` or equivalent Uqail component path                     | `@sirdab/one/components/button`                                                                        |
+| `@sirdab/ui/button` or `@uqail/ui/button`                                                | `@sirdab/one/components/button`                                                                        |
+| `@sirdab/ui/theme-provider` or Uqail equivalent                                          | `@sirdab/one/theme-provider`, or the combined `OneProvider`                                            |
+| `@sirdab/foundation`, `@uqail/foundation`, or `@sirdab/ui/foundation` helper exports     | `@sirdab/one/foundation`                                                                               |
+| UI icon module such as `icons/shell`                                                     | `@sirdab/one/icons/shell`                                                                              |
+| UI hook such as `hooks/use-mobile`                                                       | `@sirdab/one/hooks/use-mobile`                                                                         |
+| UI helper such as `lib/utils`                                                            | `@sirdab/one/lib/utils`                                                                                |
+| Foundation CSS, Tailwind bridge and component scanning                                   | Import `@sirdab/one/styles.css` once                                                                   |
+| Inter and IBM Plex Arabic loading owned by the old UI package                            | Optional `@sirdab/one/fonts.css`                                                                       |
+| Host copies of `/flags` and the Riyal font                                               | Package-owned assets, resolved by the bundler                                                          |
+| `buttonVariants` called in a Server Component                                            | Root export or `@sirdab/one/components/button-variants`                                                |
+| `@uqail/ui/lookbook`                                                                     | Public One docs/lookbook site; no product runtime dependency                                           |
+| Transportation's vendored `combobox` (`Combobox`, `ComboboxOption<T>`, `ComboboxLabels`) | `@sirdab/one/components/search-select` (`SearchSelect`, `SearchSelectOption<T>`, `SearchSelectLabels`) |
+| Transportation's vendored cmdk-free `command`                                            | `@sirdab/one/components/listbox` (`Listbox*`, `listboxMatches`)                                        |
+| Transportation's vendored `date-picker` (ISO strings, ranges)                            | `@sirdab/one/components/date-picker` (subpath only)                                                    |
+| Vendored `direction-provider`                                                            | `DirectionProvider` from `@sirdab/one`                                                                 |
+| Vendored `INPUT_TEXT_CLASSES`                                                            | `FIELD_VALUE` from `@sirdab/one/components/field-chrome`                                               |
+| Vendored `AppIcon` type                                                                  | `IconComponent` from `@sirdab/one/icons/house-icon`                                                    |
 
 Install React 19 and the alpha package. No Next peer dependency or Tailwind setup is required to use components. A host can keep Tailwind for its own layout. Remove obsolete package aliases, workspace source paths, `transpilePackages`, scanner entries and package-specific overrides only after the product's own tests pass. Do not remove an override used by unrelated product dependencies.
 

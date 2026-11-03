@@ -171,6 +171,54 @@ const FIELD_LEADING_ICON: Partial<Record<ButtonSizes, string>> = {
   touch: "[&>svg:first-child:not([class*='size-'])]:size-5",
 };
 
+type SelectTriggerVariant = Exclude<
+  ButtonVariants,
+  "destructive" | "default" | "link"
+>;
+
+/**
+ * The classes SelectTrigger draws with. Custom pickers (date pickers, search
+ * selects) use it so their triggers match Select exactly.
+ */
+function selectTriggerChrome({
+  variant = "secondary",
+  size = "xl",
+  chevron = true,
+  closed = false,
+}: {
+  variant?: SelectTriggerVariant;
+  size?: ButtonSizes;
+  chevron?: boolean;
+  closed?: boolean;
+}): string {
+  const fieldSize =
+    variant === "secondary" || variant === "outline"
+      ? FIELD_SIZE_OF[size]
+      : undefined;
+  return cn(
+    fieldSize !== undefined
+      ? cn(
+          FIELD_TRIGGER,
+          FIELD_HEIGHT[fieldSize],
+          FIELD_RADIUS[fieldSize],
+          FIELD_LEADING_ICON[size],
+          chevron ? "ps-3 pe-2" : "px-3",
+        )
+      : cn(
+          buttonVariants({ variant, size }),
+          "justify-between gap-1 disabled:text-foreground [&>svg:not(:only-child)]:me-1.5",
+          chevron &&
+            (size === "default" || size === "lg" || size === "xl") &&
+            "pe-2",
+          (variant === "secondary" || variant === "outline") &&
+            "active:bg-btn-surface-hover",
+        ),
+    "data-placeholder:text-subtle text-start disabled:cursor-not-allowed disabled:opacity-50",
+    size.startsWith("icon") && "justify-center",
+    closed && "pointer-events-none w-full opacity-50",
+  );
+}
+
 function SelectTrigger({
   className,
   variant = "secondary",
@@ -182,7 +230,7 @@ function SelectTrigger({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
   size?: ButtonSizes;
-  variant?: Exclude<ButtonVariants, "destructive" | "default" | "link">;
+  variant?: SelectTriggerVariant;
 
   closed?: React.ReactNode;
 
@@ -217,31 +265,8 @@ function SelectTrigger({
       data-variant={variant}
       data-size={size}
       className={cn(
-        fieldSize !== undefined
-          ? cn(
-              FIELD_TRIGGER,
-              FIELD_HEIGHT[fieldSize],
-              FIELD_RADIUS[fieldSize],
-              FIELD_LEADING_ICON[size],
-              chevron ? "ps-3 pe-2" : "px-3",
-            )
-          : cn(
-              buttonVariants({ variant, size }),
-
-              "justify-between gap-1 disabled:text-foreground [&>svg:not(:only-child)]:me-1.5",
-              chevron &&
-                (size === "default" || size === "lg" || size === "xl") &&
-                "pe-2",
-
-              (variant === "secondary" || variant === "outline") &&
-                "active:bg-btn-surface-hover",
-            ),
-
-        "group/select-trigger data-placeholder:text-subtle text-start disabled:cursor-not-allowed disabled:opacity-50 *:data-[slot=select-value]:flex *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:flex-1 *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2",
-
-        size.startsWith("icon") && "justify-center",
-        closed != null && "pointer-events-none w-full opacity-50",
-
+        selectTriggerChrome({ variant, size, chevron, closed: closed != null }),
+        "group/select-trigger *:data-[slot=select-value]:flex *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:flex-1 *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2",
         closed == null && className,
       )}
       tabIndex={closed != null ? -1 : undefined}
@@ -517,4 +542,6 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
+  selectTriggerChrome,
 };
+export type { SelectTriggerVariant };

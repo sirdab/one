@@ -11,6 +11,13 @@ type Side = "start" | "end" | "bottom";
 
 const SideContext = React.createContext<Side>("end");
 
+const InsideSheetContext = React.createContext(false);
+
+/** True inside SheetContent, so nested pickers can render inline instead of opening another overlay. */
+function useInsideSheet(): boolean {
+  return React.useContext(InsideSheetContext);
+}
+
 const SheetOpenContext = React.createContext(true);
 
 function Sheet({
@@ -103,7 +110,9 @@ function SheetContent({
             className="bg-muted mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full"
           />
         ) : null}
-        {shown}
+        <InsideSheetContext.Provider value={true}>
+          {shown}
+        </InsideSheetContext.Provider>
       </DrawerPrimitive.Content>
     </DrawerPrimitive.Portal>
   );
@@ -165,4 +174,5 @@ export {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  useInsideSheet,
 };

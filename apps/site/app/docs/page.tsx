@@ -87,7 +87,7 @@ export default function DocsPage(): React.JSX.Element {
           </p>
           <CodeBlock
             label="package.json"
-            code={`"@sirdab/one": "https://github.com/sirdab/one/releases/download/v0.1.0-alpha.0/sirdab-one-0.1.0-alpha.0.tgz"`}
+            code={`"@sirdab/one": "https://github.com/sirdab/one/releases/download/v0.1.0-alpha.1/sirdab-one-0.1.0-alpha.1.tgz"`}
           />
           <p>
             To try unreleased changes, build and pack the package from{" "}
