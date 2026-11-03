@@ -4,7 +4,10 @@ import * as React from "react";
 import { type VariantProps } from "class-variance-authority";
 import { Direction } from "radix-ui";
 
-import { formatValue, type Locale as NumeralLocale } from "@sirdab/one/foundation";
+import {
+  formatValue,
+  type Locale as NumeralLocale,
+} from "@sirdab/one/foundation";
 import { CheckIcon, ChevronDownIcon } from "../icons/catalogue";
 
 import {

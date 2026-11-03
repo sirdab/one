@@ -15,6 +15,7 @@ type PaletteItemRecord = {
   disabled: boolean;
 
   searchText: string;
+  forceMount?: boolean;
   onSelect?: () => void;
 };
 
@@ -146,6 +147,7 @@ function Palette({
       const record = items.get(value);
 
       if (record == null) return true;
+      if (record.forceMount) return true;
       return record.searchText.toLowerCase().includes(query);
     },
     [filter, search, items],
@@ -446,6 +448,7 @@ function PaletteItem({
   leading,
   variant = "default",
   disabled = false,
+  forceMount = false,
   enterLabel,
   onSelect,
   onMouseMove,
@@ -457,12 +460,14 @@ function PaletteItem({
   value: string;
   title: string;
 
-  subtitle: string;
+  subtitle?: string;
 
   leading: React.ReactNode;
 
   variant?: "default" | "destructive";
   disabled?: boolean;
+  /** Always shown, whatever the query: for rows the server already matched. */
+  forceMount?: boolean;
   onSelect?: (value: string) => void;
 }) {
   const {
@@ -476,17 +481,18 @@ function PaletteItem({
     pointerRef,
   } = usePaletteContext("PaletteItem");
   const groupId = usePaletteGroupId("PaletteItem");
-  const searchText = `${title} ${subtitle}`;
+  const searchText = subtitle != null ? `${title} ${subtitle}` : title;
 
   React.useEffect(() => {
     register(value, {
       groupId,
       disabled,
       searchText,
+      forceMount,
       onSelect: () => onSelect?.(value),
     });
     return () => unregister(value);
-  }, [value, groupId, disabled, searchText, onSelect]);
+  }, [value, groupId, disabled, searchText, forceMount, onSelect]);
 
   const active = activeValue === value;
 
@@ -536,12 +542,14 @@ function PaletteItem({
         >
           {title}
         </span>
-        <span
-          data-slot="palette-item-subtitle"
-          className="text-caption-quiet text-muted-foreground truncate"
-        >
-          {subtitle}
-        </span>
+        {subtitle != null ? (
+          <span
+            data-slot="palette-item-subtitle"
+            className="text-caption-quiet text-muted-foreground truncate"
+          >
+            {subtitle}
+          </span>
+        ) : null}
       </span>
 
       {active ? (

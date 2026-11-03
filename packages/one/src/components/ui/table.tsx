@@ -11,26 +11,55 @@ import { Icon } from "./icon";
 
 const FILL = "w-full max-w-0" as const;
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({
+  scroll = "x",
+  className,
+  ...props
+}: React.ComponentProps<"table"> & {
+  /** "none" drops the horizontal scroll container, for a table inside a scroller the host owns (needed for a sticky header). */
+  scroll?: "x" | "none";
+}) {
+  const table = (
+    <table
+      data-slot="table"
+      className={cn(
+        "text-body w-full border-separate border-spacing-0",
+        className,
+      )}
+      {...props}
+    />
+  );
+  if (scroll === "none") return table;
   return (
     <div
       data-slot="table-container"
       className="relative w-full overflow-x-auto"
     >
-      <table
-        data-slot="table"
-        className={cn(
-          "text-body w-full border-separate border-spacing-0",
-          className,
-        )}
-        {...props}
-      />
+      {table}
     </div>
   );
 }
 
-function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
-  return <thead data-slot="table-header" className={className} {...props} />;
+function TableHeader({
+  sticky = false,
+  className,
+  ...props
+}: React.ComponentProps<"thead"> & {
+  /** Pins the header to the top of the nearest scroller; header cells get an opaque background. */
+  sticky?: boolean;
+}) {
+  return (
+    <thead
+      data-slot="table-header"
+      data-sticky={sticky ? "" : undefined}
+      className={cn(
+        "group/header",
+        sticky && "z-raised-more sticky top-0",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
@@ -104,6 +133,7 @@ function TableHead({
       aria-sort={sort}
       className={cn(
         "h-control-xl border-row-divider text-label text-muted-foreground border-b text-start align-middle",
+        "group-data-sticky/header:bg-background",
         GUTTER,
         numeric && NUMERIC_HEAD,
         fill && FILL,
