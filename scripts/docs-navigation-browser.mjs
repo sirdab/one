@@ -60,6 +60,9 @@ export async function checkDocsNavigation(browser, origin, artifacts) {
         animations: "disabled",
       });
     }
+    // A fresh load, not a same-document hash change: the deep link is what
+    // this checks, and a hash change on the open page races the scroll spy.
+    await page.goto("about:blank");
     await page.goto(`${origin}/docs/#customization`);
     await expect(active).toHaveText("Customization");
     await page.evaluate(() =>
