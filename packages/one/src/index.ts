@@ -1,5 +1,6 @@
 export { cn } from "./lib/utils";
-export { DirectionProvider, OneProvider } from "./provider";
+export { DirectionProvider } from "./direction-provider";
+export { OneProvider } from "./provider";
 export type { OneProviderProps } from "./provider";
 export { Action, Actions } from "./components/ui/actions";
 export type { ActionProps } from "./components/ui/actions";
@@ -33,6 +34,11 @@ export {
   CardFooter,
   CardHeader,
   CardTitle,
+  LegacyCard,
+  LegacyCardContent,
+  LegacyCardDescription,
+  LegacyCardHeader,
+  LegacyCardTitle,
 } from "./components/ui/card";
 export { Calendar, CalendarDayButton } from "./components/ui/calendar";
 export { Callout } from "./components/ui/callout";

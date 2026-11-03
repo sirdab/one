@@ -123,6 +123,83 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * The card contract products had before One (`@sirdab/ui` 0.1.0 and the
+ * vendored copies): a bordered, padded box whose header, title, description
+ * and content are plain stacked blocks. Header and content keep the 16px
+ * inset the old shadcn bridge gave them (content after a header drops its
+ * top padding). One's Card leaves padding to its
+ * sections, so markup written for the old card renders flush to the edge.
+ * Products migrating from @sirdab/ui alias these (`LegacyCard as Card`) until
+ * their layouts move to CardHeader/CardContent.
+ */
+function LegacyCard({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      data-legacy=""
+      className={cn("border-border bg-card rounded-lg border p-4", className)}
+      {...props}
+    />
+  );
+}
+
+function LegacyCardHeader({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-header"
+      className={cn("flex flex-col gap-1 p-4", className)}
+      {...props}
+    />
+  );
+}
+
+function LegacyCardTitle({ className, ...props }: React.ComponentProps<"h2">) {
+  return (
+    <h2
+      data-slot="card-title"
+      className={cn("text-heading-xs", className)}
+      {...props}
+    />
+  );
+}
+
+function LegacyCardDescription({
+  className,
+  ...props
+}: React.ComponentProps<"p">) {
+  return (
+    <p
+      data-slot="card-description"
+      className={cn("text-body-quiet text-muted-foreground", className)}
+      {...props}
+    />
+  );
+}
+
+function LegacyCardContent({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-content"
+      className={cn("mt-3 p-4 [[data-slot=card-header]+&]:pt-0", className)}
+      {...props}
+    />
+  );
+}
+
+export {
+  LegacyCard,
+  LegacyCardContent,
+  LegacyCardDescription,
+  LegacyCardHeader,
+  LegacyCardTitle,
+};
 export {
   Card,
   CardHeader,

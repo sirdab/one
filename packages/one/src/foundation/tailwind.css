@@ -682,6 +682,10 @@
   height: var(--row-height);
 }
 
+@utility min-h-row {
+  min-height: var(--row-height);
+}
+
 @utility h-shell-header {
   height: var(--shell-header-height);
 }

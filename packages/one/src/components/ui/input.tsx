@@ -10,30 +10,13 @@ import { refusalProps, withDisabledReason } from "./disabled-reason";
 import {
   FIELD_BORDER,
   FIELD_FOCUS_WITHIN,
-  FIELD_HEIGHT,
-  FIELD_RADIUS,
   FIELD_VALUE,
   type FieldSize,
 } from "./field-chrome";
-
-const INPUT_HOVER =
-  "hover:not-focus-within:not-has-[:is(input,textarea,select):read-only]:border-input-border-hover";
-
-const SIZE_CLASSES: Record<FieldSize, string> = {
-  sm: `${FIELD_HEIGHT.sm} ${FIELD_RADIUS.sm} px-2.5 ${INPUT_HOVER}`,
-  md: `${FIELD_HEIGHT.md} ${FIELD_RADIUS.md} px-3 ${INPUT_HOVER}`,
-  default: `${FIELD_HEIGHT.default} ${FIELD_RADIUS.default} px-3 ${INPUT_HOVER}`,
-  search: `${FIELD_HEIGHT.search} ${FIELD_RADIUS.search} px-3 ${INPUT_HOVER}`,
-  touch: `${FIELD_HEIGHT.touch} ${FIELD_RADIUS.touch} px-3 ${INPUT_HOVER}`,
-};
-
-const LEADING_ICON = {
-  sm: "[&_svg]:size-4",
-  md: "[&_svg]:size-4",
-  default: "[&_svg]:size-5",
-  search: "[&_svg]:size-5",
-  touch: "[&_svg]:size-5",
-} as const;
+import {
+  INPUT_LEADING_ICON as LEADING_ICON,
+  INPUT_SIZE_CLASSES as SIZE_CLASSES,
+} from "./input-base";
 
 function Input({
   className,

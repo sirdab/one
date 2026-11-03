@@ -221,7 +221,7 @@ function TableCell({
         data-slot="table-cell-band"
         className={cn(
           "my-1.5 flex min-w-0 items-center gap-2 *:min-w-0",
-          multiline ? "py-3" : "h-row",
+          multiline ? "py-3" : "min-h-row",
           BAND_FILL,
           BAND_CORNERS,
           BAND_GUTTER,

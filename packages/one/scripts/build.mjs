@@ -71,6 +71,23 @@ const css = await postcss([
 });
 await writeFile(path.join(dist, "styles.css"), css.css);
 
+// Token stylesheets for hosts that run Tailwind v4 themselves: they import
+// these plus tailwind.css into their own Tailwind entry, so every utility
+// (theirs and One's) is generated in one pass, in Tailwind's order.
+await writeFile(
+  path.join(dist, "foundation.css"),
+  (
+    await readFile(
+      path.join(packageRoot, "src/foundation/foundation.css"),
+      "utf8",
+    )
+  ).replaceAll('url("../assets/', 'url("./assets/'),
+);
+await cp(
+  path.join(packageRoot, "src/foundation/shadcn-bridge.css"),
+  path.join(dist, "shadcn-bridge.css"),
+);
+
 const glue = await readFile(
   path.join(packageRoot, "src/foundation/tailwind.css"),
   "utf8",
