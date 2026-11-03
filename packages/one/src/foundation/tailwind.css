@@ -130,6 +130,18 @@
   --color-btn-disabled-surface: var(--btn-disabled-surface);
   --color-btn-disabled-text: var(--btn-disabled-text);
   --color-row-divider: var(--row-divider);
+  --color-tile-green-bg: var(--tile-green-bg);
+  --color-tile-green-fg: var(--tile-green-fg);
+  --color-tile-purple-bg: var(--tile-purple-bg);
+  --color-tile-purple-fg: var(--tile-purple-fg);
+  --color-tile-blue-bg: var(--tile-blue-bg);
+  --color-tile-blue-fg: var(--tile-blue-fg);
+  --color-tile-teal-bg: var(--tile-teal-bg);
+  --color-tile-teal-fg: var(--tile-teal-fg);
+  --color-tile-amber-bg: var(--tile-amber-bg);
+  --color-tile-amber-fg: var(--tile-amber-fg);
+  --color-tile-rose-bg: var(--tile-rose-bg);
+  --color-tile-rose-fg: var(--tile-rose-fg);
   --color-row-surface-hover: var(--row-surface-hover);
   --color-row-surface-selected: var(--row-surface-selected);
   --color-row-surface-selected-hover: var(--row-surface-selected-hover);
