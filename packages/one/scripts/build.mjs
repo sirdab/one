@@ -117,3 +117,13 @@ for (const family of ["inter", "ibm-plex-sans-arabic"]) {
   );
 }
 await writeFile(path.join(dist, "fonts.css"), fonts.join("\n"));
+
+await mkdir(path.join(dist, "bin"), { recursive: true });
+await writeFile(
+  path.join(dist, "bin/one-lint-tokens.mjs"),
+  `#!/usr/bin/env node\n${await readFile(
+    path.join(packageRoot, "scripts/lint-tokens.mjs"),
+    "utf8",
+  )}`,
+  { mode: 0o755 },
+);

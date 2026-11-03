@@ -3,7 +3,7 @@ import { join, relative, resolve } from "node:path";
 
 const roots = process.argv.slice(2).map((p) => resolve(process.cwd(), p));
 if (roots.length === 0) {
-  console.error("usage: lint-tokens.mjs <dir> [<dir> …]");
+  console.error("usage: one-lint-tokens <dir> [<dir> …]");
   process.exit(2);
 }
 

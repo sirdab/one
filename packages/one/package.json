@@ -62,6 +62,9 @@
     "./tailwind.css": "./dist/tailwind.css",
     "./package.json": "./package.json"
   },
+  "bin": {
+    "one-lint-tokens": "./dist/bin/one-lint-tokens.mjs"
+  },
   "nx": {
     "name": "one"
   },
