@@ -1058,3 +1058,36 @@ body {
   color: var(--foreground);
   color-scheme: light;
 }
+
+/* Identity tiles: initials marks for workspaces, people and organizations,
+   coloured by a stable hash of their id (six tones, light and dark). */
+:root,
+.light {
+  --tile-green-bg: oklch(94.5% 0.032 149.2);
+  --tile-green-fg: oklch(39.6% 0.111 149.2);
+  --tile-purple-bg: oklch(94.5% 0.028 305);
+  --tile-purple-fg: oklch(39.6% 0.1 305);
+  --tile-blue-bg: oklch(94.5% 0.025 250);
+  --tile-blue-fg: oklch(39.6% 0.09 250);
+  --tile-teal-bg: oklch(94.5% 0.028 195);
+  --tile-teal-fg: oklch(39.6% 0.1 195);
+  --tile-amber-bg: oklch(94.5% 0.03 58.3);
+  --tile-amber-fg: oklch(39.6% 0.095 58.3);
+  --tile-rose-bg: oklch(94.5% 0.03 10);
+  --tile-rose-fg: oklch(39.6% 0.1 10);
+}
+
+.dark {
+  --tile-green-bg: oklch(28.8% 0.075 149.2);
+  --tile-green-fg: oklch(88.5% 0.063 149.2);
+  --tile-purple-bg: oklch(28.8% 0.065 305);
+  --tile-purple-fg: oklch(88.5% 0.055 305);
+  --tile-blue-bg: oklch(28.8% 0.06 250);
+  --tile-blue-fg: oklch(88.5% 0.05 250);
+  --tile-teal-bg: oklch(28.8% 0.065 195);
+  --tile-teal-fg: oklch(88.5% 0.055 195);
+  --tile-amber-bg: oklch(28.8% 0.069 58.3);
+  --tile-amber-fg: oklch(88.5% 0.058 58.3);
+  --tile-rose-bg: oklch(28.8% 0.07 10);
+  --tile-rose-fg: oklch(88.5% 0.06 10);
+}

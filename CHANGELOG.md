@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-alpha.3 (unreleased)
+
+- Identity tile tokens: `--tile-{green,purple,blue,teal,amber,rose}-{bg,fg}` in light and dark, mapped to `bg-tile-*-bg` and `text-tile-*-fg`. Transportation colours its workspace and person initials marks with them; without the tokens those marks rendered untinted.
+
 ## 0.1.0-alpha.2 (unreleased)
 
 Fixes found moving RahafbySirdab and transportation onto One.
