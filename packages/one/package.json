@@ -1,6 +1,6 @@
 {
   "name": "@sirdab/one",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "The design system by Sirdab. React components, light and dark themes, and Arabic support.",
   "type": "module",
   "license": "MIT",
@@ -37,6 +37,10 @@
       "types": "./dist/provider.d.ts",
       "import": "./dist/provider.js"
     },
+    "./direction-provider": {
+      "types": "./dist/direction-provider.d.ts",
+      "import": "./dist/direction-provider.js"
+    },
     "./theme-provider": {
       "types": "./dist/theme-provider.d.ts",
       "import": "./dist/theme-provider.js"
@@ -60,6 +64,8 @@
     "./styles.css": "./dist/styles.css",
     "./fonts.css": "./dist/fonts.css",
     "./tailwind.css": "./dist/tailwind.css",
+    "./foundation.css": "./dist/foundation.css",
+    "./shadcn-bridge.css": "./dist/shadcn-bridge.css",
     "./package.json": "./package.json"
   },
   "bin": {

@@ -26,6 +26,19 @@ Product migrations are still pending. This extraction does not change `sirdab/ap
 
 Install React 19 and the alpha package. No Next peer dependency or Tailwind setup is required to use components. A host can keep Tailwind for its own layout. Remove obsolete package aliases, workspace source paths, `transpilePackages`, scanner entries and package-specific overrides only after the product's own tests pass. Do not remove an override used by unrelated product dependencies.
 
+**Hosts that run Tailwind v4 themselves** (most product apps) load One into their own Tailwind entry so every utility, theirs and One's, is generated in one pass:
+
+```css
+@import "tailwindcss" source("../");
+@import "@sirdab/one/shadcn-bridge.css" layer(base);
+@import "@sirdab/one/foundation.css" layer(base);
+@import "@sirdab/one/tailwind.css";
+```
+
+Do not also import `@sirdab/one/styles.css` there. Its precompiled utilities would come after the host's and override responsive variants. `styles.css` is for hosts without Tailwind.
+
+Markup written for `@sirdab/ui`'s padded Card and default-filled Badge can alias `LegacyCard as Card` (and its parts) and `LegacyBadge as Badge` until it moves to One's Card sections and badge tones.
+
 At the app entry or Next root layout:
 
 ```tsx

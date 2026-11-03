@@ -130,3 +130,22 @@ describe("Table scroll and sticky header", () => {
     expect(header?.hasAttribute("data-sticky")).toBe(false);
   });
 });
+
+describe("TableCell height", () => {
+  it("keeps the row height as a floor so wrapped content grows the row instead of spilling over", () => {
+    render(
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell>
+              شركة الخليج المتحدة للخدمات اللوجستية والنقل المبرد
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const band = document.querySelector('[data-slot="table-cell-band"]');
+    expect(band?.className).toContain("min-h-row");
+    expect(band?.className).not.toMatch(/(^|\s)h-row(\s|$)/);
+  });
+});

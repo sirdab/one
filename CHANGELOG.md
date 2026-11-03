@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0-alpha.2 (unreleased)
+
+Fixes found moving RahafbySirdab and transportation onto One.
+
+- Tailwind hosts: `foundation.css` and `shadcn-bridge.css` are exported. A host that runs Tailwind v4 imports them with `tailwind.css` into its own Tailwind entry and must not import `styles.css` too: `styles.css`'s precompiled utilities land after the host's and override its responsive variants (`hidden md:table-cell` stayed hidden). The migration guide shows both setups.
+- Bundle size: each icon is its own module, re-exported by `icons/general`, `icons/shell`, `icons/system` and `icons/catalogue`, with `"use client"` on the icon files instead of the group barrels. Turbopack used to ship whole groups (about 28 KB gzip) for a handful of icons.
+- `DirectionProvider` lives in its own module (`@sirdab/one/direction-provider`), so it no longer pulls in next-themes or the tooltip provider.
+- New `ButtonBase` and `InputBase`: Button and Input without the tooltip machinery, for public pages with tight budgets.
+- New `LegacyCard`, `LegacyCardHeader`, `LegacyCardTitle`, `LegacyCardDescription` and `LegacyCardContent`: the padded, bordered pre-One card contract, for markup written against `@sirdab/ui` (aliased like `LegacyBadge`).
+- Table rows use `--row-height` as a minimum, so wrapped cell content grows the row instead of overlapping the next one.
+- Arabic glyphs in Latin text fall back to IBM Plex Sans Arabic instead of the OS font.
+
 ## 0.1.0-alpha.1 (unreleased)
 
 Adds the pieces the transportation (TMS) app had built in its vendored copy of the UI, so it can drop that copy and use `@sirdab/one` instead.

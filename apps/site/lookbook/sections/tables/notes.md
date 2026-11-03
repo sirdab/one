@@ -6,7 +6,7 @@ usage stays canonical in `components/ui/table.tsx`'s header comment.
 ## Doctrine
 
 Rows are DATA, not controls. Each row is a 64px BAND: a 52px row
-(`h-row`, the `--row-height` rhythm) with 6px of air above and below,
+(`min-h-row`: the `--row-height` rhythm is a floor, so wrapped content grows the row instead of spilling into the next) with 6px of air above and below,
 closed by a hairline at the band's edge. That height contrast against
 the 40px house control is the look. The header is the control tier:
 40px cells (`h-control-xl`) reading `text-label` at `muted-foreground`,

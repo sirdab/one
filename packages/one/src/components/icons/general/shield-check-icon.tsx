@@ -1,0 +1,14 @@
+"use client";
+
+import { shellIcon } from "../house-icon";
+
+export const ShieldCheckIcon = /* @__PURE__ */ shellIcon(
+  "ShieldCheckIcon",
+  <path
+    d="M9 12L11 14L15 9.99999M10.7975 3.02606L5.79754 5.21356C4.70558 5.6913 4 6.77014 4 7.96204V13C4 17.4183 7.58172 21 12 21C16.4183 21 20 17.4183 20 13V7.96204C20 6.77014 19.2944 5.6913 18.2025 5.21356L13.2025 3.02606C12.4359 2.69069 11.5641 2.69069 10.7975 3.02606Z"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  />,
+);

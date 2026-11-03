@@ -1,0 +1,14 @@
+"use client";
+
+import { shellIcon } from "../house-icon";
+
+export const ProductNotFoundIcon = /* @__PURE__ */ shellIcon(
+  "ProductNotFoundIcon",
+  <path
+    d="M10 20H7C5.34315 20 4 18.6569 4 17V7C4 5.34315 5.34315 4 7 4H17C18.6569 4 20 5.34315 20 7V10M9 4V8C9 8.55228 9.44772 9 10 9H14C14.5523 9 15 8.55228 15 8V4M19.1213 19.1213C17.9497 20.2929 16.0503 20.2929 14.8787 19.1213C13.7071 17.9497 13.7071 16.0502 14.8787 14.8786C16.0503 13.7071 17.9497 13.7071 19.1213 14.8786C20.2929 16.0502 20.2929 17.9497 19.1213 19.1213ZM19.1213 19.1213L21 21"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  />,
+);

@@ -505,8 +505,12 @@
 }
 
 :root {
+  /* Arabic glyphs inside Latin text (names, Arabic titles on an English page)
+     fall to the house Arabic face, as they already do for Latin inside Arabic
+     below, instead of whatever the OS picks (wide, heavy SF Arabic on macOS). */
   --font-sans:
-    "SaudiRiyal", Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    "SaudiRiyal", Inter, "IBM Plex Sans Arabic", "Noto Sans Arabic",
+    ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-arabic:
     "SaudiRiyal", "IBM Plex Sans Arabic", "Noto Sans Arabic", sans-serif;
   --font-display: var(--font-sans);
