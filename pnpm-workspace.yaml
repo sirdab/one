@@ -6,3 +6,8 @@ allowBuilds:
   esbuild: true
   nx: true
   sharp: true
+
+# nx 23 pins undici to exactly 7.29.0 (six HIGH advisories, GHSA-2m5v-pch6-74hx
+# among them, fixed in 7.30.1). nx 24 ships 7.30.1; drop this with that upgrade.
+overrides:
+  "undici@>=7.0.0 <7.30.1": 7.30.1
